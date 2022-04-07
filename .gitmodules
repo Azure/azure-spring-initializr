@@ -1,0 +1,6 @@
+[submodule "initializr"]
+	path = initializr
+	url = https://github.com/spring-io/initializr
+[submodule "start.spring.io"]
+	path = start.spring.io
+	url = https://github.com/spring-io/start.spring.io
