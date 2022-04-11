@@ -34,4 +34,4 @@ jobs:
           service-name: azure-spring-initializr-dev
           app-name: azure-spring-initializr
           use-staging-deployment: false
-          package: ${{ env.ASC_PACKAGE_PATH }}/web/start-site/target/start-site-exec.jar
+          package: ${{ env.ASC_PACKAGE_PATH }}/start-site/target/start-site-exec.jar

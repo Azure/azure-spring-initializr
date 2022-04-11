@@ -1,9 +1,0 @@
-.env
-.cache/
-yarn-error.log
-
-analysis/
-node/
-node_modules/
-public/
-target/

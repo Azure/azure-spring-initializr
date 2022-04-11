@@ -1,0 +1,51 @@
+{
+  "icons": [
+    {
+      "src": "./icon_512x512.58cec44120042452e6c8ecfc15524373.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_384x384.6d0e437c65dff219d4e3bba28508dbc6.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_256x256.c6962b614f04a9d14dc81291da58638a.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_192x192.98128bd6ffa452257a0ac3d987a6531f.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_144x144.7d360c62a3c2b77823306d48e19a144b.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_96x96.03663061806a918699d5042f475affc4.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_72x72.cdd9c12f7f1033478ee4991d6c91d829.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon_48x48.e70b0aaadc8c98fded16e8f57f176cbe.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    }
+  ],
+  "name": "spring-initializr",
+  "short_name": "Start",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": "/",
+  "description": "Initializr generates spring boot project with just what you need to start quickly!",
+  "background_color": "#6db33f"
+}
