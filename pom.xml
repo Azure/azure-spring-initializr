@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+
+
 	<groupId>com.azure.spring.initializr</groupId>
 	<artifactId>parent</artifactId>
 	<version>${revision}</version>
 	<packaging>pom</packaging>
-	<name>Spring Initializr</name>
+	<name>Azure Spring Initializr</name>
 	<description>JVM-based project generator</description>
-	<url>https://github.com/spring-io/initializr</url>
-	<organization>
-		<name>Pivotal Software, Inc.</name>
-		<url>https://www.spring.io</url>
-	</organization>
+	<url>https://github.com/azure/azure-spring-initializr</url>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -24,31 +24,35 @@
 		<connection>${git.connection}</connection>
 		<developerConnection>${git.developerConnection}</developerConnection>
 	</scm>
-	<developers>
-		<developer>
-			<id>snicoll</id>
-			<name>Stephane Nicoll</name>
-			<email>snicoll at pivotal.io</email>
-			<organization>Pivotal Software, Inc.</organization>
-			<organizationUrl>https://www.spring.io</organizationUrl>
-			<roles>
-				<role>Project lead</role>
-			</roles>
-		</developer>
-	</developers>
+  <developers>
+    <developer>
+      <name>Spring Cloud Azure</name>
+      <email>SpringIntegSupport@microsoft.com</email>
+    </developer>
+  </developers>
 
 	<properties>
 		<revision>0.13.0-SNAPSHOT</revision>
 		<disable.checks>false</disable.checks>
-		<git.url>https://github.com/spring-io/initializr</git.url>
-		<git.connection>scm:git:https://github.com/spring-io/initializr</git.connection>
-		<git.developerConnection>scm:git:ssh://git@github.com/spring-io/initializr.git</git.developerConnection>
+		<git.url>https://github.com/azure/azure-spring-initializr</git.url>
+		<git.connection>scm:git:https://github.com/azure/azure-spring-initializr</git.connection>
+		<git.developerConnection>scm:git:git@github.com:Azure/azure-spring-initializr.git</git.developerConnection>
 		<main.basedir>${basedir}</main.basedir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<modules>
-		<module>initializr</module>
-		<module>start.spring.io</module>
+		<module>web</module>
+<!--		<module>start.spring.io</module>-->
 	</modules>
+  <repositories>
+    <repository>
+      <id>spring-snapshots</id>
+      <name>Spring Snapshots</name>
+      <url>https://repo.spring.io/libs-snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>
