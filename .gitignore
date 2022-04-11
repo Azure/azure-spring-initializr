@@ -1,4 +1,17 @@
+### Start Client ###
+/start-client/public/
+/start-client/node_modules/
+/start-client/node/
+/start-client/.env
+/start-client/.cache/
+/start-client/package-lock.json
+/start-client/yarn-error.log
+/start-client/analysis
 *.class
+
+target
+!.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
 
 #Javadoc files
 dist/
