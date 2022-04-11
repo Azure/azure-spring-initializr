@@ -1,5 +1,9 @@
 name: AzureSpringCloud
-on: push
+on:
+  push:
+    branches:
+      - 'main'
+      - 'releases/**'
 env:
   ASC_PACKAGE_PATH: ${{ github.workspace }}
   AZURE_SUBSCRIPTION: 799c12ba-353c-44a1-883d-84808ebb2216
