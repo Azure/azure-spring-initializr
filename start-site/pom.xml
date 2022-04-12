@@ -37,7 +37,10 @@
 			<groupId>io.spring.initializr</groupId>
 			<artifactId>initializr-actuator</artifactId>
 		</dependency>
-
+    <dependency>
+      <groupId>com.azure.spring.initializr</groupId>
+      <artifactId>initializr-azure</artifactId>
+    </dependency>
 		<dependency>
 			<groupId>com.azure.spring.initializr</groupId>
 			<artifactId>start-client</artifactId>

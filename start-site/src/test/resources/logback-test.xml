@@ -7,4 +7,7 @@
   <logger name="org.apache.http">
     <level value="warn" />
   </logger>
+  <logger name="jdk">
+    <level value="info" />
+  </logger>
 </configuration>
