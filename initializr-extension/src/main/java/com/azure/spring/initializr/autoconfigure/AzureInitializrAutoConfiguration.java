@@ -32,6 +32,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.file.Files;
 
 
 @Configuration
@@ -42,8 +43,8 @@ public class AzureInitializrAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ProjectDirectoryFactory projectDirectoryFactory(AzureInitializrProperties properties) {
-		return (description) -> properties.getProjectDirectory();
+	public ProjectDirectoryFactory projectDirectoryFactory() {
+		return (description) -> Files.createTempDirectory("project-");
 	}
 
 	@Bean

@@ -12,17 +12,9 @@ public class AzureInitializrProperties implements InitializingBean {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AzureInitializrProperties.class);
 
-	private Path projectDirectory;
-
 	private Path mavenResolverCacheDirectory;
 
-	public Path getProjectDirectory() {
-		return projectDirectory;
-	}
 
-	public void setProjectDirectory(Path projectDirectory) {
-		this.projectDirectory = projectDirectory;
-	}
 
 	public Path getMavenResolverCacheDirectory() {
 		return mavenResolverCacheDirectory;
@@ -37,18 +29,10 @@ public class AzureInitializrProperties implements InitializingBean {
 		if (mavenResolverCacheDirectory == null) {
 			mavenResolverCacheDirectory = Files.createTempDirectory("version-resolver-cache-");
 		}
-		if (projectDirectory == null) {
-			projectDirectory = Files.createTempDirectory("project-");
-		}
 		if (!Files.exists(mavenResolverCacheDirectory)) {
 			LOGGER.info("Creating Maven resolver cache directory: {}", mavenResolverCacheDirectory);
 			Files.createDirectory(mavenResolverCacheDirectory);
 		}
-		if (!Files.exists(projectDirectory)) {
-			LOGGER.info("Creating project directory: {}", projectDirectory);
-			Files.createDirectory(projectDirectory);
-		}
-		LOGGER.info("Project directory: {}", projectDirectory);
 		LOGGER.info("Maven resolver cache directory: {}", mavenResolverCacheDirectory);
 	}
 
