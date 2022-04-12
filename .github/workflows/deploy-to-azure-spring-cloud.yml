@@ -12,6 +12,8 @@ jobs:
   deploy_to_production:
     runs-on: ubuntu-latest
     name: deploy to production with artifact
+    strategy:
+      max-parallel: 1
     steps:
       - name: Checkout Github Action
         uses: actions/checkout@v3
