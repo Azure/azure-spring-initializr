@@ -1588,11 +1588,11 @@ initializr:
       id: groovy
       default: false
   bootVersions:
-    - name : Latest SNAPSHOT
-      id: 2.2.0.BUILD-SNAPSHOT
+    - name : 2.5.12
+      id: 2.5.12
       default: false
-    - name : 2.1.1.
-      id: 2.1.1.RELEASE
+    - name : 2.6.6
+      id: 2.6.6
       default: true
 #azure:
 #  initializr:

@@ -56,11 +56,11 @@ public class StartApplication {
 		return new HomeController();
 	}
 
-	@Bean
-	public StartInitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(
-			RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
-		return new StartInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
-	}
+//	@Bean
+//	public StartInitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(
+//			RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
+//		return new StartInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
+//	}
 
 	@Bean
 	public DependencyManagementVersionResolver dependencyManagementVersionResolver(AzureInitializrProperties properties)

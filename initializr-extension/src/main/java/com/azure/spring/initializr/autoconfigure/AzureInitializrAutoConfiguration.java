@@ -16,6 +16,9 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
+import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
+import com.azure.spring.initializr.support.ProjectGenerationListener;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.generator.project.ProjectDirectoryFactory;
 import io.spring.initializr.web.autoconfigure.InitializrAutoConfiguration;
 
@@ -25,6 +28,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -46,5 +50,9 @@ public class AzureInitializrAutoConfiguration {
 	public ProjectGenerationListener projectGenerationListener() {
 		return new ProjectGenerationListener();
 	}
-
+    @Bean
+    public AzureInitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(
+        RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
+        return new AzureInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
+    }
 }
