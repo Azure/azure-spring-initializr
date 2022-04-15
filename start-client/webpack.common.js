@@ -6,9 +6,17 @@ const WebpackPwaManifest = require('webpack-pwa-manifest')
 const isDev = process.env.NODE_ENV === 'development'
 const CopyPlugin = require('copy-webpack-plugin')
 
-const CODE = `<script defer src="https://www.googletagmanager.com/gtag/js?id={{ID}}"></script><script>window.dataLayer=window.dataLayer || []; function gtag(){dataLayer.push(arguments);}gtag('js', new Date()); gtag('config', '{{ID}}');</script>`
+const CODE = `
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "{{ID}}");
+</script>
+`;
 
-class WebpackGoogleTagManager {
+class WebpackCodeAppender {
   constructor(id) {
     this.id = id
   }
@@ -76,11 +84,11 @@ const config = {
       minify: isDev
         ? false
         : {
-            collapseWhitespace: true,
-            removeComments: true,
-            useShortDoctype: true,
-            minifyCSS: true,
-          },
+          collapseWhitespace: true,
+          removeComments: true,
+          useShortDoctype: true,
+          minifyCSS: true,
+        },
       template: './static/index.html',
       title: 'Azure Spring Initializr',
       description: `Initializr generates spring boot project with just what you need to start quickly!`,
@@ -89,7 +97,7 @@ const config = {
       image: `https://start.spring.io/images/initializr-card.jpg`,
       theme: `#6db33f`,
     }),
-    new WebpackGoogleTagManager(process.env.GOOGLE_TAGMANAGER_ID),
+    new WebpackCodeAppender('bg7drig2n4'),
     new WebpackPwaManifest({
       name: 'spring-initializr',
       short_name: 'Start',
