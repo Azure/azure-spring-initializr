@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.azure.spring.initializr.support;
+package com.azure.spring.initializr.web.project;
 
 import io.spring.initializr.web.project.ProjectFailedEvent;
 import io.spring.initializr.web.project.ProjectGeneratedEvent;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 
+/**
+ * This listens for {@link ProjectGeneratedEvent} and {@link ProjectFailedEvent}.
+ *
+ * TODO we can use this listener to track the statistic of project generation.
+ */
 public class ProjectGenerationListener {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectGenerationListener.class);

@@ -21,6 +21,7 @@ import java.io.IOException;
 import com.azure.spring.initializr.autoconfigure.AzureInitializrProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.versionresolver.DependencyManagementVersionResolver;
+import io.spring.initializr.web.autoconfigure.InitializrAutoConfiguration;
 import io.spring.start.site.project.ProjectDescriptionCustomizerConfiguration;
 import io.spring.start.site.support.CacheableDependencyManagementVersionResolver;
 import io.spring.start.site.support.StartInitializrMetadataUpdateStrategy;
@@ -40,7 +41,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  *
  * @author Stephane Nicoll
  */
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = InitializrAutoConfiguration.class)
 @SpringBootConfiguration
 @Import(ProjectDescriptionCustomizerConfiguration.class)
 @EnableCaching
@@ -55,12 +56,6 @@ public class StartApplication {
 	public HomeController homeController() {
 		return new HomeController();
 	}
-
-//	@Bean
-//	public StartInitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(
-//			RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
-//		return new StartInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
-//	}
 
 	@Bean
 	public DependencyManagementVersionResolver dependencyManagementVersionResolver(AzureInitializrProperties properties)
