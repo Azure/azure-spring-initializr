@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
+import com.azure.spring.initializr.metadata.customizer.ResourceInitializrMetadataCustomizer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.spring.initializr.metadata.InitializrConfiguration;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataBuilder;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
@@ -69,8 +72,13 @@ class StartApplicationIntegrationTests {
 				.build();
 		ResponseEntity<String> response = this.restTemplate.exchange(request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		InitializrMetadata actual = InitializrMetadataBuilder.create()
-				.withInitializrMetadata(new ByteArrayResource(response.getBody().getBytes())).build();
+        ExtendInitializrMetadataBuilder builder = new ExtendInitializrMetadataBuilder(new InitializrConfiguration());
+
+        ByteArrayResource resource = new ByteArrayResource(response.getBody().getBytes());
+        ResourceInitializrMetadataCustomizer customizer = new ResourceInitializrMetadataCustomizer(resource);
+        InitializrMetadata actual = builder.withCustomizer(customizer).build();
+//        InitializrMetadata actual = InitializrMetadataBuilder.create()
+//                                                             .withInitializrMetadata(resource).build();
 		assertThat(actual).isNotNull();
 		InitializrMetadata expected = this.metadataProvider.get();
 		assertThat(actual.getDependencies().getAll().size()).isEqualTo(expected.getDependencies().getAll().size());
