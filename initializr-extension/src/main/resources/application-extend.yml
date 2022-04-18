@@ -1,0 +1,20 @@
+extend:
+  initializr:
+    architectures:
+      - id: "none"
+        name: "None"
+        default: true
+      - id : "mvc"
+        name: "MVC"
+        default: false
+        facets:
+          - "web"
+          - "thymeleaf"
+          - "h2"
+          - "jpa"
+      - id: "microservice"
+        name: "Microservice"
+        default: false
+        facets:
+          - "web"
+          - "jpa"

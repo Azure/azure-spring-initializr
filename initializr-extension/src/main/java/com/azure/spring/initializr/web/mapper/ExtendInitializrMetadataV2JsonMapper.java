@@ -1,6 +1,8 @@
 package com.azure.spring.initializr.web.mapper;
 
-import com.azure.spring.initializr.metadata.ExtentdInitializrMetadata;
+import com.azure.spring.initializr.metadata.Architecture;
+import com.azure.spring.initializr.metadata.ArchitectureCapability;
+import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -59,8 +61,8 @@ public class ExtendInitializrMetadataV2JsonMapper implements InitializrMetadataJ
         links(delegate, metadata.getTypes().getContent(), appUrl);
         dependencies(delegate, metadata.getDependencies());
         type(delegate, metadata.getTypes());
-        if(metadata instanceof ExtentdInitializrMetadata){
-            singleSelect(delegate, ((ExtentdInitializrMetadata) metadata).getArchitecture());
+        if(metadata instanceof ExtendInitializrMetadata){
+            architecture(delegate, ((ExtendInitializrMetadata) metadata).getArchitecture());
         }
         singleSelect(delegate, metadata.getPackagings());
         singleSelect(delegate, metadata.getJavaVersions());
@@ -104,6 +106,20 @@ public class ExtendInitializrMetadataV2JsonMapper implements InitializrMetadataJ
         dependencies.set("values", values);
         parent.set(capability.getId(), dependencies);
     }
+    protected void architecture(ObjectNode parent, ArchitectureCapability capability) {
+        ObjectNode architecture = nodeFactory.objectNode();
+        architecture.put("architecture", capability.getType().getName());
+        Architecture defaultArchitecture = capability.getDefault();
+        if(defaultArchitecture != null){
+            architecture.put("default", defaultArchitecture.getId());
+        }
+        ArrayNode values = nodeFactory.arrayNode();
+        values.addAll(capability.getContent().stream().map(this::mapArchitecture).collect(Collectors.toList()));
+        architecture.set("values", values);
+        parent.set(capability.getId(), architecture);
+    }
+
+
 
     protected void type(ObjectNode parent, TypeCapability capability) {
         ObjectNode type = nodeFactory.objectNode();
@@ -184,7 +200,15 @@ public class ExtendInitializrMetadataV2JsonMapper implements InitializrMetadataJ
         }
         return null;
     }
+    private ObjectNode mapArchitecture(Architecture architecture) {
+        ObjectNode result = mapValue(architecture);
 
+        ArrayNode facets = nodeFactory.arrayNode();
+        architecture.getFacets().forEach(facets::add);
+        result.set("facets", facets);
+
+        return result;
+    }
     protected ObjectNode mapType(Type type) {
         ObjectNode result = mapValue(type);
         result.put("action", type.getAction());

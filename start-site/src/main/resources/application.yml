@@ -24,6 +24,8 @@ server:
   forward-headers-strategy: native
 
 spring:
+  profiles:
+    include: extend
   jackson:
     serialization:
       write-dates-as-timestamps: false
