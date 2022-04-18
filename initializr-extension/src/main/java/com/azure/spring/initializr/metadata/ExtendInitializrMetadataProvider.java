@@ -23,11 +23,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.annotation.Cacheable;
 
 public class ExtendInitializrMetadataProvider implements InitializrMetadataProvider {
-    private InitializrMetadata metadata;
+    private ExtendInitializrMetadata metadata;
 
     private final ObjectProvider<InitializrMetadataUpdateStrategy> strategies;
 
-    public ExtendInitializrMetadataProvider(InitializrMetadata metadata,
+    public ExtendInitializrMetadataProvider(ExtendInitializrMetadata metadata,
                                             ObjectProvider<InitializrMetadataUpdateStrategy> strategies) {
         this.metadata = metadata;
         this.strategies = strategies;
@@ -37,7 +37,7 @@ public class ExtendInitializrMetadataProvider implements InitializrMetadataProvi
     @Cacheable(value = "initializr.metadata", key = "'metadata'")
     public InitializrMetadata get() {
         this.strategies.orderedStream().forEach(strategy -> {
-            this.metadata = strategy.update(this.metadata);
+            this.metadata = (ExtendInitializrMetadata)strategy.update(this.metadata);
         });
         return this.metadata;
     }

@@ -16,9 +16,14 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
+import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
+import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
+import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
+import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
+import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
+import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCustomizer;
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
-import com.azure.spring.initializr.support.ExtendMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
 import com.azure.spring.initializr.web.project.ExtendProjectRequestToDescriptionConverter;
@@ -31,17 +36,14 @@ import io.spring.initializr.generator.io.template.MustacheTemplateRenderer;
 import io.spring.initializr.generator.io.template.TemplateRenderer;
 import io.spring.initializr.generator.project.ProjectDirectoryFactory;
 import io.spring.initializr.metadata.DependencyMetadataProvider;
-import io.spring.initializr.metadata.InitializrMetadata;
-import io.spring.initializr.metadata.InitializrMetadataBuilder;
+import io.spring.initializr.metadata.InitializrConfiguration;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.InitializrProperties;
-import io.spring.initializr.web.autoconfigure.InitializrAutoConfiguration;
 
 import io.spring.initializr.web.autoconfigure.InitializrWebConfig;
 import io.spring.initializr.web.controller.CommandLineMetadataController;
 import io.spring.initializr.web.controller.DefaultProjectGenerationController;
 import io.spring.initializr.web.controller.ProjectGenerationController;
-import io.spring.initializr.web.controller.ProjectMetadataController;
 import io.spring.initializr.web.controller.SpringCliDistributionController;
 import io.spring.initializr.web.project.DefaultProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
@@ -49,12 +51,9 @@ import io.spring.initializr.web.project.ProjectGenerationInvoker;
 import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.support.DefaultDependencyMetadataProvider;
-import io.spring.initializr.web.support.DefaultInitializrMetadataProvider;
 import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -82,10 +81,9 @@ import java.util.stream.StreamSupport;
 
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({ AzureInitializrProperties.class, InitializrProperties.class })
+@EnableConfigurationProperties({ ExtendInitializrProperties.class, InitializrProperties.class })
 @AutoConfigureAfter({ JacksonAutoConfiguration.class, RestTemplateAutoConfiguration.class })
-//@EnableAutoConfiguration(exclude = InitializrAutoConfiguration.class)
-public class AzureInitializrAutoConfiguration {
+public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
@@ -106,16 +104,42 @@ public class AzureInitializrAutoConfiguration {
         return new AzureInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
     }
 
+
     @Bean
-    public ExtendMetadataUpdateStrategy extendMetadataUpdateStrategy() {
-        return new ExtendMetadataUpdateStrategy();
+    @ConditionalOnMissingBean
+    InitializrPropertiesCustomizer initializerPropertiesCustomizer(InitializrProperties properties) {
+        return new InitializrPropertiesCustomizer(properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    ApplyDefaultCustomizer applyDefaultCustomizer() {
+        return new ApplyDefaultCustomizer();
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    ExtendInitializrPropertiesCustomizer extendInitializrPropertiesCustomizer(ExtendInitializrProperties properties){
+        return new ExtendInitializrPropertiesCustomizer(properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    ExtendInitializrMetadataBuilder extendInitializrMetadataBuilder(
+        InitializrConfiguration configuration, ObjectProvider<ExtendInitializrMetadataCustomizer> customizers) {
+        ExtendInitializrMetadataBuilder builder = new ExtendInitializrMetadataBuilder(configuration);
+        customizers.orderedStream().forEach(builder::withCustomizer);
+        return builder;
     }
 
     @Bean
     @ConditionalOnMissingBean(InitializrMetadataProvider.class)
     public InitializrMetadataProvider initializrMetadataProvider(InitializrProperties properties,
+                                                                 ExtendInitializrMetadataBuilder builder,
                                                                  ObjectProvider<InitializrMetadataUpdateStrategy> strategies) {
-        InitializrMetadata metadata = InitializrMetadataBuilder.fromInitializrProperties(properties).build();
+//        ExtendInitializrMetadataBuilder builder = ExtendInitializrMetadataBuilder
+//            .fromInitializrProperties(properties);
+//        customizers.orderedStream().forEach(builder::withCustomizer);
+        ExtendInitializrMetadata metadata = builder.build();
         return new ExtendInitializrMetadataProvider(metadata, strategies);
     }
 
