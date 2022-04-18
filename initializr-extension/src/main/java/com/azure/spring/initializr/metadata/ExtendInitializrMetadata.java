@@ -25,7 +25,10 @@ public class ExtendInitializrMetadata extends InitializrMetadata {
 
         }
     }
-    protected ExtendInitializrMetadata(InitializrConfiguration configuration) {
+    public ExtendInitializrMetadata() {
+        this(new InitializrConfiguration());
+    }
+    public ExtendInitializrMetadata(InitializrConfiguration configuration) {
         super(configuration);
     }
 

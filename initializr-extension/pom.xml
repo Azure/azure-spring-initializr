@@ -8,10 +8,10 @@
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>initializr-azure</artifactId>
+  <artifactId>initializr-extension</artifactId>
   <version>${revision}</version>
-  <name>Spring Initializr :: Generator (Azure)</name>
-  <description>Azure project generator</description>
+  <name>Spring Initializr :: Generator Extension</name>
+  <description>Extension project generator</description>
 
   <dependencies>
     <dependency>
@@ -108,20 +108,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>io.spring.javaformat</groupId>
-        <artifactId>spring-javaformat-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>
