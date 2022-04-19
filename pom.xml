@@ -47,7 +47,7 @@
     <revision>0.0.1-SNAPSHOT</revision>
     <spring-initializr.version>0.13.0-SNAPSHOT</spring-initializr.version>
     <spring-javaformat.version>0.0.31</spring-javaformat.version>
-    <spring-cloud-contract.version>3.0.5</spring-cloud-contract.version>
+    <spring-cloud-contract.version>3.1.1</spring-cloud-contract.version>
   </properties>
   <dependencyManagement>
     <dependencies>
