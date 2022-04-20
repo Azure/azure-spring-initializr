@@ -16,7 +16,6 @@
 
 package io.spring.start.site.extension.dependency.springazure;
 
-import io.spring.initializr.generator.buildsystem.BillOfMaterials;
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
