@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package io.spring.start.site.extension.dependency.springazure;
+package com.azure.spring.initializr.extension.dependency.springazure;
 
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 
 /**
- * A {@link BuildCustomizer} that automatically adds "spring-cloud-azure-starter-actuator" when any Spring Cloud Azure
- * library and Spring Boot Actuator are selected.
+ * A {@link BuildCustomizer} that automatically adds "spring-cloud-azure-starter" when any Spring Cloud Azure library is
+ * selected.
+ *
  *
  *
  */
-public class SpringAzureActuatorBuildCustomizer implements BuildCustomizer<Build> {
+public class SpringAzureDefaultBuildCustomizer implements BuildCustomizer<Build> {
 
 	@Override
 	public void customize(Build build) {
 		if (build.dependencies().items().anyMatch(u -> u.getGroupId().equals("com.azure.spring"))
-				&& build.dependencies().has("actuator")) {
-			build.dependencies().add("spring-cloud-azure-starter-actuator",
-					Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter-actuator"));
+				&& !build.dependencies().items().anyMatch(u -> u.getArtifactId().equals("spring-cloud-azure-starter"))) {
+			build.dependencies().add("spring-cloud-azure-starter",
+					Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter"));
 		}
 	}
 
