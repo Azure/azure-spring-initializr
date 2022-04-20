@@ -29,8 +29,6 @@ import io.spring.start.site.extension.dependency.liquibase.LiquibaseProjectContr
 import io.spring.start.site.extension.dependency.lombok.LombokGradleBuildCustomizer;
 import io.spring.start.site.extension.dependency.okta.OktaHelpDocumentCustomizer;
 import io.spring.start.site.extension.dependency.reactor.ReactorTestBuildCustomizer;
-import io.spring.start.site.extension.dependency.springazure.SpringAzureActuatorBuildCustomizer;
-import io.spring.start.site.extension.dependency.springazure.SpringAzureDefaultBuildCustomizer;
 import io.spring.start.site.extension.dependency.springbatch.SpringBatchTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springkafka.SpringKafkaBuildCustomizer;
 import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityRSocketBuildCustomizer;
@@ -97,16 +95,6 @@ public class DependencyProjectGenerationConfiguration {
 	@Bean
 	public SpringKafkaBuildCustomizer springKafkaBuildCustomizer() {
 		return new SpringKafkaBuildCustomizer();
-	}
-
-	@Bean
-	public SpringAzureDefaultBuildCustomizer springAzureBuildCustomizer() {
-		return new SpringAzureDefaultBuildCustomizer();
-	}
-
-	@Bean
-	public SpringAzureActuatorBuildCustomizer springAzureActuatorBuildCustomizer() {
-		return new SpringAzureActuatorBuildCustomizer();
 	}
 
 	@Bean

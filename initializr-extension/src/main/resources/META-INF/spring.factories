@@ -1,2 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.azure.spring.initializr.autoconfigure.ExtendInitializrAutoConfiguration
+
+
+io.spring.initializr.generator.project.ProjectGenerationConfiguration=\
+com.azure.spring.initializr.autoconfigure.ExtendDependencyProjectGenerationConfiguration
