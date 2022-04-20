@@ -197,15 +197,16 @@ initializr:
         snapshotsEnabled: true
   dependencies:
     - name: Storage
-      bom: spring-cloud-azure
       content:
         - name: Azure Storage Blob
           id: azure-storage-blob
+          bom: spring-cloud-azure
           groupId: com.azure.spring
           artifactId: spring-cloud-azure-starter-storage-blob
           description: Azure Storage Blob
         - name: Azure Storage File
           id: azure-storage-file
+          bom: spring-cloud-azure
           groupId: com.azure.spring
           artifactId: spring-cloud-azure-starter-storage-file-share
           description: Azure Storage File
