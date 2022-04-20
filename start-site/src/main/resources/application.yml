@@ -1067,6 +1067,7 @@ initializr:
         - name: Azure Resource Manager
           id: azure-resource-manager
           bom: spring-cloud-azure
+          starter: false
           groupId: com.azure.spring
           artifactId: spring-cloud-azure-resourcemanager
           description: Azure Resource Manager
