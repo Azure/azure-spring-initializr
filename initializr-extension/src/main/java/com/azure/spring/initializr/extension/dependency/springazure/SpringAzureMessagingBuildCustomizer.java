@@ -21,15 +21,15 @@ import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 
 /**
- * A {@link BuildCustomizer} that follow some rules to add dependencies:
- * ## Integration and Azure Messaging Service
- * 1. Automatically adds "spring-cloud-azure-starter-integration-eventhubs" when integration and Azure Event Hubs dependencies are selected.
- * 2. Automatically adds "spring-cloud-azure-starter-integration-servicebus" when integration and Azure Service Bus dependencies are selected.
- * 3. Automatically adds "spring-cloud-azure-starter-integration-storage-queue" when integration and Azure Storage Queue dependencies are selected.
- *
- * ## Cloud Stream and Azure Messaging Service
- * 1. Automatically adds "spring-cloud-azure-stream-binder-eventhubs" when Cloud Stream and Azure Event Hubs dependencies are selected.
- * 2. Automatically adds "spring-cloud-azure-stream-binder-servicebus" when Cloud Stream and Azure Service Bus dependencies are selected.
+ * A {@link BuildCustomizer} that follows some rules to add dependencies:<br>
+ * ## Integration and Azure Messaging Service <br>
+ * 1. Automatically adds "spring-cloud-azure-starter-integration-eventhubs" when integration and Azure Event Hubs dependencies are selected.<br>
+ * 2. Automatically adds "spring-cloud-azure-starter-integration-servicebus" when integration and Azure Service Bus dependencies are selected.<br>
+ * 3. Automatically adds "spring-cloud-azure-starter-integration-storage-queue" when integration and Azure Storage Queue dependencies are selected.<br>
+ *  <br>
+ * ## Cloud Stream and Azure Messaging Service<br>
+ * 1. Automatically adds "spring-cloud-azure-stream-binder-eventhubs" when Cloud Stream and Azure Event Hubs dependencies are selected.<br>
+ * 2. Automatically adds "spring-cloud-azure-stream-binder-servicebus" when Cloud Stream and Azure Service Bus dependencies are selected.<br>
  *
  */
 public class SpringAzureMessagingBuildCustomizer implements BuildCustomizer<Build> {
