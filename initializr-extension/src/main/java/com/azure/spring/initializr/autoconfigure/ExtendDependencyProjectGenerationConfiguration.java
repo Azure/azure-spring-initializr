@@ -18,6 +18,8 @@ package com.azure.spring.initializr.autoconfigure;
 
 import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureActuatorBuildCustomizer;
 import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureDefaultBuildCustomizer;
+import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureMessagingBuildCustomizer;
+import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureSleuthBuildCustomizer;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.metadata.InitializrMetadata;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +48,14 @@ public class ExtendDependencyProjectGenerationConfiguration {
 		return new SpringAzureActuatorBuildCustomizer();
 	}
 
+	@Bean
+	public SpringAzureMessagingBuildCustomizer springAzureMessagingBuildCustomizer() {
+		return new SpringAzureMessagingBuildCustomizer();
+	}
 
+	@Bean
+	public SpringAzureSleuthBuildCustomizer springAzureSleuthBuildCustomizer() {
+		return new SpringAzureSleuthBuildCustomizer();
+	}
 
 }
