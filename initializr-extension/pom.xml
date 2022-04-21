@@ -8,10 +8,10 @@
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>initializr-azure</artifactId>
+  <artifactId>initializr-extension</artifactId>
   <version>${revision}</version>
-  <name>Spring Initializr :: Generator (Azure)</name>
-  <description>Azure project generator</description>
+  <name>Spring Initializr :: Generator Extension</name>
+  <description>Extension project generator</description>
 
   <dependencies>
     <dependency>
@@ -20,11 +20,26 @@
     </dependency>
     <dependency>
       <groupId>io.spring.initializr</groupId>
+      <artifactId>initializr-generator-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.spring.initializr</groupId>
       <artifactId>initializr-metadata</artifactId>
     </dependency>
     <dependency>
       <groupId>io.spring.initializr</groupId>
       <artifactId>initializr-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.spring.initializr</groupId>
@@ -51,22 +66,45 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.spring.initializr</groupId>
+      <artifactId>initializr-generator-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.restdocs</groupId>
+      <artifactId>spring-restdocs-mockmvc</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin.external.google</groupId>
+      <artifactId>android-json</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.skyscreamer</groupId>
+      <artifactId>jsonassert</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-  <build>
-    <finalName>start-site</finalName>
-    <plugins>
-      <plugin>
-        <groupId>io.spring.javaformat</groupId>
-        <artifactId>spring-javaformat-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>

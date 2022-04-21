@@ -38,6 +38,7 @@
   <properties>
     <revision>0.13.0-SNAPSHOT</revision>
     <disable.checks>true</disable.checks>
+    <java.version>11</java.version>
     <git.url>https://github.com/azure/azure-spring-initializr</git.url>
     <git.connection>scm:git:https://github.com/azure/azure-spring-initializr</git.connection>
     <git.developerConnection>scm:git:git@github.com:Azure/azure-spring-initializr.git</git.developerConnection>
@@ -46,6 +47,7 @@
     <revision>0.0.1-SNAPSHOT</revision>
     <spring-initializr.version>0.13.0-SNAPSHOT</spring-initializr.version>
     <spring-javaformat.version>0.0.31</spring-javaformat.version>
+    <spring-cloud-contract.version>3.1.1</spring-cloud-contract.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -57,8 +59,15 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-contract-dependencies</artifactId>
+        <version>${spring-cloud-contract.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>com.azure.spring.initializr</groupId>
-        <artifactId>initializr-azure</artifactId>
+        <artifactId>initializr-extension</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
@@ -71,100 +80,22 @@
         <artifactId>start-site</artifactId>
         <version>${revision}</version>
       </dependency>
+      <dependency>
+        <groupId>com.vaadin.external.google</groupId>
+        <artifactId>android-json</artifactId>
+        <version>0.0.20131108.vaadin1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>flatten-maven-plugin</artifactId>
-          <version>1.2.7</version>
-        </plugin>
-        <plugin>
-          <groupId>io.spring.javaformat</groupId>
-          <artifactId>spring-javaformat-maven-plugin</artifactId>
-          <version>${spring-javaformat.version}</version>
-          <executions>
-            <execution>
-              <phase>validate</phase>
-              <configuration>
-                <skip>${disable.checks}</skip>
-              </configuration>
-              <goals>
-                <goal>validate</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.2</version>
-          <executions>
-            <execution>
-              <id>checkstyle-validation</id>
-              <phase>validate</phase>
-              <configuration>
-                <skip>${disable.checks}</skip>
-                <configLocation>io/spring/javaformat/checkstyle/checkstyle.xml</configLocation>
-                <includeTestSourceDirectory>true</includeTestSourceDirectory>
-              </configuration>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-          <dependencies>
-            <dependency>
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>10.1</version>
-            </dependency>
-            <dependency>
-              <groupId>io.spring.javaformat</groupId>
-              <artifactId>spring-javaformat-checkstyle</artifactId>
-              <version>${spring-javaformat.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-        <plugin>
-          <groupId>com.github.eirslett</groupId>
-          <artifactId>frontend-maven-plugin</artifactId>
-          <version>1.12.1</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.2.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <!-- Tidy up all POMs before they are published -->
-            <id>flatten</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>flatten</goal>
-            </goals>
-            <configuration>
-              <updatePomFile>true</updatePomFile>
-              <flattenMode>oss</flattenMode>
-              <pomElements>
-                <parent>expand</parent>
-                <distributionManagement>remove</distributionManagement>
-                <repositories>remove</repositories>
-              </pomElements>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 
 

@@ -17,10 +17,11 @@
 package io.spring.start.site;
 
 import java.io.IOException;
+import java.nio.file.Files;
 
-import com.azure.spring.initializr.autoconfigure.AzureInitializrProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.versionresolver.DependencyManagementVersionResolver;
+import io.spring.initializr.web.autoconfigure.InitializrAutoConfiguration;
 import io.spring.start.site.project.ProjectDescriptionCustomizerConfiguration;
 import io.spring.start.site.support.CacheableDependencyManagementVersionResolver;
 import io.spring.start.site.support.StartInitializrMetadataUpdateStrategy;
@@ -40,7 +41,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  *
  * @author Stephane Nicoll
  */
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = InitializrAutoConfiguration.class)
 @SpringBootConfiguration
 @Import(ProjectDescriptionCustomizerConfiguration.class)
 @EnableCaching
@@ -56,17 +57,11 @@ public class StartApplication {
 		return new HomeController();
 	}
 
-//	@Bean
-//	public StartInitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(
-//			RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
-//		return new StartInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
-//	}
-
 	@Bean
-	public DependencyManagementVersionResolver dependencyManagementVersionResolver(AzureInitializrProperties properties)
+	public DependencyManagementVersionResolver dependencyManagementVersionResolver()
 			throws IOException {
 		return new CacheableDependencyManagementVersionResolver(
-				DependencyManagementVersionResolver.withCacheLocation(properties.getMavenResolverCacheDirectory()));
+				DependencyManagementVersionResolver.withCacheLocation( Files.createTempDirectory("version-resolver-cache-")));
 	}
 
 }

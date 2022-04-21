@@ -24,6 +24,8 @@ server:
   forward-headers-strategy: native
 
 spring:
+  profiles:
+    include: extend
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -194,6 +196,20 @@ initializr:
         releasesEnabled: false
         snapshotsEnabled: true
   dependencies:
+    - name: Storage
+      content:
+        - name: Azure Storage Blob
+          id: azure-storage-blob
+          bom: spring-cloud-azure
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-storage-blob
+          description: Azure Storage Blob
+        - name: Azure Storage File
+          id: azure-storage-file
+          bom: spring-cloud-azure
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-storage-file-share
+          description: Azure Storage File
     - name: Developer Tools
       content:
         - name: Spring Native [Experimental]
@@ -447,6 +463,24 @@ initializr:
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-spring-mvc-template-engines
     - name: Security
       content:
+        - name: Azure Active Directory
+          bom: spring-cloud-azure
+          id: azure-active-directory
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-active-directory
+          description: Spring Security integration with Azure Active Directory for authentication.
+        - name: Azure Active Directory B2C
+          bom: spring-cloud-azure
+          id: azure-active-directory-b2c
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-active-directory-b2c
+          description: spring-cloud-azure-starter-active-directory-b2c
+        - name: Azure Key Vault Secrets
+          bom: spring-cloud-azure
+          id: azure-key-vault-secrets
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-keyvault-secrets
+          description: Azure Key Vault Secrets
         - name: Spring Security
           id: security
           description: Highly customizable authentication and access-control framework for Spring applications.
@@ -515,6 +549,15 @@ initializr:
             - rel: reference
               href: https://github.com/okta/okta-spring-boot#readme
               description: Okta Spring Boot documentation
+    - name: Microsoft Azure
+      bom: spring-cloud-azure
+      compatibilityRange: "[2.5.0-M1,2.7.0-M1)"
+      content:
+        - name: Azure Support
+          id: azure-support
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter
+          description: Auto-configuration for Azure Services (Service Bus, Storage, Active Directory, Key Vault, and more).
     - name: SQL
       content:
         - name: JDBC API
@@ -690,6 +733,18 @@ initializr:
           starter: false
     - name: NoSQL
       content:
+        - name: Azure Cosmos DB
+          bom: spring-cloud-azure
+          id: azure-cosmos-db
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-cosmos
+          description: Azure Cosmos DB
+        - name: Azure Spring Data Cosmos DB
+          bom: spring-cloud-azure
+          id: azure-spring-data-cosmos-db
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-data-cosmos
+          description: Azure Spring Data Cosmos DB
         - name: Spring Data Redis (Access+Driver)
           id: data-redis
           description: Advanced and thread-safe Java Redis client for synchronous, asynchronous, and reactive usage. Supports Cluster, Sentinel, Pipelining, Auto-Reconnect, Codecs and much more.
@@ -807,6 +862,30 @@ initializr:
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-neo4j
     - name: Messaging
       content:
+        - name: Azure Event Hubs
+          bom: spring-cloud-azure
+          id: azure-event-hubs
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-eventhubs
+          description: Azure Event Hubs
+        - name: Azure Service Bus
+          bom: spring-cloud-azure
+          id: azure-service-bus
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-servicebus
+          description: Azure Service Bus
+        - name: Azure Service Bus JMS
+          bom: spring-cloud-azure
+          id: azure-service-bus-jms
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-servicebus-jms
+          description: Azure Service Bus JMS
+        - name: Azure Storage Queue
+          bom: spring-cloud-azure
+          id: azure-storage-queue
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-storage-queue
+          description: Azure Storage Queue
         - name: Spring Integration
           id: integration
           description: Adds support for Enterprise Integration Patterns. Enables lightweight messaging and supports integration with external systems via declarative adapters.
@@ -985,6 +1064,13 @@ initializr:
               href: https://picocli.info/#_spring_boot_example
     - name: Ops
       content:
+        - name: Azure Resource Manager
+          id: azure-resource-manager
+          bom: spring-cloud-azure
+          starter: false
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-resourcemanager
+          description: Azure Resource Manager
         - name: Spring Boot Actuator
           id: actuator
           description: Supports built in (or custom) endpoints that let you monitor and manage your application - such as application health, metrics, sessions, etc.
@@ -1233,6 +1319,12 @@ initializr:
       bom: spring-cloud
       compatibilityRange: "[2.3.0.M1,3.1.0-M1)"
       content:
+        - name: Azure App Configuration
+          bom: spring-cloud-azure
+          id: azure-app-configuration
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-appconfiguration
+          description: Azure App Configuration
         - name: Config Client
           id: cloud-config-client
           description: Client that connects to a Spring Cloud Config Server to fetch the application's configuration.
@@ -1429,68 +1521,6 @@ initializr:
           links:
             - rel: reference
               href: https://docs.vmware.com/en/Spring-Cloud-Services-for-VMware-Tanzu/index.html
-    - name: Microsoft Azure
-      bom: spring-cloud-azure
-      compatibilityRange: "[2.5.0-M1,2.7.0-M1)"
-      content:
-        - name: Azure Support
-          id: azure-support
-          groupId: com.azure.spring
-          artifactId: spring-cloud-azure-starter
-          description: Auto-configuration for Azure Services (Service Bus, Storage, Active Directory, Key Vault, and more).
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/spring-boot-for-azure/
-              description: Deploying a Spring Boot app to Azure
-            - rel: reference
-              href: https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html
-            - rel: sample
-              href: https://aka.ms/spring/samples
-              description: Azure Samples
-        - name: Azure Active Directory
-          id: azure-active-directory
-          groupId: com.azure.spring
-          artifactId: spring-cloud-azure-starter-active-directory
-          description: Spring Security integration with Azure Active Directory for authentication.
-          links:
-            - rel: reference
-              href: https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#authentication
-            - rel: sample
-              href: https://aka.ms/spring/samples/latest/aad
-              description: Azure Active Directory Sample
-        - name: Azure Cosmos DB
-          id: azure-cosmos-db
-          groupId: com.azure.spring
-          artifactId: spring-cloud-azure-starter-data-cosmos
-          description: Fully managed NoSQL database service for modern app development, including Spring Data support.
-          links:
-            - rel: reference
-              href: https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#spring-data-support
-            - rel: sample
-              href: https://aka.ms/spring/samples/latest/cosmos
-              description: Azure Cosmos DB Sample
-        - name: Azure Key Vault
-          id: azure-keyvault-secrets
-          groupId: com.azure.spring
-          artifactId: spring-cloud-azure-starter-keyvault-secrets
-          description: Manage application secrets.
-          links:
-            - rel: reference
-              href: https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#secret-management
-            - rel: sample
-              href: https://aka.ms/spring/samples/latest/keyvault
-              description: Azure Key Vault Sample
-        - name: Azure Storage
-          id: azure-storage
-          groupId: com.azure.spring
-          artifactId: spring-cloud-azure-starter-storage-blob
-          description: Azure Storage service integration.
-          links:
-            - rel: reference
-              href: https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#resource-handling
-            - rel: sample
-              href: https://aka.ms/spring/samples/latest/storage
-              description: Azure Storage Sample
     - name: Google Cloud Platform
       bom: spring-cloud-gcp
       compatibilityRange: "[2.4.0-M1,2.7.0-M1)"
