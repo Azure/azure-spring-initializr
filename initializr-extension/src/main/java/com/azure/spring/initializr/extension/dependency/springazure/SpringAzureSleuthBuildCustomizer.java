@@ -21,19 +21,19 @@ import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 
 /**
- * A {@link BuildCustomizer} that automatically adds "spring-cloud-azure-starter" when any Spring Cloud Azure library is
- * selected.
- *
+ * A {@link BuildCustomizer}that automatically adds "spring-cloud-azure-trace-sleuth" when any Spring Cloud Azure
+ * library and Sleuth are selected.
  */
-public class SpringAzureDefaultBuildCustomizer implements BuildCustomizer<Build> {
+public class SpringAzureSleuthBuildCustomizer implements BuildCustomizer<Build> {
+    private static String SLEUTH_DEPENDENCY_ID = "cloud-starter-sleuth";
 
-	@Override
-	public void customize(Build build) {
-		if (build.dependencies().items().anyMatch(u -> u.getGroupId().equals("com.azure.spring"))
-				&& !build.dependencies().items().anyMatch(u -> u.getArtifactId().equals("spring-cloud-azure-starter"))) {
-			build.dependencies().add("spring-cloud-azure-starter",
-					Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter"));
-		}
-	}
-
+    @Override
+    public void customize(Build build) {
+        if (build.dependencies().has(SLEUTH_DEPENDENCY_ID)) {
+            if (build.dependencies().items().anyMatch(u -> u.getGroupId().equals("com.azure.spring"))) {
+                build.dependencies().add("spring-cloud-azure-trace-sleuth",
+                        Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-trace-sleuth"));
+            }
+        }
+    }
 }
