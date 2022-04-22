@@ -90,6 +90,28 @@ const Fields = ({
                 </FieldError>
               )}
             </Control>
+
+            <Control text='Architecture'>
+              <Radio
+                name='architecture'
+                selected={get(values, 'architecture')}
+                error={get(errors, 'architecture.value', '')}
+                options={get(config, 'lists.architecture')}
+                onChange={value => {
+                  dispatchInitializr({
+                    type: 'UPDATE',
+                    payload: { architecture: value },
+                    config: get(dependencies, 'list'),
+                  })
+                  // dispatch({
+                  //   type: 'UPDATE_DEPENDENCIES',
+                  //   payload: { architecture: value },
+                  // })
+                }}
+              />
+            </Control>
+
+
             <Control text='Project Metadata'>
               <FieldInput
                 id='input-group'

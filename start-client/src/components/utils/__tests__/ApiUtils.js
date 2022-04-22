@@ -330,9 +330,10 @@ describe('getShareUrl', () => {
         packageName: 'foo10',
       },
       dependencies: ['foo11', 'foo12'],
+      architecture: 'fooA1',
     })
     expect(result).toBe(
-      'type=foo1&language=foo2&platformVersion=foo3&packaging=foo4&jvmVersion=foo5&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&dependencies=foo11,foo12'
+      'type=foo1&language=foo2&platformVersion=foo3&architecture=fooA1&packaging=foo4&jvmVersion=foo5&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&dependencies=foo11,foo12'
     )
   })
 })
@@ -358,6 +359,7 @@ describe('getProject', () => {
         name: 'foo8',
         description: 'foo9',
         packageName: 'foo10',
+        architecture: 'fooA1',
       },
       dependencies: ['foo11', 'foo12'],
     }
@@ -367,7 +369,7 @@ describe('getProject', () => {
     ])
     expect(fetch.mock.calls.length).toEqual(1)
     expect(fetch.mock.calls[0][0]).toEqual(
-      'http://demo/starter.zip?type=foo1&language=foo2&bootVersion=foo3&baseDir=foo7&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&packaging=foo4&javaVersion=foo5&dependencies=foo11,foo12'
+      'http://demo/starter.zip?type=foo1&language=foo2&bootVersion=foo3&baseDir=foo7&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&packaging=foo4&javaVersion=foo5&architecture=&dependencies=foo11,foo12'
     )
   })
 
@@ -384,13 +386,14 @@ describe('getProject', () => {
         name: 'foo8',
         description: 'foo9',
         packageName: 'foo10',
+        architecture: 'fooA1',
       },
       dependencies: ['foo11', 'foo12'],
     }
     getProject('http://demo/starter.zip', values, [{ id: 'foo11' }])
     expect(fetch.mock.calls.length).toEqual(1)
     expect(fetch.mock.calls[0][0]).toEqual(
-      'http://demo/starter.zip?type=foo1&language=foo2&bootVersion=foo3&baseDir=foo7&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&packaging=foo4&javaVersion=foo5&dependencies=foo11'
+      'http://demo/starter.zip?type=foo1&language=foo2&bootVersion=foo3&baseDir=foo7&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&packaging=foo4&javaVersion=foo5&architecture=&dependencies=foo11'
     )
   })
 
@@ -407,12 +410,13 @@ describe('getProject', () => {
         name: 'foo8',
         description: 'foo9',
         packageName: 'foo10',
+        architecture: 'fooA1',
       },
     }
     getProject('http://demo/starter.zip', values, [])
     expect(fetch.mock.calls.length).toEqual(1)
     expect(fetch.mock.calls[0][0]).toEqual(
-      'http://demo/starter.zip?type=foo1&language=foo2&bootVersion=foo3&baseDir=foo7&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&packaging=foo4&javaVersion=foo5'
+      'http://demo/starter.zip?type=foo1&language=foo2&bootVersion=foo3&baseDir=foo7&groupId=foo6&artifactId=foo7&name=foo8&description=foo9&packageName=foo10&packaging=foo4&javaVersion=foo5&architecture='
     )
   })
 })
