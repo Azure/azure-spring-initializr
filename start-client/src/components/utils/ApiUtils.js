@@ -9,6 +9,7 @@ const PROPERTIES_MAPPING_URL = {
   type: 'project',
   language: 'language',
   platformVersion: 'boot',
+  architecture: 'architecture',
   packaging: 'meta.packaging',
   jvmVersion: 'meta.java',
   groupId: 'meta.group',
@@ -216,6 +217,10 @@ export const getLists = json => {
       key: `${boot.id}`,
       text: `${boot.name}`,
     })),
+    architecture: get(json, 'architecture.values', []).map(architecture => ({
+      key: `${architecture.id}`,
+      text: `${architecture.name}`,
+    })),
     meta: {
       java: get(json, 'javaVersion.values', []).map(java => ({
         key: `${java.id}`,
@@ -235,6 +240,7 @@ export const getDefaultValues = json => {
     project: get(json, 'type.default'),
     language: get(json, 'language.default'),
     boot: get(json, 'bootVersion.default'),
+    architecture: get(json, 'architecture.default'),
     meta: {
       name: get(json, 'name.default'),
       group: get(json, 'groupId.default'),
@@ -278,6 +284,7 @@ export const getProject = function getProject(url, values, config) {
       packageName: get(values, 'meta.packageName'),
       packaging: get(values, 'meta.packaging'),
       javaVersion: get(values, 'meta.java'),
+      architecture: get(values, 'architecture'),
     })
     let paramsDependencies = get(values, 'dependencies', [])
       .map(dependency => {
