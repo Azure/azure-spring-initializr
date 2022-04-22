@@ -1,39 +1,42 @@
 {
-	"name": "Java",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"args": {
-			"VARIANT": "11-bullseye",
-			"INSTALL_MAVEN": "true"
-			// "NODE_VERSION": "lts/*"
-		}
-	},
-
-	"extensions": [
-		"pivotal.vscode-boot-dev-pack",
-		"dawhite.mustache",
-		"eamodio.gitlens",
-		"esbenp.prettier-vscode",
-		"github.vscode-pull-request-github",
-		"hashicorp.terraform",
-		"ms-azuretools.vscode-azureterraform",
-		// "ms-dotnettools.vscode-dotnet-runtime",
-		"ms-vscode.vscode-node-azure-pack",
-		"ms-vsliveshare.vsliveshare",
-		"redhat.fabric8-analytics",
-		"redhat.vscode-xml",
-		"streetsidesoftware.code-spell-checker",
-		"visualstudioexptteam.vscodeintellicode",
-		"vscjava.vscode-java-pack"
-	],
-
-	"features": {
-		"azure-cli": "latest",
-		"docker-in-docker": "latest",
-		"github-cli": "latest",
-		"terraform": "latest"
-	},
-
-    "forwardPorts": [8000, 8080],
-	"remoteUser": "vscode"
+  "name": "Java",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "VARIANT": "11-bullseye",
+      "INSTALL_MAVEN": "true"
+    }
+  },
+  "hostRequirements": {
+    "cpus": 8,
+    "memory": "16gb",
+    "storage": "64gb"
+  },
+  "extensions": [
+    "pivotal.vscode-boot-dev-pack",
+    "dawhite.mustache",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "github.vscode-pull-request-github",
+    "hashicorp.terraform",
+    "ms-azuretools.vscode-azureterraform",
+    "ms-vscode.vscode-node-azure-pack",
+    "ms-vsliveshare.vsliveshare",
+    "redhat.fabric8-analytics",
+    "redhat.vscode-xml",
+    "streetsidesoftware.code-spell-checker",
+    "visualstudioexptteam.vscodeintellicode",
+    "vscjava.vscode-java-pack"
+  ],
+  "features": {
+    "azure-cli": "latest",
+    "docker-in-docker": "latest",
+    "github-cli": "latest",
+    "terraform": "latest"
+  },
+  "forwardPorts": [
+    8000,
+    8080
+  ],
+  "remoteUser": "vscode"
 }
