@@ -108,7 +108,7 @@ public class ExtendInitializrMetadataV2JsonMapper implements InitializrMetadataJ
     }
     protected void architecture(ObjectNode parent, ArchitectureCapability capability) {
         ObjectNode architecture = nodeFactory.objectNode();
-        architecture.put("architecture", capability.getType().getName());
+        architecture.put("type", capability.getType().getName());
         Architecture defaultArchitecture = capability.getDefault();
         if(defaultArchitecture != null){
             architecture.put("default", defaultArchitecture.getId());
