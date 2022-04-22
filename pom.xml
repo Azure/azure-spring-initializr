@@ -11,7 +11,7 @@
 
   <groupId>com.azure.spring.initializr</groupId>
   <artifactId>parent</artifactId>
-  <version>${revision}</version>
+  <version>0.13.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Azure Spring Initializr</name>
   <description>JVM-based project generator</description>
@@ -24,9 +24,9 @@
     </license>
   </licenses>
   <scm>
-    <url>${git.url}</url>
-    <connection>${git.connection}</connection>
-    <developerConnection>${git.developerConnection}</developerConnection>
+    <url>https://github.com/azure/azure-spring-initializr</url>
+    <connection>scm:git:https://github.com/azure/azure-spring-initializr</connection>
+    <developerConnection>scm:git:git@github.com:Azure/azure-spring-initializr.git</developerConnection>
   </scm>
   <developers>
     <developer>
@@ -36,12 +36,8 @@
   </developers>
 
   <properties>
-    <revision>0.13.0-SNAPSHOT</revision>
     <disable.checks>true</disable.checks>
     <java.version>11</java.version>
-    <git.url>https://github.com/azure/azure-spring-initializr</git.url>
-    <git.connection>scm:git:https://github.com/azure/azure-spring-initializr</git.connection>
-    <git.developerConnection>scm:git:git@github.com:Azure/azure-spring-initializr.git</git.developerConnection>
     <main.basedir>${basedir}</main.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring-initializr.version>0.13.0-SNAPSHOT</spring-initializr.version>
@@ -67,17 +63,17 @@
       <dependency>
         <groupId>com.azure.spring.initializr</groupId>
         <artifactId>initializr-extension</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.azure.spring.initializr</groupId>
         <artifactId>start-client</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.azure.spring.initializr</groupId>
         <artifactId>start-site</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin.external.google</groupId>
@@ -86,16 +82,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 
 
   <modules>
