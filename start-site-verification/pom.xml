@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.azure.spring.initializr</groupId>
     <artifactId>parent</artifactId>
-    <version>${revision}</version>
+    <version>0.13.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 	<artifactId>start-site-verification</artifactId>
