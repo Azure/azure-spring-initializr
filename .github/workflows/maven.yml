@@ -28,10 +28,20 @@ jobs:
     name: Deploy to Azure Spring Apps
     concurrency: staging_environment
     env:
-      ASC_PACKAGE_PATH: ${{ github.workspace }}
       AZURE_SUBSCRIPTION: 799c12ba-353c-44a1-883d-84808ebb2216
     if: ${{ github.repository == 'Azure/azure-spring-initializr' && github.event_name != 'pull_request' }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          check-latest: false
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B clean package --file pom.xml -DskipTests
       - name: Login via Azure CLI
         uses: azure/login@v1
         with:
@@ -44,7 +54,7 @@ jobs:
           service-name: azure-spring-initializr-dev
           app-name: azure-spring-initializr
           use-staging-deployment: false
-          package: ${{ env.ASC_PACKAGE_PATH }}/start-site/target/start-site-exec.jar
+          package: ${{ github.workspace }}/start-site/target/start-site-exec.jar
   build_java_docker_image:
     name: Build and publish a JVM-based Docker image
     needs: [ build ]
@@ -63,6 +73,8 @@ jobs:
           java-version: 17
           check-latest: false
           cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B clean package --file pom.xml -DskipTests
       - name: Build the Docker image
         run: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=${{ env.DOCKER_IMAGE_NAME }}:main -DskipTests
         working-directory: ${{ github.workspace }}/start-site
