@@ -96,6 +96,10 @@ const config = {
       twitter: '@springboot',
       image: `https://start.spring.io/images/initializr-card.jpg`,
       theme: `#6db33f`,
+      pageConfig: JSON.stringify({
+        logo: '/images/AzureLogo.png',
+        mobileLogo: '/images/AzureLogo.png',
+      }),
     }),
     new WebpackCodeAppender('bg7drig2n4'),
     new WebpackPwaManifest({
