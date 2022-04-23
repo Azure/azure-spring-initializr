@@ -11,7 +11,8 @@ const HeaderMobile = () => {
       <h1 className='logo logo-mobile'>
         <a href='/'>
           <span className='logo-content' tabIndex='-1'>
-            <LogoMobile />
+            <img src={window.pageConfig.mobileLogo}></img>
+            {/* <LogoMobile /> */}
           </span>
         </a>
       </h1>

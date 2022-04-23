@@ -61,6 +61,10 @@
     <meta property="og:image:height" content="523" />
     <meta name="theme-color" content="<%= htmlWebpackPlugin.options.theme %>" />
 
+    <script>
+      window.pageConfig = JSON.parse('<%= htmlWebpackPlugin.options.pageConfig || "{}" %>');
+    </script>
+
     <style>
       html,
       body {
