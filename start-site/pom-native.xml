@@ -14,7 +14,7 @@
 
   <properties>
     <repackage.classifier/>
-    <spring-native.version>0.11.2</spring-native.version>
+    <spring-native.version>0.11.4</spring-native.version>
   </properties>
 
   <dependencies>
@@ -43,6 +43,12 @@
     <dependency>
       <groupId>io.spring.initializr</groupId>
       <artifactId>initializr-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-cache</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.spring.initializr</groupId>
@@ -151,7 +157,7 @@
       <id>native</id>
       <properties>
         <repackage.classifier>exec</repackage.classifier>
-        <native-buildtools.version>0.9.9</native-buildtools.version>
+        <native-buildtools.version>0.9.11</native-buildtools.version>
       </properties>
       <dependencies>
         <dependency>
@@ -183,6 +189,14 @@
                 </goals>
               </execution>
             </executions>
+            <configuration>
+              <buildArgs>
+                <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+                <buildArg>--trace-class-initialization=org.apache.commons.logging.impl.SLF4JLocationAwareLog</buildArg>
+                <buildArg>--initialize-at-run-time=io.netty.util.internal.logging.Log4JLogger,io.netty.handler.ssl.OpenSsl,io.netty.handler.ssl.OpenSslPrivateKeyMethod,io.netty.internal.tcnative.CertificateVerifier,io.netty.internal.tcnative.SSL,io.netty.internal.tcnative.SSLPrivateKeyMethod,io.netty.handler.ssl.BouncyCastleAlpnSslUtils,io.netty.handler.ssl.util.ThreadLocalInsecureRandom,io.netty.channel.unix,io.netty.channel.epoll,io.netty.channel.kqueue,io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod,io.netty.handler.ssl.OpenSslAsyncPrivateKeyMethod,io.netty.handler.ssl.ConscryptAlpnSslEngine,io.netty.handler.ssl.ReferenceCountedOpenSslEngine,io.netty.buffer.PooledByteBufAllocator</buildArg>
+                <buildArg>--initialize-at-build-time=org.apache.commons.logging.impl.SLF4JLocationAwareLog</buildArg>
+              </buildArgs>
+            </configuration>
           </plugin>
         </plugins>
       </build>

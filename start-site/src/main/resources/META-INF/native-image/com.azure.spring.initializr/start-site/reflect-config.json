@@ -1,0 +1,145 @@
+[
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultRepositorySystem",
+    "condition": {
+      "typeReachable": "org.eclipse.aether.impl.Deployer"
+    },
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.apache.maven.repository.internal.DefaultVersionResolver",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultMetadataResolver",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultUpdateCheckManager",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultTransporterProvider",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.transport.http.HttpTransporterFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultRepositoryLayoutProvider",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultFileProcessor",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultSyncContextFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultOfflineController",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.apache.maven.repository.internal.DefaultVersionRangeResolver",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultArtifactResolver",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.apache.maven.repository.internal.DefaultArtifactDescriptorReader",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultInstaller",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultDeployer",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  }
+]
