@@ -281,6 +281,25 @@ initializr:
             - rel: reference
               href: https://docs.spring.io/spring-native/docs/current/reference/htmlsingle/
               description: Spring Native Reference Guide
+        - name: Spring Cloud Azure Native Configuration
+          id: azure-native-configuration
+          compatibilityRange: "[2.6.3,2.6.7)"
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-native-configuration
+          description: Beta support for compiling Spring Cloud Azure applications to native executables based on Spring Native.
+          facets:
+            - native
+          starter: false
+          mappings:
+            - compatibilityRange: "[2.6.3,2.6.7)"
+              version: 4.0.0-beta.1
+          links:
+            - rel: reference
+              href: https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#spring-native-support
+              description: Spring Cloud Azure Native Support Reference Guide
+            - rel: guide
+              href: https://github.com/Azure-Samples/azure-spring-boot-samples/tree/main/spring-native/storage-blob
+              description: Build a executable with Azure Storage Blob
         - name: Spring Boot DevTools
           id: devtools
           groupId: org.springframework.boot
