@@ -32,7 +32,6 @@ import static io.spring.initializr.generator.buildsystem.Dependency.withCoordina
 /**
  * An abstract {@link BuildCustomizer} class that automatically adds "com.azure.spring:spring-cloud-azure-native-configuration" when relevant Spring Cloud Azure
  * library and Spring Native are selected.
- *
  */
 abstract class AbstractSpringCloudAzureNativeBuildCustomizer<T extends Build> implements BuildCustomizer<T>, Ordered {
 
@@ -48,23 +47,18 @@ abstract class AbstractSpringCloudAzureNativeBuildCustomizer<T extends Build> im
 
     @Override
 	public void customize(T build) {
-        logger.info("Spring Cloud Azure Native customizer.");
         if (supportValidator.unSupport(build)) {
+            logger.debug("Spring Cloud Azure coordinates do not support Spring Native yet.");
             return;
         }
 
-        Dependency selected = build.dependencies().items()
-                                   .filter(u -> u.getGroupId().equals("com.azure.spring"))
-                                   .findAny()
-                                   .get();
-        logger.info("Select spring.cloud-azure.version: " + selected.getVersion() + ".");
         Dependency.Builder<?> builder = withCoordinates("com.azure.spring", "spring-cloud-azure-native-configuration");
         String azureNativeVersion = resolve(platformVersion.toString());
         build.properties()
              .version(VersionProperty.of("spring-cloud-azure-native-configuration.version"), azureNativeVersion);
         build.dependencies()
-             .add("azure-native-configuration",
-                 builder.version(VersionReference.ofProperty("spring-cloud-azure-native-configuration.version")));
+                .add("azure-native-configuration",
+                    builder.version(VersionReference.ofProperty("spring-cloud-azure-native-configuration.version")));
 	}
 
     @Override

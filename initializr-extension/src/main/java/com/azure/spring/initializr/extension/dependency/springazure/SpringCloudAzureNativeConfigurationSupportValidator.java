@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 /**
  * Validate that Spring Cloud Azure coordinates support Spring Native.
- *
  */
 class SpringCloudAzureNativeConfigurationSupportValidator<T extends Build> {
 
@@ -70,7 +69,7 @@ class SpringCloudAzureNativeConfigurationSupportValidator<T extends Build> {
                 return false;
             }
         } else {
-            logger.info("Not supported '" + build.getClass().getName() + "'.");
+            logger.info("Not supported '" + build.getClass().getName() + "' build implementation.");
             return false;
         }
 

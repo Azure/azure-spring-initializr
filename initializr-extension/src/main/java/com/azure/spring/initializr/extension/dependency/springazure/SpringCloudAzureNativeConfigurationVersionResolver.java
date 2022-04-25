@@ -25,7 +25,6 @@ import java.util.List;
 
 /**
  * Resolve the Spring Cloud Azure Native Configuration version to use based on the Spring Boot version.
- *
  */
 abstract class SpringCloudAzureNativeConfigurationVersionResolver {
 
@@ -34,8 +33,11 @@ abstract class SpringCloudAzureNativeConfigurationVersionResolver {
 
 	static String resolve(String springBootVersion) {
 		Version nativeVersion = VersionParser.DEFAULT.parse(springBootVersion);
-		return ranges.stream().filter((range) -> range.match(nativeVersion)).findFirst()
-                     .map(NativeConfigurationRange::getVersion).orElse(null);
+		return ranges.stream()
+                     .filter((range) -> range.match(nativeVersion))
+                     .findFirst()
+                     .map(NativeConfigurationRange::getVersion)
+                     .orElse(null);
 	}
 
 	private static class NativeConfigurationRange {

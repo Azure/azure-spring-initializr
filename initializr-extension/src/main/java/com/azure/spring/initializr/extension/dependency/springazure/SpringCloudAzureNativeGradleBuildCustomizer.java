@@ -23,7 +23,6 @@ import io.spring.initializr.generator.version.Version;
 /**
  * A Gradle {@link BuildCustomizer} that automatically adds "com.azure.spring:spring-cloud-azure-native-configuration" when relevant Spring Cloud Azure
  * library and Spring Native are selected.
- *
  */
 public class SpringCloudAzureNativeGradleBuildCustomizer extends AbstractSpringCloudAzureNativeBuildCustomizer<GradleBuild> {
 
