@@ -40,7 +40,7 @@ jobs:
       - name: Add Issue to project
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-          ISSUE_ID: ${{ github.event.issue.url }}
+          ISSUE_ID: ${{ github.event.issue.node_id }}
         run: |
           item_id="$( gh api graphql -f query='
             mutation($project:ID!, $issue:ID!) {
