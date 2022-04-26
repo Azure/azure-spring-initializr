@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name : Echo issue
-        run: echo ${{ github.event.issue }}
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
