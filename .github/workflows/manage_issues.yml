@@ -1,4 +1,5 @@
-# This is a basic workflow to help you get started with Actions
+# This action will add the new opened GitHub issues to https://github.com/orgs/Azure/projects/94. 
+# See also https://docs.github.com/en/issues/trying-out-the-new-projects-experience/automating-projects#example-workflow-authenticating-with-a-personal-access-token.
 
 name: Add Issue to project
 
