@@ -1,4 +1,3 @@
-[![Deploy to Azure Spring Cloud](https://github.com/Azure/azure-spring-initializr/actions/workflows/deploy-to-azure-spring-cloud.yml/badge.svg)](https://github.com/Azure/azure-spring-initializr/actions/workflows/deploy-to-azure-spring-cloud.yml)
 [![Java CI with Maven](https://github.com/Azure/azure-spring-initializr/actions/workflows/maven.yml/badge.svg)](https://github.com/Azure/azure-spring-initializr/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/Azure/azure-spring-initializr/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Azure/azure-spring-initializr/actions/workflows/codeql-analysis.yml)
 

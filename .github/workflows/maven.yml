@@ -61,6 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE_NAME: 'ghcr.io/azure/spring/spring-initializr'
+    if: ${{ github.repository == 'Azure/azure-spring-initializr' && github.event_name != 'pull_request' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
