@@ -63,6 +63,6 @@ abstract class AbstractSpringCloudAzureNativeBuildCustomizer<T extends Build> im
 
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE - 10;
+        return Ordered.LOWEST_PRECEDENCE - 20;
     }
 }
