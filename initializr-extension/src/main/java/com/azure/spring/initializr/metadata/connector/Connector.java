@@ -1,9 +1,17 @@
 package com.azure.spring.initializr.metadata.connector;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Connector {
-    String type;
-    String clientId;
-    String oauthUri;
+    private String type;
+    private String clientId;
+    private String oauthUri;
+
+    @JsonIgnore
+    private String clientSecret;
+
+    @JsonIgnore
+    private String redirectUri;
 
     public String getType() {
         return type;
@@ -27,5 +35,21 @@ public class Connector {
 
     public void setOauthUri(String oauthUri) {
         this.oauthUri = oauthUri;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
     }
 }

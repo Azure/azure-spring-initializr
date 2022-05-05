@@ -53,6 +53,7 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
         this.properties = properties;
     }
 
+    //@TODO add test case
     @RequestMapping(path = "/metadata/connectors", produces = "application/json")
     @ResponseBody
     public List<Connector> connectors() {
