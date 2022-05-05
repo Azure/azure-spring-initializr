@@ -216,8 +216,9 @@ public class ExtendInitializrAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         ExtendProjectMetadataController projectMetadataController(InitializrMetadataProvider metadataProvider,
-                                                            DependencyMetadataProvider dependencyMetadataProvider) {
-            return new ExtendProjectMetadataController(metadataProvider, dependencyMetadataProvider);
+                                                                  DependencyMetadataProvider dependencyMetadataProvider,
+                                                                  ExtendInitializrProperties properties) {
+            return new ExtendProjectMetadataController(metadataProvider, dependencyMetadataProvider,properties);
         }
 
         @Bean
