@@ -76,6 +76,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         // Generate code
         // @TODO there is no help.md here.
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
+        // @TODO Generate others
 
         // push to Github
         Path rootDirectory = result.getRootDirectory();
