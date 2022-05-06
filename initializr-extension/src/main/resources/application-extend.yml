@@ -22,5 +22,6 @@ extend:
       - type: github
         clientid: 1b17c66d923a18bc63c0
         oauthUri: https://github.com/login/oauth/authorize?client_id=1b17c66d923a18bc63c0&redirect_uri=http://localhost:8080/login/oauth2/code/github
+        # temp oauth app clientSecret
         clientSecret: b018a170f676d4fc332635051f670bdbbd0a225b
         redirectUri: http://localhost:8080/login/oauth2/code/github

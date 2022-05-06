@@ -86,6 +86,6 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
                 new File(rootDirectory.toFile().getAbsolutePath() + "/demo"),
                 accessToken);
         this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
-        return Map.of("code", 200, "value", artifactId + " pushed successful");
+        return Map.of("code", 200, "value", artifactId + " pushed successfully");
     }
 }
