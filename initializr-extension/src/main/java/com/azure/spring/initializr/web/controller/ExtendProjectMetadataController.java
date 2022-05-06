@@ -37,7 +37,6 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
 
     private final ExtendInitializrProperties properties;
 
-
     /**
      * HAL JSON content type.
      */

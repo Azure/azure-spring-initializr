@@ -10,7 +10,6 @@ public class Connector {
     @JsonIgnore
     private String clientSecret;
 
-    @JsonIgnore
     private String redirectUri;
 
     public String getType() {
