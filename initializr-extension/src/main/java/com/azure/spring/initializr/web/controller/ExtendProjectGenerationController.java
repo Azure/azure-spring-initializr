@@ -84,7 +84,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         gitHubService.pushToGithub(artifactId,
                 "main",
                 login,
-                new File(rootDirectory.toFile().getAbsolutePath() + "/demo"),
+                new File(rootDirectory.toFile().getAbsolutePath() + "/" + request.getBaseDir()),
                 accessToken);
         this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
         return Map.of("code", 200, "value", artifactId + " pushed successfully");
