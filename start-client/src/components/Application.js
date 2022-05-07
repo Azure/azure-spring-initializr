@@ -35,7 +35,7 @@ export default function Application() {
     list,
     dependencies,
   } = useContext(AppContext)
-  const { values, share, dispatch: dispatchInitializr } = useContext(
+  const { values, share, git, dispatch: dispatchInitializr } = useContext(
     InitializrContext
   )
 
@@ -56,6 +56,13 @@ export default function Application() {
         const response = getConfig(jsonConfig)
         dispatchInitializr({ type: 'COMPLETE', payload: { ...response } })
         dispatch({ type: 'COMPLETE', payload: response })
+      }).then(() => {
+        const url2 = `${windowsUtils.origin}/metadata/connectors`
+        return fetch(url2)
+          .then(res => res.json())
+          .then(res => {
+            dispatchInitializr({ type: 'GIT_READY', payload: res })
+          })
       })
     }
   }, [dispatch, dispatchInitializr, windowsUtils.origin])
@@ -76,6 +83,20 @@ export default function Application() {
     setGenerating(false)
     if (project) {
       FileSaver.saveAs(project, `${get(values, 'meta.artifact')}.zip`)
+    }
+  }
+
+  const onPush = async (e) => {
+    let { enabled, clientId, oauthUri, redirectUri } = get(git, 'github', {});
+    if (enabled) {
+      const url = [
+        oauthUri,
+        '?client_id=',
+        clientId,
+        '&redirect_uri=',
+        encodeURIComponent(`${redirectUri}?${share}`)
+      ].join('');
+      location.assign(url);
     }
   }
 
@@ -139,6 +160,7 @@ export default function Application() {
             <>
               <Fields
                 onSubmit={onSubmit}
+                onPush={onPush}
                 onShare={onShare}
                 onExplore={onExplore}
                 refExplore={buttonExplore}

@@ -22,6 +22,7 @@ export const defaultInitializrContext = {
     dependencies: [],
   },
   share: '',
+  git: {},
   errors: {},
   warnings: {},
 }
@@ -37,6 +38,7 @@ export function reducer(state, action) {
       return {
         values: defaultValues,
         share: getShareUrl(defaultValues),
+        git: {},
         errors: {},
         warnings: {},
       }
@@ -100,6 +102,10 @@ export function reducer(state, action) {
     }
     case 'CLEAR_WARNINGS': {
       return { ...state, warnings: {} }
+    }
+    case 'GIT_READY': {
+      const git = get(action, 'payload', {});
+      return { ...state, git }
     }
     default:
       return state

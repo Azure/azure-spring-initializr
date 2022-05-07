@@ -16,6 +16,7 @@ import { InitializrContext } from '../../reducer/Initializr'
 
 const Fields = ({
   onSubmit,
+  onPush,
   onExplore,
   onShare,
   refExplore,
@@ -25,7 +26,7 @@ const Fields = ({
 }) => {
   const windowsUtils = useWindowsUtils()
   const { config, dispatch, dependencies } = useContext(AppContext)
-  const { values, dispatch: dispatchInitializr, errors } = useContext(
+  const { values, git, dispatch: dispatchInitializr, errors } = useContext(
     InitializrContext
   )
   const update = args => {
@@ -203,6 +204,15 @@ const Fields = ({
         >
           Explore
         </Button>
+        {get(git, 'github.enabled') === true ? (
+          <Button
+            id='push-to-github'
+            onClick={onPush}
+            disabled={generating}
+          >
+            Push to GitHub
+          </Button>
+        ) : null}
         <Button id='share-project' onClick={onShare}>
           Share...
         </Button>
