@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -55,7 +56,7 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
     //@TODO add test case
     @RequestMapping(path = "/metadata/connectors", produces = "application/json")
     @ResponseBody
-    public List<Connector> connectors() {
+    public Map connectors() {
         return this.properties.getConnectors();
     }
 

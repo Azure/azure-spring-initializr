@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "extend.initializr")
 public class ExtendInitializrProperties {
@@ -21,13 +23,13 @@ public class ExtendInitializrProperties {
 
 
     @JsonIgnore
-    private final List<Connector> connectors = new ArrayList<>();
+    private final Map<String, Connector> connectors = new HashMap();
 
     public List<Architecture> getArchitectures() {
         return architectures;
     }
 
-    public List<Connector> getConnectors() {
+    public Map<String, Connector> getConnectors() {
         return connectors;
     }
 

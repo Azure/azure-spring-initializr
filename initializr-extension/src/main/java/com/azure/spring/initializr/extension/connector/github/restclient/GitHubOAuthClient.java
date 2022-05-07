@@ -1,6 +1,5 @@
 package com.azure.spring.initializr.extension.connector.github.restclient;
 
-import com.azure.spring.initializr.autoconfigure.ExtendInitializrProperties;
 import com.azure.spring.initializr.extension.connector.github.model.GHAccessToken;
 import com.azure.spring.initializr.metadata.connector.Connector;
 import org.springframework.http.MediaType;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 

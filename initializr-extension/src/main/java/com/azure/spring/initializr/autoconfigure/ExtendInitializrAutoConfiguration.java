@@ -167,10 +167,8 @@ public class ExtendInitializrAutoConfiguration {
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties){
         Connector githubConnector = properties
                                     .getConnectors()
-                                    .stream()
-                                    .filter(u -> "github".equals(u.getType()))
-                                    .findFirst()
-                                    .get();
+                                    .get("github");
+
         return new GitHubOAuthClient(githubConnector);
     }
 
