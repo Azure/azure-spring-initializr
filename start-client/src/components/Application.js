@@ -94,7 +94,9 @@ export default function Application() {
         '?client_id=',
         clientId,
         '&redirect_uri=',
-        encodeURIComponent(`${redirectUri}?${share}`)
+        encodeURIComponent(`${redirectUri}?${share}`),
+        '&state=',
+        Date.now().toString(36)
       ].join('');
       location.assign(url);
     }
