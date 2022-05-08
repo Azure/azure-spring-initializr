@@ -56,6 +56,10 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         String artifactId = request.getArtifactId();
         String code = request.getCode();
 
+        if (request.getBaseDir() == null & request.getName() != null) {
+            request.setBaseDir(request.getName());
+        }
+
         GHAccessToken ghaccessToken = gitHubOAuthClient.getAccessToken(code);
         String accessToken = ghaccessToken.getAccessToken();
 
