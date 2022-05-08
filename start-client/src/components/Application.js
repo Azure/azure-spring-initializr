@@ -19,7 +19,7 @@ import { Fields, Loading } from './common/builder'
 import { Form } from './common/form'
 import { Header, SideLeft, SideRight } from './common/layout'
 import { InitializrContext } from './reducer/Initializr'
-import { getConfig, getInfo, getProject } from './utils/ApiUtils'
+import { getConfig, getInfo, getProject, getGitParams } from './utils/ApiUtils'
 
 const Explore = lazy(() => import('./common/explore/Explore.js'))
 const Share = lazy(() => import('./common/share/Share.js'))
@@ -88,13 +88,14 @@ export default function Application() {
 
   const onPush = async (e) => {
     let { enabled, clientId, oauthUri, redirectUri } = get(git, 'github', {});
+    const redirectParams = getGitParams(values, get(dependencies, 'list'));
     if (enabled) {
       const url = [
         oauthUri,
         '?client_id=',
         clientId,
         '&redirect_uri=',
-        encodeURIComponent(`${redirectUri}?${share}`),
+        encodeURIComponent(`${redirectUri}?${redirectParams}`),
         '&state=',
         Date.now().toString(36)
       ].join('');
