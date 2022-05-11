@@ -6,54 +6,84 @@ import java.util.Date;
 
 public class GitHubUser {
     private String login;
+
     private int id;
+
     @JsonAlias("node_id")
     private String nodeId;
+
     @JsonAlias("avatar_url")
     private String avatarUrl;
+
     @JsonAlias("gravatar_id")
     private String gravatarId;
+
     private String url;
+
     @JsonAlias("html_url")
     private String htmlUrl;
+
     @JsonAlias("followers_url")
     private String followersUrl;
+
     @JsonAlias("following_url")
     private String followingUrl;
+
     @JsonAlias("gists_url")
     private String gistsUrl;
+
     @JsonAlias("starred_url")
     private String starredUrl;
+
     @JsonAlias("subscriptions_url")
     private String subscriptionsUrl;
+
     @JsonAlias("organizations_url")
     private String organizationsUrl;
+
     @JsonAlias("repos_url")
     private String reposUrl;
+
     @JsonAlias("events_url")
     private String eventsUrl;
+
     @JsonAlias("received_events_url")
     private String receivedEventsUrl;
+
     private String type;
+
     @JsonAlias("site_admin")
     private boolean siteAdmin;
+
     private String name;
+
     private String company;
+
     private String blog;
+
     private String location;
+
     private String email;
+
     private boolean hireable;
+
     private String bio;
+
     @JsonAlias("twitter_username")
     private String twitterUsername;
+
     @JsonAlias("public_repos")
     private int publicRepos;
+
     @JsonAlias("public_gists")
     private int publicGists;
+
     private int followers;
+
     private int following;
     @JsonAlias("created_at")
     private Date createdAt;
+
     @JsonAlias("updated_at")
     private Date updatedAt;
 

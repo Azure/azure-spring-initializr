@@ -7,6 +7,11 @@ public class Connector {
     private String oauthUri;
     private boolean enabled;
 
+    @JsonIgnore
+    private String clientSecret;
+
+    private String redirectUri;
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -14,11 +19,6 @@ public class Connector {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    @JsonIgnore
-    private String clientSecret;
-
-    private String redirectUri;
 
     public String getClientId() {
         return clientId;

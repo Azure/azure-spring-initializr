@@ -2,7 +2,9 @@ package com.azure.spring.initializr.extension.connector.github.model;
 
 public class GitHubToken {
     String accessToken;
+
     String scope;
+
     String tokenType;
 
     public String getAccessToken() {
