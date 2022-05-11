@@ -43,7 +43,14 @@ export default function useHash() {
       clearHash()
       setHash('')
       if (isValidParams(params)) {
-        toast.success(`Configuration loaded.`)
+        const code = params['?errorcode'] || params.errorcode || null;
+        if (code === null) {
+          toast.success(`Configuration loaded.`);
+        } else if (code === '200') {
+          toast.success(params.msg);
+        } else {
+          toast.error(params.msg || 'success', { autoClose: 10000 });
+        }
       }
     }
   }, [complete, hash, dispatch, config])
