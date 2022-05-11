@@ -94,6 +94,7 @@ export default function Application() {
         oauthUri,
         '?client_id=',
         clientId,
+        '&scope=repo',
         '&redirect_uri=',
         encodeURIComponent(`${redirectUri}?${redirectParams}`),
         '&state=',
