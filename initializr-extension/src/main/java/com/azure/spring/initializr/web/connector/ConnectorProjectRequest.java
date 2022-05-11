@@ -22,8 +22,8 @@ import com.azure.spring.initializr.web.project.ExtendProjectRequest;
  *
  */
 public class ConnectorProjectRequest extends ExtendProjectRequest {
-	public String code;
-	public String type;
+	private String code;
+	private String type;
 
 	public String getCode() {
 		return code;
