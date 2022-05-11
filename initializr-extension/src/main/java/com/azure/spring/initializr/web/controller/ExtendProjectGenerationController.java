@@ -8,6 +8,7 @@ import com.azure.spring.initializr.extension.connector.model.GitRepository;
 import com.azure.spring.initializr.web.connector.ConnectorProjectRequest;
 import com.azure.spring.initializr.web.connector.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
@@ -22,10 +23,11 @@ import com.azure.spring.initializr.extension.connector.github.restclient.GitHubC
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.*;
 
 public class ExtendProjectGenerationController extends ProjectGenerationController<ExtendProjectRequest> {
 
@@ -156,8 +158,14 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
-    public String invalidProjectRequest(IllegalArgumentException ex) {
-        return redirectUriString(null, ResultCode.INVALID_PARAM.getCode(), ex.getMessage());
+    public String invalidProjectRequest(IllegalArgumentException ex, HttpServletRequest httpServletRequest) {
+        Map<String, String> map = new HashMap<>();
+        Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
+        for (String name : Collections.list(parameterNames)) {
+            map.put(name, httpServletRequest.getParameter(name));
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectorProjectRequest request = mapper.convertValue(map, ConnectorProjectRequest.class);
+        return redirectUriString(request, ResultCode.INVALID_PARAM.getCode(), ex.getMessage());
     }
-
 }
