@@ -1,9 +1,12 @@
 package com.azure.spring.initializr.extension.connector.github.restclient;
 
-import com.azure.spring.initializr.extension.connector.github.model.GHAccessToken;
+import com.azure.spring.initializr.extension.connector.model.TokenResult;
+import com.azure.spring.initializr.extension.connector.restclient.OAuthClient;
 import com.azure.spring.initializr.metadata.connector.Connector;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,20 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * doc
- * - https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
- * getAuthorize_Code
- * // getcode with uri
- * - https://github.com/login/oauth/authorize?redirect_uri=http://localhost:8080/login/oauth2/code/github&client_id=1b17c66d923a18bc63c0&scope=public_repo
  */
-// used to get accessToken from github
 @Component
-public class GitHubOAuthClient {
+@ConditionalOnProperty(prefix = "initializr.connectors", name = "github.enabled", havingValue = "true")
+public class GitHubOAuthClient implements OAuthClient {
 
-    private Connector githubConnector;
+    private Connector connector;
 
-    public GitHubOAuthClient(Connector githubConnector) {
-        this.githubConnector = githubConnector;
+    public GitHubOAuthClient(Connector connector) {
+        this.connector = connector;
     }
 
     final static String BASE_URI = "https://github.com";
@@ -34,13 +32,15 @@ public class GitHubOAuthClient {
             .baseUrl(BASE_URI)
             .build();
 
-    public GHAccessToken getAccessToken(String code) {
-        // @TODO check params
+    @Override
+    public TokenResult getAccessToken(String authorizationCode) {
+        Assert.notNull(authorizationCode, "Invalid authorizationCode.");
+
         Map map = new HashMap();
-        map.put("client_id", githubConnector.getClientId());
-        map.put("client_secret", githubConnector.getClientSecret());
-        map.put("redirect_uri", githubConnector.getRedirectUri());
-        map.put("code", code);
+        map.put("client_id", connector.getClientId());
+        map.put("client_secret", connector.getClientSecret());
+        map.put("redirect_uri", connector.getRedirectUri());
+        map.put("code", authorizationCode);
         return githubOauthClient
                 .post()
                 .uri(ACCESS_TOKEN_URI)
@@ -48,7 +48,7 @@ public class GitHubOAuthClient {
                 .body(BodyInserters.fromValue(map))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(GHAccessToken.class)
+                .bodyToMono(TokenResult.class)
                 .block();
     }
 }

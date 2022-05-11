@@ -1,12 +1,14 @@
 package com.azure.spring.initializr.web.controller;
 
-import com.azure.spring.initializr.extension.connector.github.GitHubService;
-import com.azure.spring.initializr.extension.connector.github.model.GHAccessToken;
-import com.azure.spring.initializr.extension.connector.github.model.GHCreateRepo;
+import com.azure.spring.initializr.extension.connector.github.GitRepositoryService;
+import com.azure.spring.initializr.extension.connector.model.CreateRepo;
 import com.azure.spring.initializr.extension.connector.github.model.GitHubUser;
+import com.azure.spring.initializr.extension.connector.model.TokenResult;
+import com.azure.spring.initializr.extension.connector.model.GitRepository;
 import com.azure.spring.initializr.web.connector.ConnectorProjectRequest;
 import com.azure.spring.initializr.web.connector.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
@@ -21,10 +23,11 @@ import com.azure.spring.initializr.extension.connector.github.restclient.GitHubC
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.*;
 
 public class ExtendProjectGenerationController extends ProjectGenerationController<ExtendProjectRequest> {
 
@@ -36,10 +39,10 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         this.projectGenerationInvoker = projectGenerationInvoker;
     }
 
-    @Autowired
+    @Autowired(required = false)
     GitHubOAuthClient gitHubOAuthClient;
 
-    @Autowired
+    @Autowired(required = false)
     GitHubClient gitHubClient;
 
     @Override
@@ -50,34 +53,47 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return request;
     }
 
-    @RequestMapping(path = "/login/oauth2/code/github", produces = "application/json")
-    public String connectGithub(ConnectorProjectRequest request) throws GitAPIException, URISyntaxException {
-        validateParameters(request);
+    @RequestMapping(path = "/login/oauth2/code/github")
+    public String pushToGitRepository(ConnectorProjectRequest request) throws GitAPIException, URISyntaxException {
+        if (gitHubClient == null || gitHubOAuthClient == null) {
+            return redirectUriString(request,
+                    ResultCode.CODE_404.getCode(),
+                    ResultCode.CODE_404.getMsg());
+        }
 
-        String code = request.getCode();
+        checkParameters(request);
+
+        String authorizationCode = request.getCode();
         String artifactId = request.getArtifactId();
 
         if (request.getBaseDir() == null & request.getName() != null) {
             request.setBaseDir(request.getName());
         }
 
-        GHAccessToken ghaccessToken = gitHubOAuthClient.getAccessToken(code);
-        String accessToken = ghaccessToken.getAccessToken();
+        // get accessToken
+        TokenResult tokenResult = gitHubOAuthClient.getAccessToken(authorizationCode);
+        String accessToken = tokenResult.getAccessToken();
+        if (accessToken == null) {
+            return redirectUriString(request,
+                    ResultCode.ACCESSTOKEN_EMPTY.getCode(),
+                    tokenResult.getError());
+        }
 
         GitHubUser user = gitHubClient.getUser(accessToken);
-        String login = user.getLogin();
+        String loginName = user.getLogin();
         // check repositoryExists
-        HttpStatus stringStatusCode = gitHubClient.repositoryExists(accessToken, login, artifactId);
+        HttpStatus stringStatusCode = gitHubClient.repositoryExists(accessToken, loginName, artifactId);
 
         if ("OK".equals(stringStatusCode.getReasonPhrase())) {
             return redirectUriString(request,
                     ResultCode.CODE_REPO_ALREADY_EXISTS.getCode(),
-                    "There is already a project named ' " + artifactId + "' on your GitHub, please retry with a different name (the artifact is the name)...");
+                    "There is already a project named ' "
+                          + artifactId
+                          + "' on your GitHub, please retry with a different name (the artifact is the name)...");
         }
 
-        GHCreateRepo repo = new GHCreateRepo();
+        CreateRepo repo = new CreateRepo();
         repo.setName(artifactId);
-        // create repository
         gitHubClient.createRepo(accessToken, repo);
 
         // Generate code
@@ -85,32 +101,38 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
         // @TODO Generate others
 
-        // push to Github
         Path rootDirectory = result.getRootDirectory();
-        GitHubService gitHubService = new GitHubService();
-        gitHubService.pushToGithub(artifactId,
-                "main",
-                login,
-                new File(rootDirectory.toFile().getAbsolutePath() + "/" + request.getBaseDir()),
-                accessToken);
+        GitRepositoryService gitHubService = new GitRepositoryService();
+
+        String httpTransportUrl = "https://github.com/" + loginName + "/" + artifactId;
+        GitRepository gitRepository = new GitRepository();
+        gitRepository.setInitialBranch("main");
+        gitRepository.setHttpTransportUrl(httpTransportUrl);
+        gitRepository.setOwnerName(loginName);
+        gitRepository.setToken(accessToken);
+        gitRepository.setTemplateFile(new File(rootDirectory.toFile().getAbsolutePath() + "/" + request.getBaseDir()));
+        gitRepository.setEmail(user.getEmail());
+        gitHubService.pushToGitRepository(gitRepository);
+
         this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
-        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), ResultCode.CODE_SUCCESS.getMsg());
+
+        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), httpTransportUrl);
     }
 
-    private void validateParameters(ConnectorProjectRequest request) {
-        Assert.notNull(request.getArtifactId(), "Invalide request param artifactId.");
-        Assert.notNull(request.getCode(), "Invalide request param code.");
-        Assert.notNull(request.getName(), "Invalide request param name.");
-        Assert.notNull(request.getType(), "Invalide request param type.");
-        Assert.notNull(request.getLanguage(), "Invalide request param language.");
+    private void checkParameters(ConnectorProjectRequest request) {
+        Assert.notNull(request.getArtifactId(), "Invalid request param artifactId.");
+        Assert.notNull(request.getCode(), "Invalid request param code.");
+        Assert.notNull(request.getName(), "Invalid request param name.");
+        Assert.notNull(request.getType(), "Invalid request param type.");
+        Assert.notNull(request.getLanguage(), "Invalid request param language.");
         Assert.notNull(request.getArchitecture(), "Request: param architecture.");
-        Assert.notNull(request.getPackaging(), "Invalide request param packaging.");
-        Assert.notNull(request.getGroupId(), "Invalide request param groupId.");
-        Assert.notNull(request.getArtifactId(), "Invalide request param artifactId.");
-        Assert.notNull(request.getDescription(), "Invalide request param description.");
-        Assert.notNull(request.getPackageName(), "Invalide request param packageName.");
-        Assert.notNull(request.getBootVersion(), "Invalide request param bootVersion.");
-        Assert.notNull(request.getJavaVersion(), "Invalide request param javaVersion.");
+        Assert.notNull(request.getPackaging(), "Invalid request param packaging.");
+        Assert.notNull(request.getGroupId(), "Invalid request param groupId.");
+        Assert.notNull(request.getArtifactId(), "Invalid request param artifactId.");
+        Assert.notNull(request.getDescription(), "Invalid request param description.");
+        Assert.notNull(request.getPackageName(), "Invalid request param packageName.");
+        Assert.notNull(request.getBootVersion(), "Invalid request param bootVersion.");
+        Assert.notNull(request.getJavaVersion(), "Invalid request param javaVersion.");
     }
 
     private String redirectUriString(ConnectorProjectRequest request, String errorCode, String msg) {
@@ -136,8 +158,14 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
-    public String invalidProjectRequest(IllegalArgumentException ex) {
-        return redirectUriString(null, ResultCode.INVALID_PARAM.getCode(), ex.getMessage());
+    public String invalidProjectRequest(IllegalArgumentException ex, HttpServletRequest httpServletRequest) {
+        Map<String, String> map = new HashMap<>();
+        Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
+        for (String name : Collections.list(parameterNames)) {
+            map.put(name, httpServletRequest.getParameter(name));
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        ConnectorProjectRequest request = mapper.convertValue(map, ConnectorProjectRequest.class);
+        return redirectUriString(request, ResultCode.INVALID_PARAM.getCode(), ex.getMessage());
     }
-
 }

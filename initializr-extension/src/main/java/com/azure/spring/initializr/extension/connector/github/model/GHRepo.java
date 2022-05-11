@@ -3,8 +3,11 @@ package com.azure.spring.initializr.extension.connector.github.model;
 
 public class GHRepo {
     String name;
+
     String description;
+
     String cloneUrl;
+
     String defaultBranch;
 
     public String getName() {

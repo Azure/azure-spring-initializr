@@ -1,8 +1,8 @@
-package com.azure.spring.initializr.extension.connector.github.model;
+package com.azure.spring.initializr.extension.connector.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
-public class GHAccessToken {
+public class TokenResult {
     @JsonAlias("access_token")
     String accessToken;
 
@@ -18,7 +18,6 @@ public class GHAccessToken {
 
     @JsonAlias("error_uri")
     String errorUri;
-
 
     public String getError() {
         return error;
@@ -44,14 +43,6 @@ public class GHAccessToken {
         this.errorUri = errorUri;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String access_token) {
-        this.accessToken = access_token;
-    }
-
     public String getScope() {
         return scope;
     }
@@ -66,5 +57,13 @@ public class GHAccessToken {
 
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

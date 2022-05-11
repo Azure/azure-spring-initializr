@@ -1,7 +1,7 @@
-package com.azure.spring.initializr.extension.connector.github.model;
+package com.azure.spring.initializr.extension.connector.model;
 
 
-public class GHCreateRepo {
+public class CreateRepo {
     String name;
 
     String description;

@@ -17,10 +17,12 @@
 package com.azure.spring.initializr.web.connector;
 
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConnectorProjectRequest extends ExtendProjectRequest {
 	private String code;
 	private String type;
