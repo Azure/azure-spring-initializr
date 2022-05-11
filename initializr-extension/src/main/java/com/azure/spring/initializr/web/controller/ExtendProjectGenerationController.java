@@ -5,6 +5,7 @@ import com.azure.spring.initializr.extension.connector.github.model.GHAccessToke
 import com.azure.spring.initializr.extension.connector.github.model.GHCreateRepo;
 import com.azure.spring.initializr.extension.connector.github.model.GitHubUser;
 import com.azure.spring.initializr.web.connector.ConnectorProjectRequest;
+import com.azure.spring.initializr.web.connector.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.controller.ProjectGenerationController;
@@ -13,10 +14,12 @@ import io.spring.initializr.web.project.ProjectGenerationResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubClient;
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -24,6 +27,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class ExtendProjectGenerationController extends ProjectGenerationController<ExtendProjectRequest> {
+
     ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker;
 
     public ExtendProjectGenerationController(InitializrMetadataProvider metadataProvider,
@@ -46,15 +50,12 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return request;
     }
 
-    //@TODO add test case
-    @RequestMapping(
-            path = "/login/oauth2/code/github",
-            produces = "application/json")
-    @ResponseBody
-    public Map connectGithub(ConnectorProjectRequest request) throws GitAPIException, URISyntaxException {
-        //@TODO check param
-        String artifactId = request.getArtifactId();
+    @RequestMapping(path = "/login/oauth2/code/github", produces = "application/json")
+    public String connectGithub(ConnectorProjectRequest request) throws GitAPIException, URISyntaxException {
+        validateParameters(request);
+
         String code = request.getCode();
+        String artifactId = request.getArtifactId();
 
         if (request.getBaseDir() == null & request.getName() != null) {
             request.setBaseDir(request.getName());
@@ -69,7 +70,9 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         HttpStatus stringStatusCode = gitHubClient.repositoryExists(accessToken, login, artifactId);
 
         if ("OK".equals(stringStatusCode.getReasonPhrase())) {
-            return Map.of("code", 201, "value", "repository already exists");
+            return redirectUriString(request,
+                    ResultCode.CODE_REPO_ALREADY_EXISTS.getCode(),
+                    "There is already a project named ' " + artifactId + "' on your GitHub, please retry with a different name (the artifact is the name)...");
         }
 
         GHCreateRepo repo = new GHCreateRepo();
@@ -91,6 +94,50 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
                 new File(rootDirectory.toFile().getAbsolutePath() + "/" + request.getBaseDir()),
                 accessToken);
         this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
-        return Map.of("code", 200, "value", artifactId + " pushed successfully");
+        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), ResultCode.CODE_SUCCESS.getMsg());
     }
+
+    private void validateParameters(ConnectorProjectRequest request) {
+        Assert.notNull(request.getArtifactId(), "Invalide request param artifactId.");
+        Assert.notNull(request.getCode(), "Invalide request param code.");
+        Assert.notNull(request.getName(), "Invalide request param name.");
+        Assert.notNull(request.getType(), "Invalide request param type.");
+        Assert.notNull(request.getLanguage(), "Invalide request param language.");
+        Assert.notNull(request.getArchitecture(), "Request: param architecture.");
+        Assert.notNull(request.getPackaging(), "Invalide request param packaging.");
+        Assert.notNull(request.getGroupId(), "Invalide request param groupId.");
+        Assert.notNull(request.getArtifactId(), "Invalide request param artifactId.");
+        Assert.notNull(request.getDescription(), "Invalide request param description.");
+        Assert.notNull(request.getPackageName(), "Invalide request param packageName.");
+        Assert.notNull(request.getBootVersion(), "Invalide request param bootVersion.");
+        Assert.notNull(request.getJavaVersion(), "Invalide request param javaVersion.");
+    }
+
+    private String redirectUriString(ConnectorProjectRequest request, String errorCode, String msg) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance()
+                .queryParam("errorcode", errorCode)
+                .queryParam("msg", msg);
+
+        if (request != null) {
+            uriComponentsBuilder
+                    .queryParam("name", request.getName())
+                    .queryParam("type", request.getType())
+                    .queryParam("language", request.getLanguage())
+                    .queryParam("architecture", request.getArchitecture())
+                    .queryParam("packaging", request.getPackaging())
+                    .queryParam("groupId", request.getGroupId())
+                    .queryParam("artifactId", request.getArtifactId())
+                    .queryParam("description", request.getDescription())
+                    .queryParam("packageName", request.getPackageName())
+                    .queryParam("platformVersion", request.getBootVersion())
+                    .queryParam("jvmVersion", request.getJavaVersion());
+        }
+        return "redirect:/#!" + uriComponentsBuilder.toUriString();
+    }
+
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public String invalidProjectRequest(IllegalArgumentException ex) {
+        return redirectUriString(null, ResultCode.INVALID_PARAM.getCode(), ex.getMessage());
+    }
+
 }
