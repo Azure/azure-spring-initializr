@@ -16,12 +16,11 @@ public class GitHubService {
      * @throws GitAPIException
      * @throws URISyntaxException
      */
-    public void pushToGithub(String artifactId, String initialBranch, String ownerName, File templateFile, String token) throws GitAPIException, URISyntaxException {
+    public void pushToGithub(String ownerName, String initialBranch, String httpTransportUrl, File templateFile, String token) throws GitAPIException, URISyntaxException {
 
         // @TODO Check Param
         // @TODO Catch Exception
         //-------------------
-        String httpTransportUrl = "https://github.com/" + ownerName + "/" + artifactId;
         //01. Init a git repo.
         Git repo = Git.init().setInitialBranch(initialBranch)
                 .setDirectory(templateFile)

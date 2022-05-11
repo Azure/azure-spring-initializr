@@ -2,7 +2,7 @@ package com.azure.spring.initializr.web.connector;
 
 public enum ResultCode {
 
-    CODE_SUCCESS("200","Push to github repo successfully."),
+    CODE_SUCCESS("0","OK."),
     INVALID_PARAM("201", "Param is invalid."),
     CODE_REPO_ALREADY_EXISTS("202", "Repo already exists"),
     ;

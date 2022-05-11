@@ -88,13 +88,14 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         // push to Github
         Path rootDirectory = result.getRootDirectory();
         GitHubService gitHubService = new GitHubService();
-        gitHubService.pushToGithub(artifactId,
+        String httpTransportUrl = "https://github.com/" + login + "/" + artifactId;
+        gitHubService.pushToGithub(login,
                 "main",
-                login,
+                httpTransportUrl,
                 new File(rootDirectory.toFile().getAbsolutePath() + "/" + request.getBaseDir()),
                 accessToken);
         this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
-        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), ResultCode.CODE_SUCCESS.getMsg());
+        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), httpTransportUrl);
     }
 
     private void validateParameters(ConnectorProjectRequest request) {
