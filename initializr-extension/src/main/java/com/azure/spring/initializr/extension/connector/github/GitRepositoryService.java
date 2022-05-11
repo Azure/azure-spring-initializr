@@ -20,7 +20,9 @@ public class GitRepositoryService {
     public static void pushToGitRepository(GitRepository gitRepository) throws GitAPIException, URISyntaxException {
         Assert.notNull(gitRepository.getToken(), "Invalid token.");
         Assert.notNull(gitRepository.getOwnerName(), "Invalid owner name.");
-        Assert.notNull(gitRepository.getEmail(), "Invalid email address.");
+        if (gitRepository.getEmail() == null) {
+            gitRepository.setEmail("SpringIntegSupport@microsoft.com");
+        }
 
         // @TODO Catch Exception
         //-------------------
