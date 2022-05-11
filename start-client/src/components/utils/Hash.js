@@ -46,7 +46,7 @@ export default function useHash() {
         const code = params['?errorcode'] || params.errorcode || null;
         if (code === null) {
           toast.success(`Configuration loaded.`);
-        } else if (code === '200') {
+        } else if (code === '200' || code === '0') {
           toast.success(params.msg);
         } else {
           toast.error(params.msg || 'success', { autoClose: 10000 });

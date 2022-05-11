@@ -13,6 +13,7 @@ import { AppContext } from '../../reducer/App'
 import { Button, Radio } from '../form'
 import { Dependency } from '../dependency'
 import { InitializrContext } from '../../reducer/Initializr'
+import { IconGithub } from '../icons'
 
 const Fields = ({
   onSubmit,
@@ -204,6 +205,9 @@ const Fields = ({
         >
           Explore
         </Button>
+        <Button id='share-project' onClick={onShare}>
+          Share...
+        </Button>
         {get(git, 'github.enabled') === true ? (
           <Button
             id='push-to-github'
@@ -211,11 +215,9 @@ const Fields = ({
             disabled={generating}
           >
             Push to GitHub
+            <span style={{ float: 'right', width: '22px', height: '22px', margin:'-4px 0 0 0', padding:'0 0 0 6px' }}><IconGithub /></span>
           </Button>
         ) : null}
-        <Button id='share-project' onClick={onShare}>
-          Share...
-        </Button>
       </Actions>
     </>
   )
