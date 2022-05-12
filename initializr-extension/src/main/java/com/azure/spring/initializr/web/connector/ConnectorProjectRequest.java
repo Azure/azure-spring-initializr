@@ -25,7 +25,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConnectorProjectRequest extends ExtendProjectRequest {
 	private String code;
-	private String type;
+
+	private String connectorType;
 
 	public String getCode() {
 		return code;
@@ -35,13 +36,12 @@ public class ConnectorProjectRequest extends ExtendProjectRequest {
 		this.code = code;
 	}
 
-	@Override
-	public String getType() {
-		return type;
+	public String getConnectorType() {
+		return connectorType;
 	}
 
-	@Override
-	public void setType(String type) {
-		this.type = type;
+	public void setConnectorType(String connectorType) {
+		this.connectorType = connectorType;
 	}
+
 }

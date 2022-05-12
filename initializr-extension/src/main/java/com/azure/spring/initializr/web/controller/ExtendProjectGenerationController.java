@@ -15,7 +15,6 @@ import io.spring.initializr.web.project.ProjectGenerationInvoker;
 import io.spring.initializr.web.project.ProjectGenerationResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,8 +52,15 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return request;
     }
 
-    @RequestMapping(path = "/login/oauth2/code/github")
+    @RequestMapping(path = "/login/oauth2/code")
     public String pushToGitRepository(ConnectorProjectRequest request) throws GitAPIException, URISyntaxException {
+        if ("github".equals(request.getConnectorType())) {
+            return pushToGithub(request);
+        }
+        return redirectUriString(request);
+    }
+
+    private String pushToGithub(ConnectorProjectRequest request) throws GitAPIException, URISyntaxException {
         if (gitHubClient == null || gitHubOAuthClient == null) {
             return redirectUriString(request,
                     ResultCode.CODE_404.getCode(),
@@ -82,14 +88,14 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         GitHubUser user = gitHubClient.getUser(accessToken);
         String loginName = user.getLogin();
         // check repositoryExists
-        HttpStatus stringStatusCode = gitHubClient.repositoryExists(accessToken, loginName, artifactId);
+        boolean repositoryExists = gitHubClient.repositoryExists(accessToken, loginName, artifactId);
 
-        if ("OK".equals(stringStatusCode.getReasonPhrase())) {
+        if (repositoryExists) {
             return redirectUriString(request,
                     ResultCode.CODE_REPO_ALREADY_EXISTS.getCode(),
                     "There is already a project named ' "
-                          + artifactId
-                          + "' on your GitHub, please retry with a different name (the artifact is the name)...");
+                            + artifactId
+                            + "' on your GitHub, please retry with a different name (the artifact is the name)...");
         }
 
         CreateRepo repo = new CreateRepo();
@@ -135,10 +141,17 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         Assert.notNull(request.getJavaVersion(), "Invalid request param javaVersion.");
     }
 
+    private String redirectUriString(ConnectorProjectRequest request) {
+        return redirectUriString(request, null, null);
+    }
+
     private String redirectUriString(ConnectorProjectRequest request, String errorCode, String msg) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance()
-                .queryParam("errorcode", errorCode)
-                .queryParam("msg", msg);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
+        if (errorCode != null && msg != null) {
+            uriComponentsBuilder
+                    .queryParam("errorcode", errorCode)
+                    .queryParam("msg", msg);
+        }
 
         if (request != null) {
             uriComponentsBuilder

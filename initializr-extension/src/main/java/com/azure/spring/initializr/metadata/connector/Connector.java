@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Connector {
     private String clientId;
+
     private String oauthUri;
+
     private boolean enabled;
 
     @JsonIgnore

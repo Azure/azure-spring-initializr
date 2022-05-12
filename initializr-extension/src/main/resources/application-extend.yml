@@ -25,11 +25,11 @@ extend:
           # temp oauth app clientSecret
           clientSecret: b018a170f676d4fc332635051f670bdbbd0a225b
           oauthUri: https://github.com/login/oauth/authorize
-          redirectUri: http://localhost:8080/login/oauth2/code/github
+          redirectUri: http://localhost:8080/login/oauth2/code
         bitbucket:
           enable: false
           oauthUri: ${config-your-bitbucket-oauthUri}
           clientSecret: ${config-your-bitbucket-clientSecret}
           clientid: ${config-your-bitbucket-clientid}
-          redirectUri: ${config-your-bitbucket-redirectUri}
+          redirectUri: ${config-your-connectors-domain}/login/oauth2/code
 

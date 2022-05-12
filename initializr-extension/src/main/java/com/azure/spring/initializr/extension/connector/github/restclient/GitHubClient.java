@@ -56,10 +56,10 @@ public class GitHubClient implements ConnectorClient {
     }
 
     @Override
-    public HttpStatus repositoryExists(String accessToken, String loginName, String repoName) {
+    public boolean repositoryExists(String accessToken, String loginName, String repoName) {
         // @TODO check params
         // @TODO try catch
-        return githubClient
+        HttpStatus httpStatus = githubClient
                 .get()
                 .uri("/repos/" + loginName + "/" + repoName)
                 .header("Authorization", getToken(accessToken))
@@ -67,6 +67,10 @@ public class GitHubClient implements ConnectorClient {
                 .exchange()
                 .block()
                 .statusCode();
+        if ("OK".equals(httpStatus.getReasonPhrase())) {
+            return true;
+        }
+        return false;
     }
 
     private String getToken(String accessToken) {
