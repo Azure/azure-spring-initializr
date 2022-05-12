@@ -97,7 +97,8 @@ export default function Application() {
         '&redirect_uri=',
         encodeURIComponent(`${redirectUri}?${redirectParams}`),
         '&state=',
-        Date.now().toString(36)
+        Date.now().toString(36),
+        '&scope=repo',
       ].join('');
       location.assign(url);
     }
