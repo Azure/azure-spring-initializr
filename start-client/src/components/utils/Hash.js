@@ -45,11 +45,13 @@ export default function useHash() {
       if (isValidParams(params)) {
         const code = params['?errorcode'] || params.errorcode || null;
         if (code === null) {
-          toast.success(`Configuration loaded.`);
+          toast.success(`Configuration loaded.`, { autoClose: 1500 });
         } else if (code === '200' || code === '0') {
-          toast.success(params.msg);
+          toast.success('success!', { autoClose: 1500 });
+          toast.success('git url: ' + params.msg, { autoClose: false });
         } else {
-          toast.error(params.msg || 'success', { autoClose: 10000 });
+          toast.error('error!', { autoClose: 1500 });
+          toast.error(params.msg, { autoClose: false });
         }
       }
     }

@@ -94,11 +94,11 @@ export default function Application() {
         oauthUri,
         '?client_id=',
         clientId,
-        '&scope=repo',
         '&redirect_uri=',
         encodeURIComponent(`${redirectUri}?${redirectParams}`),
         '&state=',
-        Date.now().toString(36)
+        Date.now().toString(36),
+        '&scope=repo',
       ].join('');
       location.assign(url);
     }
