@@ -1,9 +1,9 @@
 package com.azure.spring.initializr.extension.connector.github.restclient;
 
-import com.azure.spring.initializr.extension.connector.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.model.CreateRepo;
+import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
+import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
 import com.azure.spring.initializr.extension.connector.github.model.User;
-import com.azure.spring.initializr.extension.connector.restclient.ConnectorClient;
+import com.azure.spring.initializr.extension.connector.common.restclient.ConnectorClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

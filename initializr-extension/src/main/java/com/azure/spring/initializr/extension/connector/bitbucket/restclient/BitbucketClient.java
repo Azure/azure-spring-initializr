@@ -1,16 +1,15 @@
 package com.azure.spring.initializr.extension.connector.bitbucket.restclient;
 
-import com.azure.spring.initializr.extension.connector.exception.ConnectorException;
+import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
 import com.azure.spring.initializr.extension.connector.github.model.User;
-import com.azure.spring.initializr.extension.connector.model.CreateRepo;
-import com.azure.spring.initializr.extension.connector.restclient.ConnectorClient;
+import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
+import com.azure.spring.initializr.extension.connector.common.restclient.ConnectorClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component

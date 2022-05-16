@@ -1,8 +1,8 @@
 package com.azure.spring.initializr.extension.connector.bitbucket.restclient;
 
-import com.azure.spring.initializr.extension.connector.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.model.TokenResult;
-import com.azure.spring.initializr.extension.connector.restclient.OAuthClient;
+import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
+import com.azure.spring.initializr.extension.connector.common.model.TokenResult;
+import com.azure.spring.initializr.extension.connector.common.restclient.OAuthClient;
 import com.azure.spring.initializr.metadata.connector.Connector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.extension.connector.exception;
+package com.azure.spring.initializr.extension.connector.common.exception;
 
 public class ConnectorException extends RuntimeException{
     private static final long serialVersionUID = -5365631128956061164L;

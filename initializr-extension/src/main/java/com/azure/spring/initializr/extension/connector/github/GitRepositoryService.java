@@ -1,8 +1,8 @@
 package com.azure.spring.initializr.extension.connector.github;
 
-import com.azure.spring.initializr.extension.connector.exception.ConnectorException;
+import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
-import com.azure.spring.initializr.extension.connector.model.GitRepository;
+import com.azure.spring.initializr.extension.connector.common.model.GitRepository;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.RemoteAddCommand;
