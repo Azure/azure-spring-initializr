@@ -3,7 +3,7 @@ package com.azure.spring.initializr.web.controller;
 import com.azure.spring.initializr.extension.connector.bitbucket.restclient.BitbucketClient;
 import com.azure.spring.initializr.extension.connector.bitbucket.restclient.BitbucketOAuthClient;
 import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.github.GitRepositoryService;
+import com.azure.spring.initializr.extension.connector.common.GitRepositoryService;
 import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
 import com.azure.spring.initializr.extension.connector.common.model.User;
 import com.azure.spring.initializr.extension.connector.common.model.TokenResult;

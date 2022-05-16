@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.extension.connector.github;
+package com.azure.spring.initializr.extension.connector.common;
 
 import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
