@@ -24,24 +24,24 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConnectorProjectRequest extends ExtendProjectRequest {
-	private String code;
+    private String code;
 
-	private String connectorType;
+    private String connectorType;
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getConnectorType() {
-		return connectorType;
-	}
+    public String getConnectorType() {
+        return connectorType;
+    }
 
-	public void setConnectorType(String connectorType) {
-		this.connectorType = connectorType;
-	}
+    public void setConnectorType(String connectorType) {
+        this.connectorType = connectorType;
+    }
 
 }
