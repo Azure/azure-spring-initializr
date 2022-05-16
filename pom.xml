@@ -43,9 +43,15 @@
     <spring-initializr.version>0.13.0-SNAPSHOT</spring-initializr.version>
     <spring-javaformat.version>0.0.31</spring-javaformat.version>
     <spring-cloud-contract.version>3.1.2</spring-cloud-contract.version>
+    <jgit.version>6.1.0.202203080745-r</jgit.version>
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.eclipse.jgit</groupId>
+        <artifactId>org.eclipse.jgit</artifactId>
+        <version>${jgit.version}</version>
+      </dependency>
       <dependency>
         <groupId>io.spring.initializr</groupId>
         <artifactId>initializr-bom</artifactId>

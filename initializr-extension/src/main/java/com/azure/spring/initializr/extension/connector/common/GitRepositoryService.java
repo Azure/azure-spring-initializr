@@ -1,7 +1,6 @@
 package com.azure.spring.initializr.extension.connector.common;
 
 import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
 import com.azure.spring.initializr.extension.connector.common.model.GitRepository;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
@@ -23,7 +22,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class GitRepositoryService {
-    private static Logger logger = LoggerFactory.getLogger(GitHubOAuthClient.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GitRepositoryService.class);
 
     /**
      * pushToGithub
@@ -60,16 +59,16 @@ public class GitRepositoryService {
                     gitRepository.getToken()));
             pushCommand.call();
         } catch (GitAPIException gitAPIException) {
-            logger.error("An error occurred while pushing to the git repo.", gitAPIException);
+            LOGGER.error("An error occurred while pushing to the git repo.", gitAPIException);
             throw new ConnectorException("An error occurred while pushing to the git repo.");
         } catch (URISyntaxException uriSyntaxException) {
-            logger.error("An error occurred while setting gituri of the git repo.", uriSyntaxException);
+            LOGGER.error("An error occurred while setting gituri of the git repo.", uriSyntaxException);
             throw new ConnectorException("An error occurred while setting gituri of the git repo.");
         } catch (IOException ioException) {
-            logger.error("An IO error occurred while initializing the git repo.", ioException);
+            LOGGER.error("An IO error occurred while initializing the git repo.", ioException);
             throw new ConnectorException("An IO error occurred while initializing the git repo.");
         } catch (InterruptedException interruptedException) {
-            logger.error("An error occurred while initializing the git repo.", interruptedException);
+            LOGGER.error("An error occurred while initializing the git repo.", interruptedException);
             throw new ConnectorException("An error occurred while initializing the git repo.");
         }
     }

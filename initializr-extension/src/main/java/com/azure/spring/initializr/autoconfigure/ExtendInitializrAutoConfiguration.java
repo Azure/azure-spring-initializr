@@ -231,7 +231,7 @@ public class ExtendInitializrAutoConfiguration {
         ExtendProjectMetadataController projectMetadataController(InitializrMetadataProvider metadataProvider,
                                                                   DependencyMetadataProvider dependencyMetadataProvider,
                                                                   ExtendInitializrProperties properties) {
-            return new ExtendProjectMetadataController(metadataProvider, dependencyMetadataProvider,properties);
+            return new ExtendProjectMetadataController(metadataProvider, dependencyMetadataProvider, properties);
         }
 
         @Bean

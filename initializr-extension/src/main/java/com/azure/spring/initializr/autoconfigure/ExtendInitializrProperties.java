@@ -18,9 +18,7 @@ public class ExtendInitializrProperties {
 
 
     @JsonIgnore
-//    @NestedConfigurationProperty
     private final List<Architecture> architectures = new ArrayList<>();
-
 
     @JsonIgnore
     private final Map<String, Connector> connectors = new HashMap();
