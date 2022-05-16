@@ -5,6 +5,8 @@ import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../reducer/App'
 import { InitializrContext } from '../reducer/Initializr'
 import { isValidParams } from './ApiUtils'
+import { Button } from '../common/form'
+import React from 'react'
 
 const getHash = () => {
   return window.location.hash
@@ -47,11 +49,45 @@ export default function useHash() {
         if (code === null) {
           toast.success(`Configuration loaded.`, { autoClose: 1500 });
         } else if (code === '200' || code === '0') {
-          toast.success('success!', { autoClose: 1500 });
-          toast.success('git url: ' + params.msg, { autoClose: false });
+          function copy() {
+            let textareaEl = document.createElement('textarea');
+            textareaEl.setAttribute('readonly', 'readonly');
+            textareaEl.value = `git clone ${params.msg}`;
+            document.body.appendChild(textareaEl);
+            textareaEl.select();
+            let isSuccess = document.execCommand('copy');
+            document.body.removeChild(textareaEl);
+            return isSuccess;
+          }
+          const msg = ({ closeToast, toastProps }) => (
+            <div className='git-msg'>
+              <div className='git-msg-title' style={{color:'green'}}>Your App is ready!</div>
+              <div className='git-msg-body'>
+                <div>Your application is now on GitHub ready to be cloned:</div>
+                <div>
+                  <code className='git-msg-code'>git clone {params.msg}</code>
+                </div>
+                <div>
+                  <Button onClick={copy}>copy</Button>
+                  <Button onClick={closeToast}>close</Button>
+                </div>
+              </div>
+            </div>
+          )
+          toast.success(msg, { autoClose: false, closeOnClick: false });
         } else {
-          toast.error('error!', { autoClose: 1500 });
-          toast.error(params.msg, { autoClose: false });
+          const msg = ({ closeToast, toastProps }) => (
+            <div className='git-msg'>
+              <div className='git-msg-title' style={{color:'red'}}>Some mistake happend</div>
+              <div className='git-msg-body'>
+                <div>{params.msg}</div>
+                <div style={{marginTop: '20px'}}>
+                  <Button onClick={closeToast}>close</Button>
+                </div>
+              </div>
+            </div>
+          )
+          toast.error(msg, { autoClose: false, closeOnClick: false });
         }
       }
     }

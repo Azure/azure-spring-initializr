@@ -3,7 +3,7 @@ $rt-color-info: #3498db;
 $rt-color-success: #6db33f;
 $rt-color-warning: #e8ba00;
 $rt-color-error: #e74c3c;
-$rt-toast-width: 400px;
+$rt-toast-width: 500px;
 
 @import '../../node_modules/react-toastify/scss/variables';
 
@@ -35,6 +35,7 @@ $rt-toast-width: 400px;
   border: 1px solid $light-border;
   border-left: 6px solid $rt-color-default;
   font-weight: 600;
+  cursor: default;
   .toast-close {
     display: block;
     position: absolute;
@@ -50,11 +51,11 @@ $rt-toast-width: 400px;
       width: 16px;
     }
   }
-  &:hover {
-    .toast-close {
-      opacity: 1;
-    }
-  }
+  // &:hover {
+  //   .toast-close {
+  //     opacity: 1;
+  //   }
+  // }
   &--info {
     border-left-color: $rt-color-info;
   }
@@ -67,4 +68,27 @@ $rt-toast-width: 400px;
   &--error {
     border-left-color: $rt-color-error;
   }
+}
+
+.git-msg{
+  // cursor: default;
+}
+
+.git-msg-title{
+  margin:10px 0 20px 0;
+  font-size:18px;
+  font-weight: bold;
+}
+
+.git-msg-body{
+  line-height: 24px;
+  font-weight: normal;
+  
+}
+
+.git-msg-code{
+  display: block;
+  margin:20px 0 15px 0;
+  padding:15px 10px;
+  background-color: rgba(100,100,100,0.2);
 }
