@@ -158,31 +158,32 @@ public class ExtendInitializrAutoConfiguration {
         return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
     }
 
-    //TODO @ConditionalOnProperty
     @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
     GitHubClient gitHubClient(){
         return new GitHubClient();
     }
 
     @Bean
-    BitbucketClient bitbucketClient(){
-        return new BitbucketClient();
-    }
-
     @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
-    @Bean
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties) {
         Connector connector = properties.getConnectors()
                                         .get("github");
         return new GitHubOAuthClient(connector);
     }
 
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.bitbucket.enabled", havingValue = "true")
     @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.bitbucket.enabled", havingValue = "true")
     BitbucketOAuthClient bitbucketOAuthClient(ExtendInitializrProperties properties) {
         Connector connector = properties.getConnectors()
                 .get("bitbucket");
         return new BitbucketOAuthClient(connector);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.bitbucket.enabled", havingValue = "true")
+    BitbucketClient bitbucketClient(){
+        return new BitbucketClient();
     }
 
     @Bean
