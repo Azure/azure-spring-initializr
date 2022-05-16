@@ -113,22 +113,25 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         connectorClient.createRepo(accessToken, repo);
 
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
+        String gitRepositoryUrl = "https://github.com/" + loginName + "/" + artifactId;
 
-        Path rootDirectory = result.getRootDirectory();
-        String httpTransportUrl = "https://github.com/" + loginName + "/" + artifactId;
-        GitRepository gitRepository = new GitRepository();
-        gitRepository.setInitialBranch("main");
-        gitRepository.setHttpTransportUrl(httpTransportUrl);
-        gitRepository.setOwnerName(loginName);
-        gitRepository.setToken(accessToken);
-        gitRepository.setTemplateFile(new File(rootDirectory.toFile().getAbsolutePath() + "/" + request.getBaseDir()));
-        GitRepositoryService.pushToGitRepository(gitRepository);
+        try{
+            GitRepository gitRepository = new GitRepository();
+            gitRepository.setInitialBranch("main");
+            gitRepository.setHttpTransportUrl(gitRepositoryUrl);
+            gitRepository.setOwnerName(loginName);
+            gitRepository.setToken(accessToken);
+            gitRepository.setTemplateFile(new File(result.getRootDirectory().toFile().getAbsolutePath()
+                    + "/" + request.getBaseDir()));
+            GitRepositoryService.pushToGitRepository(gitRepository);
+        }catch (ConnectorException connectorException){
+            throw connectorException;
+        }finally {
+            this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
+        }
 
-        this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
-
-        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), httpTransportUrl);
+        return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), gitRepositoryUrl);
     }
-
 
     private void checkParameters(ConnectorProjectRequest request) {
         Assert.notNull(request.getArtifactId(), "Invalid request param artifactId.");
