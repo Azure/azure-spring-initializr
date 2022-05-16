@@ -28,7 +28,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 
 public class ExtendProjectGenerationController extends ProjectGenerationController<ExtendProjectRequest> {
