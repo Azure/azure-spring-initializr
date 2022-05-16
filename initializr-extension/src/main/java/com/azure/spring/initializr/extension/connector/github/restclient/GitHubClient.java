@@ -13,7 +13,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Component
 public class GitHubClient implements ConnectorClient {
     private static Logger LOGGER = LoggerFactory.getLogger(GitHubClient.class);
 

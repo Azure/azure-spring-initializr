@@ -158,7 +158,7 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
-    GitHubClient gitHubClient(){
+    GitHubClient gitHubClient() {
         return new GitHubClient();
     }
 
