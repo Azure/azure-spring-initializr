@@ -16,11 +16,12 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
+import com.azure.messaging.eventhubs.EventHubClientBuilder;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
+import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
 import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
-import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
 import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCustomizer;
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
@@ -28,7 +29,6 @@ import com.azure.spring.initializr.web.controller.ExtendProjectGenerationControl
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
 import com.azure.spring.initializr.web.project.ExtendProjectRequestToDescriptionConverter;
 import com.azure.spring.initializr.web.project.ProjectGenerationListener;
-import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.io.SimpleIndentStrategy;
@@ -39,24 +39,23 @@ import io.spring.initializr.metadata.DependencyMetadataProvider;
 import io.spring.initializr.metadata.InitializrConfiguration;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.InitializrProperties;
-
 import io.spring.initializr.web.autoconfigure.InitializrWebConfig;
 import io.spring.initializr.web.controller.CommandLineMetadataController;
-import io.spring.initializr.web.controller.DefaultProjectGenerationController;
 import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.controller.SpringCliDistributionController;
 import io.spring.initializr.web.project.DefaultProjectRequestPlatformVersionTransformer;
-import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
 import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.support.DefaultDependencyMetadataProvider;
 import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -85,6 +84,8 @@ import java.util.stream.StreamSupport;
 @AutoConfigureAfter({ JacksonAutoConfiguration.class, RestTemplateAutoConfiguration.class })
 public class ExtendInitializrAutoConfiguration {
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExtendInitializrAutoConfiguration.class);
+
     @Bean
     @ConditionalOnMissingBean
     public ProjectDirectoryFactory projectDirectoryFactory() {
@@ -93,8 +94,15 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ProjectGenerationListener projectGenerationListener() {
-        return new ProjectGenerationListener();
+    @ConditionalOnProperty(value = "extend.initializr.stats.eventhub.enabled", havingValue = "true")
+    public ProjectGenerationListener projectGenerationListener(ObjectMapper objectMapper,
+                                                               ExtendInitializrProperties properties,
+                                                               ObjectProvider<EventHubClientBuilder> eventHubClientBuilders) {
+        EventHubClientBuilder clientBuilder = eventHubClientBuilders.getIfUnique();
+        if (clientBuilder == null) {
+            LOGGER.warn("No 'EventHubClientBuilder' available.");
+        }
+        return new ProjectGenerationListener(objectMapper, properties, clientBuilder);
     }
 
     @Bean
@@ -141,20 +149,6 @@ public class ExtendInitializrAutoConfiguration {
 //        customizers.orderedStream().forEach(builder::withCustomizer);
         ExtendInitializrMetadata metadata = builder.build();
         return new ExtendInitializrMetadataProvider(metadata, strategies);
-    }
-
-    @Bean("projectGenerationController")
-    @ConditionalOnMissingBean
-    ProjectGenerationController<ExtendProjectRequest> projectGenerationController(
-        InitializrMetadataProvider metadataProvider,
-        ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
-        ApplicationContext applicationContext) {
-        ExtendProjectRequestToDescriptionConverter converter =
-            new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
-                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
-        ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-            applicationContext, converter);
-        return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
     }
 
     @Bean
@@ -207,10 +201,12 @@ public class ExtendInitializrAutoConfiguration {
             InitializrMetadataProvider metadataProvider,
             ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
             ApplicationContext applicationContext) {
-            ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-                applicationContext, new DefaultProjectRequestToDescriptionConverter(platformVersionTransformer
-                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new)));
-            return new DefaultProjectGenerationController(metadataProvider, projectGenerationInvoker);
+            ExtendProjectRequestToDescriptionConverter converter =
+                new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
+                    .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
+            ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<ProjectRequest>(
+                applicationContext, converter);
+            return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
         }
 
         @Bean

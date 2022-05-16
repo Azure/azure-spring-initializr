@@ -37,6 +37,12 @@ spring:
       cache:
         use-last-modified: false
 
+  cloud:
+    azure:
+      eventhubs:
+        event-hub-name: ${INITIALIZR_SUCCESS_EVENT_HUB}
+        connection-string: ${EVENT_HUBS_INITIALIZR_CONNECTION_STRING}
+
 initializr:
   env:
     boms:
@@ -1624,6 +1630,14 @@ initializr:
     - name : 2.6.6
       id: 2.6.6
       default: true
+
+extend:
+  initializr:
+    stats:
+      eventhub:
+        enabled: true
+#        success-eventhub-name: initializr-success-test
+#        failed-eventhub-name: initializr-failed-test
 #azure:
 #  initializr:
 #    maven-resolver-cache-directory: /tmp/maven-resolver-cache

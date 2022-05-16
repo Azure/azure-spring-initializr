@@ -1,6 +1,5 @@
 package com.azure.spring.initializr.web.project;
 
-import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
@@ -8,7 +7,7 @@ import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.project.ProjectRequestToDescriptionConverter;
 
-public class ExtendProjectRequestToDescriptionConverter implements ProjectRequestToDescriptionConverter<ExtendProjectRequest> {
+public class ExtendProjectRequestToDescriptionConverter implements ProjectRequestToDescriptionConverter<ProjectRequest> {
 
     private final ProjectRequestPlatformVersionTransformer platformVersionTransformer;
 
@@ -20,7 +19,7 @@ public class ExtendProjectRequestToDescriptionConverter implements ProjectReques
     }
 
     @Override
-    public ProjectDescription convert(ExtendProjectRequest request, InitializrMetadata metadata) {
+    public ProjectDescription convert(ProjectRequest request, InitializrMetadata metadata) {
         validate(request, metadata);
         ProjectDescription description = delegate.convert(request, metadata);
 

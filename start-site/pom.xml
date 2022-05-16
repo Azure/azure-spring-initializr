@@ -47,7 +47,10 @@
 			<artifactId>start-client</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-
+    <dependency>
+      <groupId>com.azure.spring</groupId>
+      <artifactId>spring-cloud-azure-starter-eventhubs</artifactId>
+    </dependency>
 		<dependency>
 			<groupId>javax.cache</groupId>
 			<artifactId>cache-api</artifactId>

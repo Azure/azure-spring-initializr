@@ -16,6 +16,9 @@ public class ExtendInitializrProperties {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExtendInitializrProperties.class);
 
+    @JsonIgnore
+    @NestedConfigurationProperty
+    private StatsProperties stats = new StatsProperties();
 
     @JsonIgnore
 //    @NestedConfigurationProperty
@@ -25,4 +28,7 @@ public class ExtendInitializrProperties {
         return architectures;
     }
 
+    public StatsProperties getStats() {
+        return stats;
+    }
 }
