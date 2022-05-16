@@ -214,18 +214,6 @@ public class ExtendInitializrAutoConfiguration {
             return new InitializrWebConfig();
         }
 
-//        @Bean
-//        @ConditionalOnMissingBean
-//        ProjectGenerationController<ProjectRequest> projectGenerationController(
-//            InitializrMetadataProvider metadataProvider,
-//            ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
-//            ApplicationContext applicationContext) {
-//            ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-//                applicationContext, new DefaultProjectRequestToDescriptionConverter(platformVersionTransformer
-//                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new)));
-//            return new DefaultProjectGenerationController(metadataProvider, projectGenerationInvoker);
-//        }
-
         @Bean
         @ConditionalOnMissingBean
         ExtendProjectMetadataController projectMetadataController(InitializrMetadataProvider metadataProvider,
