@@ -21,9 +21,8 @@ extend:
     connectors:
         github:
           enabled: true
-          clientid: 1b17c66d923a18bc63c0
-          # temp github oauth app clientSecret
-          clientSecret: b018a170f676d4fc332635051f670bdbbd0a225b
+          clientid: ${input-your-client-id}
+          clientSecret: ${input-your-client-secret}
           oauthUri: https://github.com/login/oauth/authorize
           redirectUri: http://localhost:8080/login/oauth2/code
 
