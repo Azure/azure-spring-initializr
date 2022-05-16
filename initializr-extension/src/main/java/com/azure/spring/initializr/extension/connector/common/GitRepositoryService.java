@@ -28,8 +28,6 @@ public class GitRepositoryService {
     /**
      * pushToGithub
      *
-     * @throws GitAPIException
-     * @throws URISyntaxException
      */
     public static void pushToGitRepository(GitRepository gitRepository) {
         try {

@@ -8,7 +8,6 @@ public enum ResultCode {
     ACCESSTOKEN_EMPTY("203","Can not get access token."),
     CONNECTOR_EXCEPTION("204", "There is a connector exception."),
     CODE_404("404","There was an unexpected error (type=Not Found, status=404).."),
-
     ;
 
     private String code;
