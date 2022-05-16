@@ -1,8 +1,8 @@
-package com.azure.spring.initializr.extension.connector.github.restclient;
+package com.azure.spring.initializr.extension.connector.bitbucket.restclient;
 
 import com.azure.spring.initializr.extension.connector.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.model.CreateRepo;
 import com.azure.spring.initializr.extension.connector.github.model.User;
+import com.azure.spring.initializr.extension.connector.model.CreateRepo;
 import com.azure.spring.initializr.extension.connector.restclient.ConnectorClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +14,14 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
-public class GitHubClient implements ConnectorClient {
-    private static Logger logger = LoggerFactory.getLogger(GitHubOAuthClient.class);
+public class BitbucketClient implements ConnectorClient {
+    private static Logger logger = LoggerFactory.getLogger(BitbucketClient.class);
 
-    final static String BASE_URI = "https://api.github.com";
-    final static String CREATE_REPO_PATH = "/user/repos";
+    final static String BASE_URI = "https://api.bitbucket.org/2.0";
+    final static String CREATE_REPO_PATH = "/repositories";
     final static String GET_USER = "/user";
 
-    WebClient githubClient = WebClient.builder()
+    WebClient bitbucketClient = WebClient.builder()
             .baseUrl(BASE_URI)
             .build();
 
@@ -33,9 +33,10 @@ public class GitHubClient implements ConnectorClient {
      */
     @Override
     public User getUser(String accessToken) {
-        Assert.notNull(accessToken,"Invalid accessToken");
+        Assert.notNull(accessToken, "Invalid accessToken");
+
         try {
-            return githubClient
+            return bitbucketClient
                     .get()
                     .uri(GET_USER)
                     .header("Authorization", getToken(accessToken))
@@ -47,20 +48,17 @@ public class GitHubClient implements ConnectorClient {
             logger.error("An error occurred while getting user info.", ex);
             throw new ConnectorException("An error occurred while getting user info.");
         }
-
     }
 
     @Override
     public String createRepo(String accessToken, CreateRepo repo) {
-        Assert.notNull(accessToken,"Invalid accessToken");
-        Assert.notNull(repo,"Invalid repo");
+        Assert.notNull(accessToken, "Invalid accessToken");
+        Assert.notNull(repo, "Invalid repo");
 
         try {
-            return githubClient
+            return bitbucketClient
                     .post()
-                    .uri(CREATE_REPO_PATH)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(repo))
+                    .uri(CREATE_REPO_PATH + "/" + repo.getWorkSpace() + "/" + repo.getName())
                     .header("Authorization", getToken(accessToken))
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
@@ -74,13 +72,14 @@ public class GitHubClient implements ConnectorClient {
 
     @Override
     public boolean repositoryExists(String accessToken, String loginName, String repoName) {
-        Assert.notNull(accessToken,"Invalid accessToken");
-        Assert.notNull(loginName,"Invalid loginName");
-        Assert.notNull(repoName,"Invalid repoName");
+
+        Assert.notNull(accessToken, "Invalid accessToken");
+        Assert.notNull(loginName, "Invalid loginName");
+        Assert.notNull(repoName, "Invalid repoName");
         try {
-            HttpStatus httpStatus = githubClient
+            HttpStatus httpStatus = bitbucketClient
                     .get()
-                    .uri("/repos/" + loginName + "/" + repoName)
+                    .uri("/repositories/" + loginName + "/" + repoName)
                     .header("Authorization", getToken(accessToken))
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
@@ -97,7 +96,7 @@ public class GitHubClient implements ConnectorClient {
     }
 
     private String getToken(String accessToken) {
-        return "token " + accessToken;
+        return "Bearer " + accessToken;
     }
 
 }

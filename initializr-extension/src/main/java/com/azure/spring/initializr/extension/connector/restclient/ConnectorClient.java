@@ -1,11 +1,11 @@
 package com.azure.spring.initializr.extension.connector.restclient;
 
 import com.azure.spring.initializr.extension.connector.model.CreateRepo;
-import com.azure.spring.initializr.extension.connector.github.model.GitHubUser;
+import com.azure.spring.initializr.extension.connector.github.model.User;
 
 public interface ConnectorClient {
 
-    GitHubUser getUser(String accessToken);
+    User getUser(String accessToken);
 
     String  createRepo(String accessToken, CreateRepo repo) ;
 

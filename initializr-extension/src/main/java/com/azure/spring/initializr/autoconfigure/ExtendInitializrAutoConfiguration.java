@@ -16,6 +16,8 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
+import com.azure.spring.initializr.extension.connector.bitbucket.restclient.BitbucketClient;
+import com.azure.spring.initializr.extension.connector.bitbucket.restclient.BitbucketOAuthClient;
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubClient;
 import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
@@ -162,12 +164,25 @@ public class ExtendInitializrAutoConfiguration {
         return new GitHubClient();
     }
 
+    @Bean
+    BitbucketClient bitbucketClient(){
+        return new BitbucketClient();
+    }
+
     @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
     @Bean
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties) {
         Connector connector = properties.getConnectors()
                                         .get("github");
         return new GitHubOAuthClient(connector);
+    }
+
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.bitbucket.enabled", havingValue = "true")
+    @Bean
+    BitbucketOAuthClient bitbucketOAuthClient(ExtendInitializrProperties properties) {
+        Connector connector = properties.getConnectors()
+                .get("bitbucket");
+        return new BitbucketOAuthClient(connector);
     }
 
     @Bean

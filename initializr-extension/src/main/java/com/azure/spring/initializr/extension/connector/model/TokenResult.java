@@ -6,6 +6,7 @@ public class TokenResult {
     @JsonAlias("access_token")
     String accessToken;
 
+    @JsonAlias("scopes")
     String scope;
 
     @JsonAlias("token_type")

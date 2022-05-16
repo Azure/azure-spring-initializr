@@ -6,6 +6,8 @@ public class CreateRepo {
 
     String description;
 
+    String workSpace;
+
     public String getName() {
         return name;
     }
@@ -20,5 +22,13 @@ public class CreateRepo {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getWorkSpace() {
+        return workSpace;
+    }
+
+    public void setWorkSpace(String workSpace) {
+        this.workSpace = workSpace;
     }
 }
