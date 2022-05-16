@@ -23,16 +23,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class BitbucketOAuthClient implements OAuthClient {
     private static final Logger logger = LoggerFactory.getLogger(BitbucketOAuthClient.class);
 
+    final static String BASE_URI = "https://bitbucket.org";
+    final static String ACCESS_TOKEN_URI = "/site/oauth2/access_token";
+
     private final Connector connector;
 
     public BitbucketOAuthClient(Connector connector) {
         this.connector = connector;
     }
 
-    final static String BASE_URI = "https://bitbucket.org";
-    final static String ACCESS_TOKEN_URI = "/site/oauth2/access_token";
-
-    WebClient githubOauthClient = WebClient.builder()
+    private WebClient githubOauthClient = WebClient.builder()
             .baseUrl(BASE_URI)
             .build();
 
@@ -64,8 +64,8 @@ public class BitbucketOAuthClient implements OAuthClient {
                         } else
                             return clientResponse.bodyToMono(TokenResult.class);
                     }).block();
-        } catch (Exception e) {
-            logger.error("Error while authenticating", e);
+        } catch (RuntimeException ex) {
+            logger.error("Error while authenticating", ex);
             throw new ConnectorException("Error while authenticating");
         }
     }
