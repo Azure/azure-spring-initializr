@@ -32,7 +32,7 @@ public class GitHubClient implements ConnectorClient {
      */
     @Override
     public User getUser(String accessToken) {
-        Assert.notNull(accessToken,"Invalid accessToken");
+        Assert.notNull(accessToken, "Invalid accessToken");
         try {
             return githubClient
                     .get()
@@ -51,8 +51,8 @@ public class GitHubClient implements ConnectorClient {
 
     @Override
     public String createRepo(String accessToken, CreateRepo repo) {
-        Assert.notNull(accessToken,"Invalid accessToken");
-        Assert.notNull(repo,"Invalid repo");
+        Assert.notNull(accessToken, "Invalid accessToken");
+        Assert.notNull(repo, "Invalid repo");
 
         try {
             return githubClient
@@ -73,9 +73,9 @@ public class GitHubClient implements ConnectorClient {
 
     @Override
     public boolean repositoryExists(String accessToken, String loginName, String repoName) {
-        Assert.notNull(accessToken,"Invalid accessToken");
-        Assert.notNull(loginName,"Invalid loginName");
-        Assert.notNull(repoName,"Invalid repoName");
+        Assert.notNull(accessToken, "Invalid accessToken");
+        Assert.notNull(loginName, "Invalid loginName");
+        Assert.notNull(repoName, "Invalid repoName");
         try {
             HttpStatus httpStatus = githubClient
                     .get()

@@ -107,7 +107,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
         String gitRepositoryUrl = "https://github.com/" + loginName + "/" + artifactId;
 
-        try{
+        try {
             GitRepository gitRepository = new GitRepository();
             gitRepository.setInitialBranch("main");
             gitRepository.setHttpTransportUrl(gitRepositoryUrl);
@@ -116,9 +116,9 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
             gitRepository.setTemplateFile(new File(result.getRootDirectory().toFile().getAbsolutePath()
                     + "/" + request.getBaseDir()));
             GitRepositoryService.pushToGitRepository(gitRepository);
-        }catch (ConnectorException connectorException){
+        } catch (ConnectorException connectorException) {
             throw connectorException;
-        }finally {
+        } finally {
             this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
         }
 
@@ -170,7 +170,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return "redirect:/#!" + uriComponentsBuilder.toUriString();
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class,ConnectorException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class, ConnectorException.class})
     public String invalidProjectRequest(RuntimeException ex, HttpServletRequest httpServletRequest) {
         Map<String, String> map = new HashMap<>();
         Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
@@ -182,7 +182,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         String errorCode = ResultCode.CODE_SUCCESS.getCode();
         if (ex instanceof IllegalArgumentException) {
             errorCode = ResultCode.INVALID_PARAM.getCode();
-        } else if (ex instanceof ConnectorException){
+        } else if (ex instanceof ConnectorException) {
             errorCode = ResultCode.CONNECTOR_EXCEPTION.getCode();
         }
         return redirectUriString(request, errorCode, ex.getMessage());
