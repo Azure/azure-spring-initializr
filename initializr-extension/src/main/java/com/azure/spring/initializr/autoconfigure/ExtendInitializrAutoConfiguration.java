@@ -156,14 +156,14 @@ public class ExtendInitializrAutoConfiguration {
         return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
     }
 
-    //TODO @ConditionalOnProperty
     @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
     GitHubClient gitHubClient(){
         return new GitHubClient();
     }
 
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
     @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties) {
         Connector connector = properties.getConnectors()
                                         .get("github");

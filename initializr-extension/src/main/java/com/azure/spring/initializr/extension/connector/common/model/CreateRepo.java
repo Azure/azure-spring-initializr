@@ -1,10 +1,12 @@
-package com.azure.spring.initializr.extension.connector.model;
+package com.azure.spring.initializr.extension.connector.common.model;
 
 
 public class CreateRepo {
     String name;
 
     String description;
+
+    String workSpace;
 
     public String getName() {
         return name;
@@ -20,5 +22,13 @@ public class CreateRepo {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getWorkSpace() {
+        return workSpace;
+    }
+
+    public void setWorkSpace(String workSpace) {
+        this.workSpace = workSpace;
     }
 }

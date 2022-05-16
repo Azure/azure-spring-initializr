@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.extension.connector.model;
+package com.azure.spring.initializr.extension.connector.common.model;
 
 import java.io.File;
 
