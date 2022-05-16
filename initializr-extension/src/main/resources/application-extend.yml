@@ -26,11 +26,5 @@ extend:
           clientSecret: b018a170f676d4fc332635051f670bdbbd0a225b
           oauthUri: https://github.com/login/oauth/authorize
           redirectUri: http://localhost:8080/login/oauth2/code
-        bitbucket:
-          enabled: true
-          oauthUri: https://bitbucket.org/site/oauth2/authorize
-          # temp bitbucket oauth app clientSecret
-          clientSecret: vAzDHPU3jPbmvVbBEPUwv2J5JwcGjZRc
-          clientid: nLF4RzS7H3PfmxKwcu
-          redirectUri: http://localhost:8080/login/oauth2/code
+
 

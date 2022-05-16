@@ -1,7 +1,5 @@
 package com.azure.spring.initializr.web.controller;
 
-import com.azure.spring.initializr.extension.connector.bitbucket.restclient.BitbucketClient;
-import com.azure.spring.initializr.extension.connector.bitbucket.restclient.BitbucketOAuthClient;
 import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
 import com.azure.spring.initializr.extension.connector.common.GitRepositoryService;
 import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
@@ -46,12 +44,6 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     @Autowired(required = false)
     private GitHubClient gitHubClient;
 
-    @Autowired(required = false)
-    private BitbucketOAuthClient bitbucketOAuthClient;
-
-    @Autowired(required = false)
-    private BitbucketClient bitbucketClient;
-
     @Override
     public ExtendProjectRequest projectRequest(Map<String, String> headers) {
         ExtendProjectRequest request = new ExtendProjectRequest();
@@ -64,8 +56,6 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     public String pushToGitRepository(ConnectorProjectRequest request) {
         if ("github".equals(request.getConnectorType())) {
             return pushToGitRepo(request, gitHubClient, gitHubOAuthClient);
-        } else if ("bitbucket".equals(request.getConnectorType())) {
-            return pushToGitRepo(request, bitbucketClient, bitbucketOAuthClient);
         }
         return redirectUriString(request);
     }
