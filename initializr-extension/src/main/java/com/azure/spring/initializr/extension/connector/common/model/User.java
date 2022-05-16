@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.extension.connector.github.model;
+package com.azure.spring.initializr.extension.connector.common.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

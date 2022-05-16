@@ -1,7 +1,7 @@
 package com.azure.spring.initializr.extension.connector.common.restclient;
 
 import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
-import com.azure.spring.initializr.extension.connector.github.model.User;
+import com.azure.spring.initializr.extension.connector.common.model.User;
 
 public interface ConnectorClient {
 

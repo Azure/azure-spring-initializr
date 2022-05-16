@@ -1,7 +1,7 @@
 package com.azure.spring.initializr.extension.connector.bitbucket.restclient;
 
 import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.github.model.User;
+import com.azure.spring.initializr.extension.connector.common.model.User;
 import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
 import com.azure.spring.initializr.extension.connector.common.restclient.ConnectorClient;
 import org.slf4j.Logger;
