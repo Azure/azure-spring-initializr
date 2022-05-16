@@ -36,7 +36,6 @@ public class GitRepositoryService {
                     .setDirectory(gitRepository.getTemplateFile())
                     .call();
             //02. Add all files to git repo.
-            repo.add().addFilepattern("*.md").call();
             repo.add().addFilepattern(".").call();
             //03. Add all files to git repo.
             repo.commit().setMessage("Initial commit from Azure Spring Initializr")
