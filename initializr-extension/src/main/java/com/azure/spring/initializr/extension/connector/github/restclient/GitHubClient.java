@@ -13,9 +13,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Component
 public class GitHubClient implements ConnectorClient {
-    private static Logger logger = LoggerFactory.getLogger(GitHubOAuthClient.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GitHubClient.class);
 
     final static String BASE_URI = "https://api.github.com";
     final static String CREATE_REPO_PATH = "/user/repos";
@@ -33,7 +32,7 @@ public class GitHubClient implements ConnectorClient {
      */
     @Override
     public User getUser(String accessToken) {
-        Assert.notNull(accessToken,"Invalid accessToken");
+        Assert.notNull(accessToken, "Invalid accessToken");
         try {
             return githubClient
                     .get()
@@ -44,7 +43,7 @@ public class GitHubClient implements ConnectorClient {
                     .bodyToMono(User.class)
                     .block();
         } catch (RuntimeException ex) {
-            logger.error("An error occurred while getting user info.", ex);
+            LOGGER.error("An error occurred while getting user info.", ex);
             throw new ConnectorException("An error occurred while getting user info.");
         }
 
@@ -52,8 +51,8 @@ public class GitHubClient implements ConnectorClient {
 
     @Override
     public String createRepo(String accessToken, CreateRepo repo) {
-        Assert.notNull(accessToken,"Invalid accessToken");
-        Assert.notNull(repo,"Invalid repo");
+        Assert.notNull(accessToken, "Invalid accessToken");
+        Assert.notNull(repo, "Invalid repo");
 
         try {
             return githubClient
@@ -66,7 +65,7 @@ public class GitHubClient implements ConnectorClient {
                     .retrieve()
                     .bodyToMono(String.class).block();
         } catch (RuntimeException ex) {
-            logger.error("An error occurred while creating repo.", ex);
+            LOGGER.error("An error occurred while creating repo.", ex);
             throw new ConnectorException("An error occurred while creating repo.");
         }
 
@@ -74,9 +73,9 @@ public class GitHubClient implements ConnectorClient {
 
     @Override
     public boolean repositoryExists(String accessToken, String loginName, String repoName) {
-        Assert.notNull(accessToken,"Invalid accessToken");
-        Assert.notNull(loginName,"Invalid loginName");
-        Assert.notNull(repoName,"Invalid repoName");
+        Assert.notNull(accessToken, "Invalid accessToken");
+        Assert.notNull(loginName, "Invalid loginName");
+        Assert.notNull(repoName, "Invalid repoName");
         try {
             HttpStatus httpStatus = githubClient
                     .get()
@@ -91,7 +90,7 @@ public class GitHubClient implements ConnectorClient {
             }
             return false;
         } catch (RuntimeException ex) {
-            logger.error("An error occurred while checking repository status.", ex);
+            LOGGER.error("An error occurred while checking repository status.", ex);
             throw new ConnectorException("An error occurred while checking repository status.");
         }
     }

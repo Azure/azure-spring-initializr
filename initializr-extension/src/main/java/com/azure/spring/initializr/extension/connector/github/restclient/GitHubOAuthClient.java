@@ -21,7 +21,7 @@ import java.util.Map;
 @Component
 @ConditionalOnProperty(prefix = "initializr.connectors", name = "github.enabled", havingValue = "true")
 public class GitHubOAuthClient implements OAuthClient {
-    private final static Logger logger = LoggerFactory.getLogger(GitHubOAuthClient.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(GitHubOAuthClient.class);
 
     final static String BASE_URI = "https://github.com";
     final static String ACCESS_TOKEN_URI = "/login/oauth/access_token";
@@ -56,7 +56,7 @@ public class GitHubOAuthClient implements OAuthClient {
                     .bodyToMono(TokenResult.class)
                     .block();
         } catch (RuntimeException ex) {
-            logger.error("Error while authenticating", ex);
+            LOGGER.error("Error while authenticating", ex);
             throw new ConnectorException("Error while authenticating");
         }
 
