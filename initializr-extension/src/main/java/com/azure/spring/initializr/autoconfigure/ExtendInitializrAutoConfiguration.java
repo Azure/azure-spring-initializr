@@ -27,8 +27,10 @@ import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCusto
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
+import com.azure.spring.initializr.web.project.EventHubStatProjectGenerationLogProcessor;
 import com.azure.spring.initializr.web.project.ExtendProjectRequestToDescriptionConverter;
 import com.azure.spring.initializr.web.project.ProjectGenerationListener;
+import com.azure.spring.initializr.web.project.StatProjectGenerationLogProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.io.SimpleIndentStrategy;
@@ -94,15 +96,21 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = "extend.initializr.stats.eventhub.enabled", havingValue = "true")
     public ProjectGenerationListener projectGenerationListener(ObjectMapper objectMapper,
-                                                               ExtendInitializrProperties properties,
+                                                               ObjectProvider<StatProjectGenerationLogProcessor> processors) {
+        return new ProjectGenerationListener(objectMapper, processors.getIfUnique());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(StatProjectGenerationLogProcessor.class)
+    @ConditionalOnProperty(value = "extend.initializr.stats.eventhub.enabled", havingValue = "true")
+    public StatProjectGenerationLogProcessor eventHubProcessor(ExtendInitializrProperties properties,
                                                                ObjectProvider<EventHubClientBuilder> eventHubClientBuilders) {
         EventHubClientBuilder clientBuilder = eventHubClientBuilders.getIfUnique();
         if (clientBuilder == null) {
             LOGGER.warn("No 'EventHubClientBuilder' available.");
         }
-        return new ProjectGenerationListener(objectMapper, properties, clientBuilder);
+        return new EventHubStatProjectGenerationLogProcessor(properties.getStats().getEventhub(), clientBuilder);
     }
 
     @Bean
@@ -111,7 +119,6 @@ public class ExtendInitializrAutoConfiguration {
         RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
         return new AzureInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
     }
-
 
     @Bean
     @ConditionalOnMissingBean

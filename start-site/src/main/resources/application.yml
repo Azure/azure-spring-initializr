@@ -2,6 +2,7 @@ logging:
   level:
     org.springframework.core.env: warn
     org.springframework.jndi: warn
+    com.azure.core.amqp.implementation: warn
 
 management:
   info:
@@ -39,9 +40,11 @@ spring:
 
   cloud:
     azure:
+      credential:
+        managed-identity-enabled: true
       eventhubs:
-        event-hub-name: ${INITIALIZR_SUCCESS_EVENT_HUB}
-        connection-string: ${EVENT_HUBS_INITIALIZR_CONNECTION_STRING}
+        event-hub-name: may-not-exists
+        namespace: ${EVENT_HUBS_INITIALIZR_NAMESPACE}
 
 initializr:
   env:
@@ -1642,8 +1645,9 @@ extend:
     stats:
       eventhub:
         enabled: true
-#        success-eventhub-name: initializr-success-test
-#        failed-eventhub-name: initializr-failed-test
+#        success-eventhub-name: initializr-success-dev
+#        failure-eventhub-name: initializr-failure-dev
+
 #azure:
 #  initializr:
 #    maven-resolver-cache-directory: /tmp/maven-resolver-cache

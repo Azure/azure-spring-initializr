@@ -16,10 +16,6 @@
 
 package com.azure.spring.initializr.web.project;
 
-import com.azure.messaging.eventhubs.EventData;
-import com.azure.messaging.eventhubs.EventHubClientBuilder;
-import com.azure.messaging.eventhubs.EventHubProducerClient;
-import com.azure.spring.initializr.autoconfigure.ExtendInitializrProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.web.project.ProjectFailedEvent;
@@ -27,43 +23,20 @@ import io.spring.initializr.web.project.ProjectGeneratedEvent;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.util.StringUtils;
-
-import java.util.Arrays;
 
 /**
  * This listens for {@link ProjectGeneratedEvent} and {@link ProjectFailedEvent}.
- *
- * TODO we can use this listener to track the statistic of project generation.
  */
 public class ProjectGenerationListener {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectGenerationListener.class);
-    private static final String INITIALIZR_SUCCESS_EVENTHUB_NAME = "initializr-success";
-    private static final String INITIALIZR_FAILED_EVENTHUB_NAME = "initializr-failed";
     private final ObjectMapper objectMapper;
-    private final ExtendInitializrProperties properties;
-    private final EventHubProducerClient failedProducerClient;
-    private final EventHubProducerClient successProducerClient;
+    private final StatProjectGenerationLogProcessor generationLogProcessor;
 
     public ProjectGenerationListener(ObjectMapper objectMapper,
-                                     ExtendInitializrProperties properties,
-                                     EventHubClientBuilder clientBuilder) {
+                                     StatProjectGenerationLogProcessor generationLogProcessor) {
         this.objectMapper = objectMapper;
-        this.properties = properties;
-        if (clientBuilder != null) {
-            String success = properties.getStats().getEventhub().getSuccessEventhubName();
-            String failed = properties.getStats().getEventhub().getFailedEventhubName();
-            this.failedProducerClient = clientBuilder
-                .eventHubName(StringUtils.hasText(success) ? success : INITIALIZR_FAILED_EVENTHUB_NAME)
-                .buildProducerClient();
-            this.successProducerClient = clientBuilder
-                .eventHubName(StringUtils.hasText(failed) ? failed : INITIALIZR_SUCCESS_EVENTHUB_NAME)
-                .buildProducerClient();
-        } else {
-            this.failedProducerClient = null;
-            this.successProducerClient = null;
-        }
+        this.generationLogProcessor = generationLogProcessor;
     }
 
     @Async
@@ -71,8 +44,8 @@ public class ProjectGenerationListener {
 	public void onProjectFailedEvent(ProjectFailedEvent event) {
         try {
             String failedEventLogString = getProjectFailedEventLogString(event);
-            if (failedProducerClient != null) {
-                failedProducerClient.send(Arrays.asList(new EventData(failedEventLogString)));
+            if (generationLogProcessor != null) {
+                generationLogProcessor.sendFailure(failedEventLogString);
             }
             LOGGER.error("Generation failed.", event.getCause());
             LOGGER.info("Project generation failed: {}", failedEventLogString);
@@ -86,8 +59,8 @@ public class ProjectGenerationListener {
 	public void onProjectGeneratedEvent(ProjectGeneratedEvent event) {
         try {
             String eventLogString = getGenerationEventLogString(event);
-            if (successProducerClient != null) {
-                successProducerClient.send(Arrays.asList(new EventData(eventLogString)));
+            if (generationLogProcessor != null) {
+                generationLogProcessor.sendSuccess(eventLogString);
             }
             LOGGER.info("Project generated: {}", eventLogString);
         } catch (JsonProcessingException e) {

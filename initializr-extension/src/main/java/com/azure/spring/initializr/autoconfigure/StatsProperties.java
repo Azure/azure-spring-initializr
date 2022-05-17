@@ -35,6 +35,9 @@ public class StatsProperties {
 	 */
 	public static final class Eventhub {
 
+        static final String INITIALIZR_SUCCESS_EVENTHUB_NAME = "initializr-success";
+        static final String INITIALIZR_FAILURE_EVENTHUB_NAME = "initializr-failure";
+
 		/**
 		 * Whether the project generation stat via EventHubs is enabled, not enabled be default.
          * If enabling this switch, the project generation request will be collected through EventHubs,
@@ -42,9 +45,9 @@ public class StatsProperties {
 		 */
         private boolean enabled;
 
-        private String successEventhubName;
+        private String successEventhubName = INITIALIZR_SUCCESS_EVENTHUB_NAME;
 
-        private String failedEventhubName;
+        private String failureEventhubName = INITIALIZR_FAILURE_EVENTHUB_NAME;
 
         public boolean isEnabled() {
             return enabled;
@@ -62,12 +65,12 @@ public class StatsProperties {
             this.successEventhubName = successEventhubName;
         }
 
-        public String getFailedEventhubName() {
-            return failedEventhubName;
+        public String getFailureEventhubName() {
+            return failureEventhubName;
         }
 
-        public void setFailedEventhubName(String failedEventhubName) {
-            this.failedEventhubName = failedEventhubName;
+        public void setFailureEventhubName(String failureEventhubName) {
+            this.failureEventhubName = failureEventhubName;
         }
     }
 
