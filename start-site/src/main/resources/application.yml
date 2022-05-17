@@ -113,7 +113,7 @@ initializr:
         versionProperty: spring-cloud-azure.version
         mappings:
           - compatibilityRange: "[2.5.0.M1,2.7.0-M1)"
-            version: 4.0.0
+            version: 4.1.0
       spring-cloud-gcp:
         groupId: com.google.cloud
         artifactId: spring-cloud-gcp-dependencies
@@ -487,6 +487,12 @@ initializr:
           groupId: com.azure.spring
           artifactId: spring-cloud-azure-starter-keyvault-secrets
           description: Azure Key Vault Secrets
+        - name: Azure Key Vault Certificates
+          bom: spring-cloud-azure
+          id: azure-key-vault-certificates
+          groupId: com.azure.spring
+          artifactId: spring-cloud-azure-starter-keyvault-certificates
+          description: Azure Key Vault Certificates
         - name: Spring Security
           id: security
           description: Highly customizable authentication and access-control framework for Spring applications.
