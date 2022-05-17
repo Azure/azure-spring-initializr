@@ -1,24 +1,24 @@
-package com.azure.spring.initializr.extension.connector.common.model;
+package com.azure.spring.initializr.extension.scm.common.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class TokenResult {
     @JsonAlias("access_token")
-    String accessToken;
+    private String accessToken;
 
     @JsonAlias("scopes")
-    String scope;
+    private String scope;
 
     @JsonAlias("token_type")
-    String tokenType;
+    private String tokenType;
 
-    String error;
+    private String error;
 
     @JsonAlias("error_description")
-    String errorDescription;
+    private String errorDescription;
 
     @JsonAlias("error_uri")
-    String errorUri;
+    private String errorUri;
 
     public String getError() {
         return error;

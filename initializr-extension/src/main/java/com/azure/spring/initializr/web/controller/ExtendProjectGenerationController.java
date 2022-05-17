@@ -1,13 +1,11 @@
 package com.azure.spring.initializr.web.controller;
 
-import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.common.GitRepositoryService;
-import com.azure.spring.initializr.extension.connector.common.model.CreateRepo;
-import com.azure.spring.initializr.extension.connector.common.model.User;
-import com.azure.spring.initializr.extension.connector.common.model.TokenResult;
-import com.azure.spring.initializr.extension.connector.common.model.GitRepository;
-import com.azure.spring.initializr.extension.connector.common.restclient.ConnectorClient;
-import com.azure.spring.initializr.extension.connector.common.restclient.OAuthClient;
+import com.azure.spring.initializr.extension.scm.common.exception.SCMException;
+import com.azure.spring.initializr.extension.scm.common.model.Repository;
+import com.azure.spring.initializr.extension.scm.common.model.User;
+import com.azure.spring.initializr.extension.scm.common.model.GitRepository;
+import com.azure.spring.initializr.extension.scm.common.service.GitService;
+import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactoryDelegate;
 import com.azure.spring.initializr.web.connector.ConnectorProjectRequest;
 import com.azure.spring.initializr.web.connector.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
@@ -20,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.azure.spring.initializr.extension.connector.github.restclient.GitHubClient;
-import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,11 +37,8 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         this.projectGenerationInvoker = projectGenerationInvoker;
     }
 
-    @Autowired(required = false)
-    private GitHubOAuthClient gitHubOAuthClient;
-
-    @Autowired(required = false)
-    private GitHubClient gitHubClient;
+    @Autowired
+    GitServiceFactoryDelegate gitServiceFactoryDelegate;
 
     @Override
     public ExtendProjectRequest projectRequest(Map<String, String> headers) {
@@ -58,17 +51,15 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     @RequestMapping(path = "/login/oauth2/code")
     public String pushToGitRepository(ConnectorProjectRequest request) {
         if ("github".equals(request.getConnectorType())) {
-            return pushToGitRepo(request, gitHubClient, gitHubOAuthClient);
+            return pushToGitRepo(request);
         }
         return redirectUriString(request);
     }
 
-    private String pushToGitRepo(ConnectorProjectRequest request, ConnectorClient connectorClient, OAuthClient oAuthClient) {
-        if (connectorClient == null || oAuthClient == null) {
-            return redirectUriString(request,
-                    ResultCode.CODE_404.getCode(),
-                    ResultCode.CODE_404.getMsg());
-        }
+    // check
+    // create
+    // generate and push
+    private String pushToGitRepo(ConnectorProjectRequest request) {
 
         checkParameters(request);
         if (request.getBaseDir() == null) {
@@ -76,19 +67,12 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         }
 
         String authorizationCode = request.getCode();
+        GitService gitService = gitServiceFactoryDelegate.getGitService(request.getConnectorType(), authorizationCode);
 
-        TokenResult tokenResult = oAuthClient.getAccessToken(authorizationCode);
-        String accessToken = tokenResult.getAccessToken();
-        if (accessToken == null) {
-            return redirectUriString(request,
-                    ResultCode.ACCESSTOKEN_EMPTY.getCode(),
-                    tokenResult.getError());
-        }
-
-        User user = connectorClient.getUser(accessToken);
+        User user = gitService.getUser();
         String loginName = user.getLogin();
         String artifactId = request.getArtifactId();
-        boolean repositoryExists = connectorClient.repositoryExists(accessToken, loginName, artifactId);
+        boolean repositoryExists = gitService.repositoryExists(loginName, artifactId);
 
         if (repositoryExists) {
             return redirectUriString(request,
@@ -99,10 +83,10 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
                             + ", please retry with a different name (the artifact is the name)...");
         }
 
-        CreateRepo repo = new CreateRepo();
-        repo.setName(artifactId);
-        repo.setWorkSpace(loginName);
-        connectorClient.createRepo(accessToken, repo);
+        Repository repository = new Repository();
+        repository.setName(artifactId);
+        repository.setWorkSpace(loginName);
+        gitService.createRepository(repository);
 
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
         String gitRepositoryUrl = "https://github.com/" + loginName + "/" + artifactId;
@@ -112,11 +96,11 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
             gitRepository.setInitialBranch("main");
             gitRepository.setHttpTransportUrl(gitRepositoryUrl);
             gitRepository.setOwnerName(loginName);
-            gitRepository.setToken(accessToken);
+            gitRepository.setToken(gitService.getAccessToken());
             gitRepository.setTemplateFile(new File(result.getRootDirectory().toFile().getAbsolutePath()
                     + "/" + request.getBaseDir()));
-            GitRepositoryService.pushToGitRepository(gitRepository);
-        } catch (ConnectorException connectorException) {
+            gitService.pushToGitRepository(gitRepository);
+        } catch (SCMException connectorException) {
             throw connectorException;
         } finally {
             this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
@@ -170,7 +154,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return "redirect:/#!" + uriComponentsBuilder.toUriString();
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class, ConnectorException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class, SCMException.class})
     public String invalidProjectRequest(RuntimeException ex, HttpServletRequest httpServletRequest) {
         Map<String, String> map = new HashMap<>();
         Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
@@ -182,7 +166,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         String errorCode = ResultCode.CODE_SUCCESS.getCode();
         if (ex instanceof IllegalArgumentException) {
             errorCode = ResultCode.INVALID_PARAM.getCode();
-        } else if (ex instanceof ConnectorException) {
+        } else if (ex instanceof SCMException) {
             errorCode = ResultCode.CONNECTOR_EXCEPTION.getCode();
         }
         return redirectUriString(request, errorCode, ex.getMessage());

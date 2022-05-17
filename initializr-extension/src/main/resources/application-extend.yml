@@ -18,7 +18,8 @@ extend:
         facets:
           - "web"
           - "jpa"
-    connectors:
+    scm:
+      oauthapp:
         github:
           enabled: true
           clientid: ${input-your-client-id}

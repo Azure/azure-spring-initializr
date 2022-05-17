@@ -16,12 +16,15 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
-import com.azure.spring.initializr.extension.connector.github.restclient.GitHubClient;
-import com.azure.spring.initializr.extension.connector.github.restclient.GitHubOAuthClient;
+import com.azure.spring.initializr.extension.scm.github.restclient.GithubServiceFactory;
+import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactory;
+import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactoryDelegate;
+import com.azure.spring.initializr.extension.scm.github.restclient.GitHubClient;
+import com.azure.spring.initializr.extension.scm.github.restclient.GitHubOAuthClient;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
-import com.azure.spring.initializr.metadata.connector.Connector;
+import com.azure.spring.initializr.metadata.scm.OAuthApp;
 import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
@@ -70,11 +73,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
@@ -157,17 +162,33 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
-    GitHubClient gitHubClient() {
-        return new GitHubClient();
+    GitServiceFactoryDelegate providerFactoryDelegate(ObjectProvider<List<GitServiceFactory>> providerFactories) {
+        return new GitServiceFactoryDelegate(providerFactories);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "connectors.github.enabled", havingValue = "true")
-    GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties) {
-        Connector connector = properties.getConnectors()
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "scm.oauthapp.github.enabled", havingValue = "true")
+    GitHubClient gitHubClient(WebClient.Builder builder) {
+        return new GitHubClient(builder);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "scm.oauthapp.github.enabled", havingValue = "true")
+    GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient.Builder builder) {
+        OAuthApp connector = properties.getOAuthApp()
                                         .get("github");
-        return new GitHubOAuthClient(connector);
+        return new GitHubOAuthClient(connector, builder);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "scm.oauthapp.github.enabled", havingValue = "true")
+    GithubServiceFactory githubProviderFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient) {
+        return new GithubServiceFactory(gitHubOAuthClient, gitHubClient);
+    }
+
+    @Bean
+    public WebClient.Builder builder() {
+        return WebClient.builder();
     }
 
     @Bean

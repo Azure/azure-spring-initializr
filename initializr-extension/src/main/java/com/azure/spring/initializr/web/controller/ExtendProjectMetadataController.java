@@ -1,7 +1,6 @@
 package com.azure.spring.initializr.web.controller;
 
 import com.azure.spring.initializr.autoconfigure.ExtendInitializrProperties;
-import com.azure.spring.initializr.metadata.connector.Connector;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV21JsonMapper;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV22JsonMapper;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV2JsonMapper;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -56,7 +54,7 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
     @RequestMapping(path = "/metadata/connectors", produces = "application/json")
     @ResponseBody
     public Map connectors() {
-        return this.properties.getConnectors();
+        return this.properties.getOAuthApp();
     }
 
     @RequestMapping(path = "/metadata/config", produces = "application/json")

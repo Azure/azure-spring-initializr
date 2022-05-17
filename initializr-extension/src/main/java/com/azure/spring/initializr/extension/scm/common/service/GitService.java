@@ -1,7 +1,12 @@
-package com.azure.spring.initializr.extension.connector.common;
+package com.azure.spring.initializr.extension.scm.common.service;
 
-import com.azure.spring.initializr.extension.connector.common.exception.ConnectorException;
-import com.azure.spring.initializr.extension.connector.common.model.GitRepository;
+
+import com.azure.spring.initializr.extension.scm.common.exception.SCMException;
+import com.azure.spring.initializr.extension.scm.common.model.GitRepository;
+import com.azure.spring.initializr.extension.scm.common.model.Repository;
+import com.azure.spring.initializr.extension.scm.common.model.User;
+import com.azure.spring.initializr.extension.scm.common.restclient.GitClient;
+import com.azure.spring.initializr.extension.scm.common.restclient.OAuthClient;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.RemoteAddCommand;
@@ -12,16 +17,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 
-public class GitRepositoryService {
-    private static Logger LOGGER = LoggerFactory.getLogger(GitRepositoryService.class);
+public class GitService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitService.class);
+
+    private String code;
+
+    private String accessToken;
+
+    private boolean authorized = false;
+
+    private GitClient connectorClient;
+
+    private OAuthClient oAuthClient;
+
+    public GitService(OAuthClient oAuthClient, GitClient connectorClient, String code) {
+        this.connectorClient = connectorClient;
+        this.oAuthClient = oAuthClient;
+        this.code = code;
+        getAccessToken();
+    }
+
+    public String getAccessToken() {
+        if (!authorized) {
+            accessToken = oAuthClient.getAccessToken(code).getAccessToken();
+            authorized = true;
+        }
+        return accessToken;
+    }
+
+    public User getUser() {
+        return connectorClient.getUser(accessToken);
+    }
+
+    public String createRepository(Repository repository) {
+        return connectorClient.createRepository(accessToken, repository);
+    }
+
+    public boolean repositoryExists(String ownerName, String repoName) {
+        return connectorClient.repositoryExists(accessToken, ownerName, repoName);
+    }
+
+    public String getCode() {
+        return code;
+    }
 
     /**
      * pushToGithub
@@ -60,13 +101,13 @@ public class GitRepositoryService {
             pushCommand.call();
         } catch (GitAPIException gitAPIException) {
             LOGGER.error("An error occurred while pushing to the git repo.", gitAPIException);
-            throw new ConnectorException("An error occurred while pushing to the git repo.");
+            throw new SCMException("An error occurred while pushing to the git repo.");
         } catch (URISyntaxException uriSyntaxException) {
             LOGGER.error("An error occurred while setting gituri of the git repo.", uriSyntaxException);
-            throw new ConnectorException("An error occurred while setting gituri of the git repo.");
+            throw new SCMException("An error occurred while setting gituri of the git repo.");
         } catch (IOException ioException) {
             LOGGER.error("An IO error occurred while initializing the git repo.", ioException);
-            throw new ConnectorException("An IO error occurred while initializing the git repo.");
+            throw new SCMException("An IO error occurred while initializing the git repo.");
         }
     }
 
@@ -89,5 +130,6 @@ public class GitRepositoryService {
         reader.close();
         tempFile.renameTo(inputFile);
     }
+
 
 }

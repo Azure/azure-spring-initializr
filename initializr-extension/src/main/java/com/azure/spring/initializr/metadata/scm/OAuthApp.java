@@ -1,8 +1,8 @@
-package com.azure.spring.initializr.metadata.connector;
+package com.azure.spring.initializr.metadata.scm;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Connector {
+public class OAuthApp {
     private String clientId;
 
     private String oauthUri;
