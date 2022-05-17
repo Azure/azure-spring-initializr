@@ -59,9 +59,13 @@ export default function useHash() {
             document.body.removeChild(textareaEl);
             return isSuccess;
           }
+          function redirect() {
+            const rurl = params.msg.replace(/\.git$/, '');
+            window.open(rurl);
+          }
           const msg = ({ closeToast, toastProps }) => (
             <div className='git-msg'>
-              <div className='git-msg-title' style={{color:'green'}}>Your App is ready!</div>
+              <div className='git-msg-title' style={{ color: 'green' }}>Your App is ready!</div>
               <div className='git-msg-body'>
                 <div>Your application is now on GitHub ready to be cloned:</div>
                 <div>
@@ -69,6 +73,7 @@ export default function useHash() {
                 </div>
                 <div>
                   <Button onClick={copy}>copy</Button>
+                  <Button onClick={redirect}>show repo</Button>
                   <Button onClick={closeToast}>close</Button>
                 </div>
               </div>
@@ -78,10 +83,10 @@ export default function useHash() {
         } else {
           const msg = ({ closeToast, toastProps }) => (
             <div className='git-msg'>
-              <div className='git-msg-title' style={{color:'red'}}>Some mistake happend</div>
+              <div className='git-msg-title' style={{ color: 'red' }}>Some mistake happend</div>
               <div className='git-msg-body'>
                 <div>{params.msg}</div>
-                <div style={{marginTop: '20px'}}>
+                <div style={{ marginTop: '20px' }}>
                   <Button onClick={closeToast}>close</Button>
                 </div>
               </div>
