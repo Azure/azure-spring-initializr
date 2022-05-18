@@ -20,12 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class GitService {
@@ -118,8 +113,6 @@ public class GitService {
             Assert.notNull(accessToken, "Invalid token.");
             Assert.notNull(userName, "Invalid userName name.");
 
-            removeLineInGitignore("HELP.md", directory.getAbsolutePath());
-
             Git repo = commit(userName, directory);
             gitPush(accessToken, userName, gitRepoUrl, repo);
             clean(repo);
@@ -129,9 +122,6 @@ public class GitService {
         } catch (URISyntaxException uriSyntaxException) {
             LOGGER.error("An error occurred while setting gituri of the git repo.", uriSyntaxException);
             throw new OAuthAppException("An error occurred while setting gituri of the git repo.");
-        } catch (IOException ioException) {
-            LOGGER.error("An IO error occurred while initializing the git repo.", ioException);
-            throw new OAuthAppException("An IO error occurred while initializing the git repo.");
         }
     }
 
@@ -164,26 +154,6 @@ public class GitService {
         pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userName,
                 token));
         pushCommand.call();
-    }
-
-    private static void removeLineInGitignore(String lineToRemove, String path) throws IOException {
-        File inputFile = new File(path + File.separator + ".gitignore");
-        File tempFile = new File(path + File.separator + "temp");
-
-        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-        String currentLine;
-
-        while((currentLine = reader.readLine()) != null) {
-            // trim newline when comparing with lineToRemove
-            String trimmedLine = currentLine.trim();
-            if(trimmedLine.equals(lineToRemove)) continue;
-            writer.write(currentLine + System.getProperty("line.separator"));
-        }
-        writer.close();
-        reader.close();
-        tempFile.renameTo(inputFile);
     }
 
     private void checkParameters(PushToGitProjectRequest request) {
