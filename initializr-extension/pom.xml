@@ -67,7 +67,7 @@
     </dependency>
     <dependency>
       <groupId>com.azure.spring</groupId>
-      <artifactId>spring-messaging-azure-eventhubs</artifactId>
+      <artifactId>spring-cloud-azure-starter-eventhubs</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

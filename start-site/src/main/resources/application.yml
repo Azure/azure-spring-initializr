@@ -43,6 +43,8 @@ spring:
       credential:
         managed-identity-enabled: true
       eventhubs:
+        # Make the enabled switch false if you don't need to send data to the Event Hubs
+#        enabled: false
         event-hub-name: initializr
         namespace: ${EVENT_HUBS_INITIALIZR_NAMESPACE}
 
