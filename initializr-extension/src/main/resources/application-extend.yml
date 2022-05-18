@@ -21,7 +21,16 @@ extend:
     oauthapps:
       github:
         enabled: true
-        clientid: ${input-your-client-id}
-        clientSecret: ${input-your-client-secret}
+        clientid: ${kv-github-client-id}
+        clientSecret: ${kv-github-client-secret}
         oauthUri: https://github.com/login/oauth/authorize
-        redirectUri: ${input-your-redirectUri}
+        redirectUri: ${kv-github-client-redirectUri}
+spring:
+  cloud:
+    azure:
+      keyvault:
+        secret:
+          property-source-enabled: true
+          property-sources:
+            - name: key-vault-property-souece
+              endpoint: ${input-your-keyvault-endpoint}
