@@ -4,6 +4,6 @@ public interface GitServiceFactory {
 
     GitService getGitService(String code);
 
-    boolean support(String type);
+    boolean support(String gitServiceType);
 
 }

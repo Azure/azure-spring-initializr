@@ -65,7 +65,7 @@ public class GitService {
         if (repositoryExists) {
             throw new OAuthAppException("There is already a project named ' "
                     + artifactId
-                    + "' on your " + request.getConnectorType()
+                    + "' on your " + request.getGitServiceType()
                     + ", please retry with a different name (the artifact is the name)...");
         }
 

@@ -22,7 +22,7 @@ public class GithubServiceFactory implements GitServiceFactory {
     }
 
     @Override
-    public boolean support(String type) {
-        return GITHUB.equals(type);
+    public boolean support(String gitServiceType) {
+        return GITHUB.equals(gitServiceType);
     }
 }

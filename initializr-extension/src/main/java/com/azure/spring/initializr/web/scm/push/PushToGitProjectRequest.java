@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class PushToGitProjectRequest extends ExtendProjectRequest {
     private String code;
 
-    private String connectorType;
+    private String gitServiceType;
 
     public String getCode() {
         return code;
@@ -36,12 +36,12 @@ public class PushToGitProjectRequest extends ExtendProjectRequest {
         this.code = code;
     }
 
-    public String getConnectorType() {
-        return connectorType;
+    public String getGitServiceType() {
+        return gitServiceType;
     }
 
-    public void setConnectorType(String connectorType) {
-        this.connectorType = connectorType;
+    public void setGitServiceType(String gitServiceType) {
+        this.gitServiceType = gitServiceType;
     }
 
 }

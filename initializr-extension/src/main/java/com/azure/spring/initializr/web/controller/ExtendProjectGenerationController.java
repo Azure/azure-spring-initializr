@@ -46,10 +46,10 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
 
     @RequestMapping(path = "/login/oauth2/code")
     public String pushToGitRepository(PushToGitProjectRequest request) {
-        if (StringUtils.isNotBlank(request.getConnectorType()) && StringUtils.isNotBlank(request.getCode())) {
+        if (StringUtils.isNotBlank(request.getGitServiceType()) && StringUtils.isNotBlank(request.getCode())) {
             ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
             try {
-                GitService gitService = gitServiceFactoryDelegate.getGitService(request.getConnectorType(), request.getCode());
+                GitService gitService = gitServiceFactoryDelegate.getGitService(request.getGitServiceType(), request.getCode());
                 String gitRepositoryUrl = gitService.pushToGitRepository(request, result);
                 return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), gitRepositoryUrl);
             } catch (RuntimeException exception) {
