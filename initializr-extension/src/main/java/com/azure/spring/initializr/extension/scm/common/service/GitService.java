@@ -75,33 +75,12 @@ public class GitService {
         try {
             Assert.notNull(token, "Invalid token.");
             Assert.notNull(userName, "Invalid owner name.");
-            
-            // remove HELP.md in .gitignore
+
             removeLineInGitignore("HELP.md", directory.getAbsolutePath());
-            //01. Init a git repo.
-            Git repo = Git.init()
-                    .setInitialBranch(GIT_INIT_BRANCH)
-                    .setDirectory(directory)
-                    .call();
-            //02. Add all files to git repo.
-            repo.add().addFilepattern(".").call();
-            //03. Add all files to git repo.
-            repo.commit().setMessage(GIT_INIT_MESSAGE)
-                    .setAuthor(userName, GIT_INIT_EMAIL)
-                    .setCommitter(userName, GIT_INIT_EMAIL)
-                    .setSign(false)
-                    .call();
-            //04. Add remote
-            RemoteAddCommand remote = repo.remoteAdd();
-            remote.setName("origin")
-                    .setUri(new URIish(gitRepoUrl)).call();
-            //05. Push to remote
-            PushCommand pushCommand = repo.push();
-            pushCommand.add("HEAD");
-            pushCommand.setRemote("origin");
-            pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userName,
-                    token));
-            pushCommand.call();
+
+            Git repo = commit(userName, directory);
+            push(token, userName, gitRepoUrl, repo);
+            clean(repo);
         } catch (GitAPIException gitAPIException) {
             LOGGER.error("An error occurred while pushing to the git repo.", gitAPIException);
             throw new OAuthAppException("An error occurred while pushing to the git repo.");
@@ -112,6 +91,37 @@ public class GitService {
             LOGGER.error("An IO error occurred while initializing the git repo.", ioException);
             throw new OAuthAppException("An IO error occurred while initializing the git repo.");
         }
+    }
+
+    private void clean(Git repo) throws GitAPIException {
+        repo.clean().call();
+        repo.close();
+    }
+
+    private Git commit(String userName, File directory) throws GitAPIException {
+        Git repo = Git.init()
+                .setInitialBranch(GIT_INIT_BRANCH)
+                .setDirectory(directory)
+                .call();
+        repo.add().addFilepattern(".").call();
+        repo.commit().setMessage(GIT_INIT_MESSAGE)
+                .setAuthor(userName, GIT_INIT_EMAIL)
+                .setCommitter(userName, GIT_INIT_EMAIL)
+                .setSign(false)
+                .call();
+        return repo;
+    }
+
+    private void push(String token, String userName, String gitRepoUrl, Git repo) throws GitAPIException, URISyntaxException {
+        RemoteAddCommand remote = repo.remoteAdd();
+        remote.setName("origin")
+                .setUri(new URIish(gitRepoUrl)).call();
+        PushCommand pushCommand = repo.push();
+        pushCommand.add("HEAD");
+        pushCommand.setRemote("origin");
+        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userName,
+                token));
+        pushCommand.call();
     }
 
     private static void removeLineInGitignore(String lineToRemove, String path) throws IOException {
