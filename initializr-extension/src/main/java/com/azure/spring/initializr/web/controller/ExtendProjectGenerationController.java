@@ -91,8 +91,8 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
             File path = new File(result.getRootDirectory().toFile().getAbsolutePath()
                     + "/" + request.getBaseDir());
             gitService.pushToGitRepository(gitService.getAccessToken(), username, path, gitRepositoryUrl);
-        } catch (OAuthAppException scmException) {
-            throw scmException;
+        } catch (OAuthAppException oAuthAppException) {
+            throw oAuthAppException;
         } finally {
             this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
         }

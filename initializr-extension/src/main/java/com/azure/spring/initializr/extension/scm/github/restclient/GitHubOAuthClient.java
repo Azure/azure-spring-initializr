@@ -18,8 +18,6 @@ import java.util.Map;
 
 /**
  */
-@Component
-@ConditionalOnProperty(prefix = "initializr.scm.oauthapp", name = "github.enabled", havingValue = "true")
 public class GitHubOAuthClient implements OAuthClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubOAuthClient.class);
 
