@@ -38,7 +38,9 @@ public class GitHubOAuthClient implements OAuthClient {
     @Override
     public TokenResult getAccessToken(String authorizationCode) {
         Assert.notNull(authorizationCode, "Invalid authorizationCode.");
-
+        Assert.notNull(oAuthApp.getClientId(), "Invalid clientId.");
+        Assert.notNull(oAuthApp.getClientSecret(), "Invalid clientSecret.");
+        Assert.notNull(oAuthApp.getRedirectUri(), "Invalid redirectUri.");
         try {
             Map<String, String> map = new HashMap();
             map.put("client_id", oAuthApp.getClientId());

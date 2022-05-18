@@ -2,7 +2,6 @@ package com.azure.spring.initializr.extension.scm.common.service;
 
 
 import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
-import com.azure.spring.initializr.extension.scm.common.model.GitRepository;
 import com.azure.spring.initializr.extension.scm.common.model.Repository;
 import com.azure.spring.initializr.extension.scm.common.model.User;
 import com.azure.spring.initializr.extension.scm.common.restclient.GitClient;
@@ -22,6 +21,10 @@ import java.net.URISyntaxException;
 
 public class GitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitService.class);
+    private static String GIT_INIT_EMAIL = "SpringIntegSupport@microsoft.com";
+    private static String GIT_INIT_MESSAGE = "Initial commit from Azure Spring Initializr";
+    private static String GIT_INIT_BRANCH = "main";
+
 
     private String code;
 
@@ -68,36 +71,36 @@ public class GitService {
      * pushToGithub
      *
      */
-    public static void pushToGitRepository(GitRepository gitRepository) {
+    public void pushToGitRepository(String token, String userName, File directory,String  gitRepoUrl) {
         try {
-            Assert.notNull(gitRepository.getToken(), "Invalid token.");
-            Assert.notNull(gitRepository.getUserName(), "Invalid owner name.");
-            gitRepository.setEmail("SpringIntegSupport@microsoft.com");
+            Assert.notNull(token, "Invalid token.");
+            Assert.notNull(userName, "Invalid owner name.");
+            
             // remove HELP.md in .gitignore
-            removeLineInGitignore("HELP.md", gitRepository.getTemplateFile().getAbsolutePath());
+            removeLineInGitignore("HELP.md", directory.getAbsolutePath());
             //01. Init a git repo.
             Git repo = Git.init()
-                    .setInitialBranch(gitRepository.getInitialBranch())
-                    .setDirectory(gitRepository.getTemplateFile())
+                    .setInitialBranch(GIT_INIT_BRANCH)
+                    .setDirectory(directory)
                     .call();
             //02. Add all files to git repo.
             repo.add().addFilepattern(".").call();
             //03. Add all files to git repo.
-            repo.commit().setMessage("Initial commit from Azure Spring Initializr")
-                    .setAuthor(gitRepository.getUserName(), gitRepository.getEmail())
-                    .setCommitter(gitRepository.getUserName(), gitRepository.getEmail())
+            repo.commit().setMessage(GIT_INIT_MESSAGE)
+                    .setAuthor(userName, GIT_INIT_EMAIL)
+                    .setCommitter(userName, GIT_INIT_EMAIL)
                     .setSign(false)
                     .call();
             //04. Add remote
             RemoteAddCommand remote = repo.remoteAdd();
             remote.setName("origin")
-                    .setUri(new URIish(gitRepository.getHttpTransportUrl())).call();
+                    .setUri(new URIish(gitRepoUrl)).call();
             //05. Push to remote
             PushCommand pushCommand = repo.push();
             pushCommand.add("HEAD");
             pushCommand.setRemote("origin");
-            pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUserName(),
-                    gitRepository.getToken()));
+            pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userName,
+                    token));
             pushCommand.call();
         } catch (GitAPIException gitAPIException) {
             LOGGER.error("An error occurred while pushing to the git repo.", gitAPIException);

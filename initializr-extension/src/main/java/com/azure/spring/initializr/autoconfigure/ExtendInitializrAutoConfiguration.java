@@ -167,13 +167,13 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "oauthapps.github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
     GitHubClient gitHubClient(WebClient.Builder builder) {
         return new GitHubClient(builder);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "oauthapps.github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient.Builder builder) {
         OAuthApp oAuthApp = properties.getOAuthApps()
                                        .get("github");
@@ -181,12 +181,13 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "oauthapps.github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
     GithubServiceFactory githubProviderFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient) {
         return new GithubServiceFactory(gitHubOAuthClient, gitHubClient);
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public WebClient.Builder builder() {
         return WebClient.builder();
     }

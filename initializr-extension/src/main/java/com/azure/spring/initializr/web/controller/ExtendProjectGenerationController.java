@@ -3,7 +3,6 @@ package com.azure.spring.initializr.web.controller;
 import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.common.model.Repository;
 import com.azure.spring.initializr.extension.scm.common.model.User;
-import com.azure.spring.initializr.extension.scm.common.model.GitRepository;
 import com.azure.spring.initializr.extension.scm.common.service.GitService;
 import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactoryDelegate;
 import com.azure.spring.initializr.web.scm.PushToGitProjectRequest;
@@ -86,17 +85,12 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         gitService.createRepository(repository);
 
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
-        String gitRepositoryUrl = "https://github.com/" + username + "/" + artifactId;
 
+        String gitRepositoryUrl = "https://github.com/" + username + "/" + artifactId;
         try {
-            GitRepository gitRepository = new GitRepository();
-            gitRepository.setInitialBranch("main");
-            gitRepository.setHttpTransportUrl(gitRepositoryUrl);
-            gitRepository.setUserName(username);
-            gitRepository.setToken(gitService.getAccessToken());
-            gitRepository.setTemplateFile(new File(result.getRootDirectory().toFile().getAbsolutePath()
-                    + "/" + request.getBaseDir()));
-            gitService.pushToGitRepository(gitRepository);
+            File path = new File(result.getRootDirectory().toFile().getAbsolutePath()
+                    + "/" + request.getBaseDir());
+            gitService.pushToGitRepository(gitService.getAccessToken(), username, path, gitRepositoryUrl);
         } catch (OAuthAppException scmException) {
             throw scmException;
         } finally {
