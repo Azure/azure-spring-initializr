@@ -19,8 +19,8 @@ import java.util.Map;
 public class GitHubOAuthClient implements OAuthClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubOAuthClient.class);
 
-    private final static String BASE_URI = "https://github.com";
-    private final static String ACCESS_TOKEN_URI = "/login/oauth/access_token";
+    private static final String BASE_URI = "https://github.com";
+    private static final String ACCESS_TOKEN_URI = "/login/oauth/access_token";
 
     private final OAuthApp oAuthApp;
     private final WebClient.Builder builder;
@@ -38,7 +38,7 @@ public class GitHubOAuthClient implements OAuthClient {
         Assert.notNull(oAuthApp.getClientSecret(), "Invalid clientSecret.");
         Assert.notNull(oAuthApp.getRedirectUri(), "Invalid redirectUri.");
         try {
-            Map<String, String> map = new HashMap();
+            Map<String, String> map = new HashMap<>();
             map.put("client_id", oAuthApp.getClientId());
             map.put("client_secret", oAuthApp.getClientSecret());
             map.put("redirect_uri", oAuthApp.getRedirectUri());

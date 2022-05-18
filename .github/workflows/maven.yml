@@ -55,7 +55,10 @@ jobs:
           app-name: azure-spring-initializr
           use-staging-deployment: false
           package: ${{ github.workspace }}/start-site/target/start-site-exec.jar
-          environment-variables: -extend.initializr.connectors.github.clientid ${{ secrets.GH_OAUTH_CLIENTID }} -extend.initializr.connectors.github.clientSecret ${{ secrets.GH_OAUTH_CLIENTSECRET }} -extend.initializr.connectors.github.redirectUri ${{ secrets.GH_OAUTH_REDIRECTURI }}
+          environment-variables: >
+            -extend.initializr.gitpush.oauthapps.github.clientid ${{ secrets.GH_OAUTH_CLIENTID }} 
+            -extend.initializr.gitpush.oauthapps.github.clientSecret ${{ secrets.GH_OAUTH_CLIENTSECRET }} 
+            -extend.initializr.gitpush.oauthapps.github.redirectUri ${{ secrets.GH_OAUTH_REDIRECTURI }}
   build_java_docker_image:
     name: Build and publish a JVM-based Docker image
     needs: [ build ]

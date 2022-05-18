@@ -3,8 +3,7 @@ package com.azure.spring.initializr.web.controller;
 import com.azure.spring.initializr.extension.scm.push.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitService;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryDelegate;
-import com.azure.spring.initializr.web.scm.push.PushToGitProjectRequest;
-import com.azure.spring.initializr.web.scm.push.ResultCode;
+import com.azure.spring.initializr.web.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
@@ -12,7 +11,6 @@ import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
 import io.spring.initializr.web.project.ProjectGenerationResult;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,16 +23,17 @@ import java.util.Map;
 
 public class ExtendProjectGenerationController extends ProjectGenerationController<ExtendProjectRequest> {
 
-    ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker;
+    private final ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker;
+
+    private final GitServiceFactoryDelegate gitServiceFactoryDelegate;
 
     public ExtendProjectGenerationController(InitializrMetadataProvider metadataProvider,
-                                             ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker) {
+                                             ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker,
+                                             GitServiceFactoryDelegate gitServiceFactoryDelegate) {
         super(metadataProvider, projectGenerationInvoker);
+        this.gitServiceFactoryDelegate = gitServiceFactoryDelegate;
         this.projectGenerationInvoker = projectGenerationInvoker;
     }
-
-    @Autowired
-    GitServiceFactoryDelegate gitServiceFactoryDelegate;
 
     @Override
     public ExtendProjectRequest projectRequest(Map<String, String> headers) {
@@ -45,7 +44,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     }
 
     @RequestMapping(path = "/login/oauth2/code")
-    public String pushToGitRepository(PushToGitProjectRequest request) {
+    public String pushToGitRepository(ExtendProjectRequest request) {
         if (StringUtils.isNotBlank(request.getGitServiceType()) && StringUtils.isNotBlank(request.getCode())) {
             ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
             try {
@@ -61,11 +60,11 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return redirectUriString(request);
     }
 
-    private String redirectUriString(PushToGitProjectRequest request) {
+    private String redirectUriString(ExtendProjectRequest request) {
         return redirectUriString(request, null, null);
     }
 
-    private String redirectUriString(PushToGitProjectRequest request, String errorCode, String msg) {
+    private String redirectUriString(ExtendProjectRequest request, String errorCode, String msg) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
         if (errorCode != null && msg != null) {
             uriComponentsBuilder
@@ -94,11 +93,12 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     public String invalidProjectRequest(RuntimeException ex, HttpServletRequest httpServletRequest) {
         Map<String, String> map = new HashMap<>();
         Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
-        for (String name : Collections.list(parameterNames)) {
+        while (parameterNames.hasMoreElements()) {
+            String name = parameterNames.nextElement();
             map.put(name, httpServletRequest.getParameter(name));
         }
         ObjectMapper mapper = new ObjectMapper();
-        PushToGitProjectRequest request = mapper.convertValue(map, PushToGitProjectRequest.class);
+        ExtendProjectRequest request = mapper.convertValue(map, ExtendProjectRequest.class);
         String errorCode = ResultCode.CODE_SUCCESS.getCode();
         if (ex instanceof IllegalArgumentException) {
             errorCode = ResultCode.INVALID_PARAM.getCode();

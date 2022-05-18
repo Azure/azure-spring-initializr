@@ -1,6 +1,6 @@
 package com.azure.spring.initializr.web.project;
 
-import com.azure.spring.initializr.web.project.ExtendProjectRequest;
+import com.azure.spring.initializr.generator.project.ExtendProjectDescription;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
@@ -23,8 +23,9 @@ public class ExtendProjectRequestToDescriptionConverter implements ProjectReques
     public ProjectDescription convert(ExtendProjectRequest request, InitializrMetadata metadata) {
         validate(request, metadata);
         ProjectDescription description = delegate.convert(request, metadata);
-
-        return description;
+        ExtendProjectDescription extendProjectDescription = new ExtendProjectDescription(description);
+        extendProjectDescription.setGitServiceType(request.getGitServiceType());
+        return extendProjectDescription;
     }
 
     private void validate(ProjectRequest request, InitializrMetadata metadata) {

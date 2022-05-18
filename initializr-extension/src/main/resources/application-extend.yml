@@ -18,13 +18,14 @@ extend:
         facets:
           - "web"
           - "jpa"
-    oauthapps:
-      github:
-        enabled: true
-        clientid: ${kv-github-client-id}
-        clientSecret: ${kv-github-client-secret}
-        oauthUri: https://github.com/login/oauth/authorize
-        redirectUri: ${kv-github-client-redirectUri}
+    gitpush:
+      oauthapps:
+        github:
+          enabled: true
+          clientid: ${kv-github-client-id}
+          client-secret: ${kv-github-client-secret}
+          oauth-uri: https://github.com/login/oauth/authorize
+          redirect-uri: ${kv-github-client-redirect-uri}
 
 spring:
   cloud:

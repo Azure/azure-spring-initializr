@@ -16,6 +16,7 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
+import com.azure.spring.initializr.extension.scm.push.common.GitServiceEnum;
 import com.azure.spring.initializr.extension.scm.push.github.restclient.GithubServiceFactory;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactory;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryDelegate;
@@ -147,43 +148,29 @@ public class ExtendInitializrAutoConfiguration {
         return new ExtendInitializrMetadataProvider(metadata, strategies);
     }
 
-    @Bean("projectGenerationController")
-    @ConditionalOnMissingBean
-    ExtendProjectGenerationController projectGenerationController(
-        InitializrMetadataProvider metadataProvider,
-        ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
-        ApplicationContext applicationContext) {
-        ExtendProjectRequestToDescriptionConverter converter =
-            new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
-                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
-        ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-            applicationContext, converter);
-        return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
-    }
-
     @Bean
-    GitServiceFactoryDelegate gitServiceFactoryDelegate(ObjectProvider<List<GitServiceFactory>> providerFactories) {
+    GitServiceFactoryDelegate gitServiceFactoryDelegate(ObjectProvider<GitServiceFactory> providerFactories) {
         return new GitServiceFactoryDelegate(providerFactories);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr.gitpush.oauthapps", name = "github.enabled", havingValue = "true")
     GitHubClient gitHubClient(WebClient.Builder builder) {
         return new GitHubClient(builder);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr.gitpush.oauthapps", name = "github.enabled", havingValue = "true")
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient.Builder builder) {
         OAuthApp oAuthApp = properties.getOAuthApps()
-                                       .get("github");
+                                      .get(GitServiceEnum.GITHUB.getName());
         return new GitHubOAuthClient(oAuthApp, builder);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
-    GithubServiceFactory githubServiceFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient) {
-        return new GithubServiceFactory(gitHubOAuthClient, gitHubClient);
+    @ConditionalOnProperty(prefix = "extend.initializr.gitpush.oauthapps", name = "github.enabled", havingValue = "true")
+    GitServiceFactory githubServiceFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient, ExtendInitializrProperties properties) {
+        return new GithubServiceFactory(gitHubOAuthClient, gitHubClient, properties.getGitPush());
     }
 
     @Bean
@@ -230,6 +217,21 @@ public class ExtendInitializrAutoConfiguration {
     @Configuration
     @ConditionalOnWebApplication
     static class InitializrWebConfiguration {
+
+        @Bean("projectGenerationController")
+        @ConditionalOnMissingBean
+        ExtendProjectGenerationController projectGenerationController(
+                InitializrMetadataProvider metadataProvider,
+                ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
+                ApplicationContext applicationContext,
+                GitServiceFactoryDelegate gitServiceFactoryDelegate) {
+            ExtendProjectRequestToDescriptionConverter converter =
+                    new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
+                            .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
+            ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
+                    applicationContext, converter);
+            return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker, gitServiceFactoryDelegate);
+        }
 
         @Bean
         InitializrWebConfig initializrWebConfig() {
