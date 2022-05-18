@@ -25,12 +25,14 @@ extend:
         clientSecret: ${kv-github-client-secret}
         oauthUri: https://github.com/login/oauth/authorize
         redirectUri: ${kv-github-client-redirectUri}
+
 spring:
   cloud:
     azure:
       keyvault:
         secret:
-          property-source-enabled: true
+          # set property-source-enabled to `true` if you want to use keyvault
+          property-source-enabled: false
           property-sources:
             - name: key-vault-property-souece
               endpoint: ${input-your-keyvault-endpoint}
