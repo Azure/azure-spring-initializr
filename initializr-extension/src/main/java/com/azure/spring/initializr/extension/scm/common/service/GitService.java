@@ -21,9 +21,9 @@ import java.net.URISyntaxException;
 
 public class GitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitService.class);
-    private static String GIT_INIT_EMAIL = "SpringIntegSupport@microsoft.com";
-    private static String GIT_INIT_MESSAGE = "Initial commit from Azure Spring Initializr";
-    private static String GIT_INIT_BRANCH = "main";
+    private static final String GIT_INIT_EMAIL = "SpringIntegSupport@microsoft.com";
+    private static final String GIT_INIT_MESSAGE = "Initial commit from Azure Spring Initializr";
+    private static final String GIT_INIT_BRANCH = "main";
 
 
     private String code;

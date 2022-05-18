@@ -6,6 +6,7 @@ import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactor
 public class GithubServiceFactory implements GitServiceFactory {
 
     private static final String GITHUB = "github";
+
     private GitHubOAuthClient gitHubOAuthClient;
 
     private GitHubClient gitHubClient;
@@ -21,7 +22,7 @@ public class GithubServiceFactory implements GitServiceFactory {
     }
 
     @Override
-    public String getType() {
-        return GITHUB;
+    public boolean support(String type) {
+        return GITHUB.equals(type);
     }
 }

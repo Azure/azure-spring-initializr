@@ -162,7 +162,7 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    GitServiceFactoryDelegate providerFactoryDelegate(ObjectProvider<List<GitServiceFactory>> providerFactories) {
+    GitServiceFactoryDelegate gitServiceFactoryDelegate(ObjectProvider<List<GitServiceFactory>> providerFactories) {
         return new GitServiceFactoryDelegate(providerFactories);
     }
 
@@ -182,7 +182,7 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "extend.initializr.oauthapps", name = "github.enabled", havingValue = "true")
-    GithubServiceFactory githubProviderFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient) {
+    GithubServiceFactory githubServiceFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient) {
         return new GithubServiceFactory(gitHubOAuthClient, gitHubClient);
     }
 
