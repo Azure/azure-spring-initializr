@@ -7,7 +7,7 @@ import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.project.ProjectRequestToDescriptionConverter;
 
-public class ExtendProjectRequestToDescriptionConverter implements ProjectRequestToDescriptionConverter<ProjectRequest> {
+public class ExtendProjectRequestToDescriptionConverter implements ProjectRequestToDescriptionConverter<ExtendProjectRequest> {
 
     private final ProjectRequestPlatformVersionTransformer platformVersionTransformer;
 
@@ -19,23 +19,23 @@ public class ExtendProjectRequestToDescriptionConverter implements ProjectReques
     }
 
     @Override
-    public ProjectDescription convert(ProjectRequest request, InitializrMetadata metadata) {
+    public ProjectDescription convert(ExtendProjectRequest request, InitializrMetadata metadata) {
         validate(request, metadata);
         ProjectDescription description = delegate.convert(request, metadata);
 
         return description;
     }
 
-    private void validate(ProjectRequest request, InitializrMetadata metadata) {
+    private void validate(ExtendProjectRequest request, InitializrMetadata metadata) {
         validateArchitecture(request, metadata);
         validateSamples(request, metadata);
     }
 
-    private void validateArchitecture(ProjectRequest request, InitializrMetadata metadata) {
+    private void validateArchitecture(ExtendProjectRequest request, InitializrMetadata metadata) {
 
     }
 
-    private void validateSamples(ProjectRequest request, InitializrMetadata metadata) {
+    private void validateSamples(ExtendProjectRequest request, InitializrMetadata metadata) {
 
     }
 

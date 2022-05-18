@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-public class GenerationEventLogConverter implements Converter<ProjectRequestEvent, GenerationEventLog> {
+public final class GenerationEventLogConverter implements Converter<ProjectRequestEvent, GenerationEventLog> {
 
     public static Converter<ProjectRequestEvent, GenerationEventLog> CONVERTER = new GenerationEventLogConverter();
 
@@ -31,6 +31,9 @@ public class GenerationEventLogConverter implements Converter<ProjectRequestEven
                 .ifPresent(samples -> log.setSamples(String.join(",", samples)));
         Optional.ofNullable(request.getDependencies())
                 .ifPresent(dependencies -> log.setDependencies(String.join(",", dependencies)));
+//        log.setStackTrace(event.getCause().getLocalizedMessage());
+//        log.setMessage(event.getCause().getMessage());
+//        log.setExceptionClass(event.getCause().getClass().getSimpleName());
         return log;
     }
 }

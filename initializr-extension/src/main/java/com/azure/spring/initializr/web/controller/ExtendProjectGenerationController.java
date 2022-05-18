@@ -4,13 +4,12 @@ import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
-import io.spring.initializr.web.project.ProjectRequest;
 
 import java.util.Map;
 
-public class ExtendProjectGenerationController extends ProjectGenerationController<ProjectRequest> {
+public class ExtendProjectGenerationController extends ProjectGenerationController<ExtendProjectRequest> {
     public ExtendProjectGenerationController(InitializrMetadataProvider metadataProvider,
-                                              ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker) {
+                                              ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker) {
         super(metadataProvider, projectGenerationInvoker);
     }
 

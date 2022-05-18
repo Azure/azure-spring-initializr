@@ -16,38 +16,30 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import com.azure.spring.initializr.web.project.EventHubsProjectGenerationStatisticsProcessor;
 
 /**
  * Statistics-related properties.
  */
 public class StatsProperties {
+    
+    private final Eventhubs eventhubs = new Eventhubs();
 
-	@NestedConfigurationProperty
-	private final Eventhub eventhub = new Eventhub();
-
-    public Eventhub getEventhub() {
-        return eventhub;
+    public Eventhubs getEventhubs() {
+        return eventhubs;
     }
 
     /**
-	 * EventHub configuration.
-	 */
-	public static final class Eventhub {
+     * Event Hubs configuration.
+     */
+    public static final class Eventhubs {
 
-        static final String INITIALIZR_SUCCESS_EVENTHUB_NAME = "initializr-success";
-        static final String INITIALIZR_FAILURE_EVENTHUB_NAME = "initializr-failure";
-
-		/**
-		 * Whether the project generation stat via EventHubs is enabled, not enabled be default.
-         * If enabling this switch, the project generation request will be collected through EventHubs,
-         * finally ingested into Azure Data Explorer.
-		 */
+        /**
+         * Whether the project generation Statistics via Event Hubs is enabled, not enabled by default.
+         * If enabling this switch, the project generation request will be sent by {@link EventHubsProjectGenerationStatisticsProcessor}
+         * through Event Hubs, finally ingested into Azure Data Explorer.
+         */
         private boolean enabled;
-
-        private String successEventhubName = INITIALIZR_SUCCESS_EVENTHUB_NAME;
-
-        private String failureEventhubName = INITIALIZR_FAILURE_EVENTHUB_NAME;
 
         public boolean isEnabled() {
             return enabled;
@@ -55,22 +47,6 @@ public class StatsProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
-        }
-
-        public String getSuccessEventhubName() {
-            return successEventhubName;
-        }
-
-        public void setSuccessEventhubName(String successEventhubName) {
-            this.successEventhubName = successEventhubName;
-        }
-
-        public String getFailureEventhubName() {
-            return failureEventhubName;
-        }
-
-        public void setFailureEventhubName(String failureEventhubName) {
-            this.failureEventhubName = failureEventhubName;
         }
     }
 

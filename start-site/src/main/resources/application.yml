@@ -43,7 +43,7 @@ spring:
       credential:
         managed-identity-enabled: true
       eventhubs:
-        event-hub-name: may-not-exists
+        event-hub-name: initializr
         namespace: ${EVENT_HUBS_INITIALIZR_NAMESPACE}
 
 initializr:
@@ -1643,10 +1643,8 @@ initializr:
 extend:
   initializr:
     stats:
-      eventhub:
+      eventhubs:
         enabled: true
-#        success-eventhub-name: initializr-success-dev
-#        failure-eventhub-name: initializr-failure-dev
 
 #azure:
 #  initializr:
