@@ -53,8 +53,8 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
 
     @RequestMapping(path = "/metadata/connectors", produces = "application/json")
     @ResponseBody
-    public Map connectors() {
-        return this.properties.getOAuthApp();
+    public Map oauthApps() {
+        return this.properties.getOAuthApps();
     }
 
     @RequestMapping(path = "/metadata/config", produces = "application/json")

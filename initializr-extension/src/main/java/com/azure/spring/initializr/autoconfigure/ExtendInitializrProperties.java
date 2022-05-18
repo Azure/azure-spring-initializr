@@ -19,27 +19,15 @@ public class ExtendInitializrProperties {
     @JsonIgnore
     private final List<Architecture> architectures = new ArrayList<>();
 
-    private final Scm scm = new Scm();
-
     public List<Architecture> getArchitectures() {
         return architectures;
     }
 
-    public Scm getScm() {
-        return scm;
-    }
+    @JsonIgnore
+    private final Map<String, OAuthApp> oAuthApps = new HashMap<>();
 
-    public class Scm{
-        @JsonIgnore
-        private final Map<String, OAuthApp> oAuthAppMap = new HashMap();
-
-        public Map<String, OAuthApp> getOAuthApp() {
-            return oAuthAppMap;
-        }
-    }
-
-    public Map<String, OAuthApp> getOAuthApp() {
-        return this.scm.getOAuthApp();
+    public Map<String, OAuthApp> getOAuthApps() {
+        return oAuthApps;
     }
 
 

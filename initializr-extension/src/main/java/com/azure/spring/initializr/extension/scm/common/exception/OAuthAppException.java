@@ -1,21 +1,21 @@
 package com.azure.spring.initializr.extension.scm.common.exception;
 
-public class SCMException extends RuntimeException{
+public class OAuthAppException extends RuntimeException{
     private static final long serialVersionUID = -5365631128956061164L;
 
-    public SCMException() {
+    public OAuthAppException() {
         super();
     }
 
-    public SCMException(String s) {
+    public OAuthAppException(String s) {
         super(s);
     }
 
-    public SCMException(String message, Throwable cause) {
+    public OAuthAppException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public SCMException(Throwable cause) {
+    public OAuthAppException(Throwable cause) {
         super(cause);
     }
 }

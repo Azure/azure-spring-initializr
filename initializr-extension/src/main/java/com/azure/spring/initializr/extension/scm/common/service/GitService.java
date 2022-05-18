@@ -1,7 +1,7 @@
 package com.azure.spring.initializr.extension.scm.common.service;
 
 
-import com.azure.spring.initializr.extension.scm.common.exception.SCMException;
+import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.common.model.GitRepository;
 import com.azure.spring.initializr.extension.scm.common.model.Repository;
 import com.azure.spring.initializr.extension.scm.common.model.User;
@@ -29,12 +29,12 @@ public class GitService {
 
     private boolean authorized = false;
 
-    private GitClient connectorClient;
+    private GitClient gitClient;
 
     private OAuthClient oAuthClient;
 
-    public GitService(OAuthClient oAuthClient, GitClient connectorClient, String code) {
-        this.connectorClient = connectorClient;
+    public GitService(OAuthClient oAuthClient, GitClient gitClient, String code) {
+        this.gitClient = gitClient;
         this.oAuthClient = oAuthClient;
         this.code = code;
         getAccessToken();
@@ -49,15 +49,15 @@ public class GitService {
     }
 
     public User getUser() {
-        return connectorClient.getUser(accessToken);
+        return gitClient.getUser(accessToken);
     }
 
     public String createRepository(Repository repository) {
-        return connectorClient.createRepository(accessToken, repository);
+        return gitClient.createRepository(accessToken, repository);
     }
 
-    public boolean repositoryExists(String ownerName, String repoName) {
-        return connectorClient.repositoryExists(accessToken, ownerName, repoName);
+    public boolean repositoryExists(String username, String repoName) {
+        return gitClient.repositoryExists(accessToken, username, repoName);
     }
 
     public String getCode() {
@@ -71,7 +71,7 @@ public class GitService {
     public static void pushToGitRepository(GitRepository gitRepository) {
         try {
             Assert.notNull(gitRepository.getToken(), "Invalid token.");
-            Assert.notNull(gitRepository.getOwnerName(), "Invalid owner name.");
+            Assert.notNull(gitRepository.getUserName(), "Invalid owner name.");
             gitRepository.setEmail("SpringIntegSupport@microsoft.com");
             // remove HELP.md in .gitignore
             removeLineInGitignore("HELP.md", gitRepository.getTemplateFile().getAbsolutePath());
@@ -84,8 +84,8 @@ public class GitService {
             repo.add().addFilepattern(".").call();
             //03. Add all files to git repo.
             repo.commit().setMessage("Initial commit from Azure Spring Initializr")
-                    .setAuthor(gitRepository.getOwnerName(), gitRepository.getEmail())
-                    .setCommitter(gitRepository.getOwnerName(), gitRepository.getEmail())
+                    .setAuthor(gitRepository.getUserName(), gitRepository.getEmail())
+                    .setCommitter(gitRepository.getUserName(), gitRepository.getEmail())
                     .setSign(false)
                     .call();
             //04. Add remote
@@ -96,18 +96,18 @@ public class GitService {
             PushCommand pushCommand = repo.push();
             pushCommand.add("HEAD");
             pushCommand.setRemote("origin");
-            pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getOwnerName(),
+            pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUserName(),
                     gitRepository.getToken()));
             pushCommand.call();
         } catch (GitAPIException gitAPIException) {
             LOGGER.error("An error occurred while pushing to the git repo.", gitAPIException);
-            throw new SCMException("An error occurred while pushing to the git repo.");
+            throw new OAuthAppException("An error occurred while pushing to the git repo.");
         } catch (URISyntaxException uriSyntaxException) {
             LOGGER.error("An error occurred while setting gituri of the git repo.", uriSyntaxException);
-            throw new SCMException("An error occurred while setting gituri of the git repo.");
+            throw new OAuthAppException("An error occurred while setting gituri of the git repo.");
         } catch (IOException ioException) {
             LOGGER.error("An IO error occurred while initializing the git repo.", ioException);
-            throw new SCMException("An IO error occurred while initializing the git repo.");
+            throw new OAuthAppException("An IO error occurred while initializing the git repo.");
         }
     }
 

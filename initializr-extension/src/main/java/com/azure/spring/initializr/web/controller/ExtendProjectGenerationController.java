@@ -1,13 +1,13 @@
 package com.azure.spring.initializr.web.controller;
 
-import com.azure.spring.initializr.extension.scm.common.exception.SCMException;
+import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.common.model.Repository;
 import com.azure.spring.initializr.extension.scm.common.model.User;
 import com.azure.spring.initializr.extension.scm.common.model.GitRepository;
 import com.azure.spring.initializr.extension.scm.common.service.GitService;
 import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactoryDelegate;
-import com.azure.spring.initializr.web.connector.ConnectorProjectRequest;
-import com.azure.spring.initializr.web.connector.ResultCode;
+import com.azure.spring.initializr.web.scm.PushToGitProjectRequest;
+import com.azure.spring.initializr.web.scm.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
@@ -49,17 +49,14 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     }
 
     @RequestMapping(path = "/login/oauth2/code")
-    public String pushToGitRepository(ConnectorProjectRequest request) {
+    public String pushToGitRepository(PushToGitProjectRequest request) {
         if ("github".equals(request.getConnectorType())) {
             return pushToGitRepo(request);
         }
         return redirectUriString(request);
     }
 
-    // check
-    // create
-    // generate and push
-    private String pushToGitRepo(ConnectorProjectRequest request) {
+    private String pushToGitRepo(PushToGitProjectRequest request) {
 
         checkParameters(request);
         if (request.getBaseDir() == null) {
@@ -70,9 +67,9 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         GitService gitService = gitServiceFactoryDelegate.getGitService(request.getConnectorType(), authorizationCode);
 
         User user = gitService.getUser();
-        String loginName = user.getLogin();
+        String username = user.getUsername();
         String artifactId = request.getArtifactId();
-        boolean repositoryExists = gitService.repositoryExists(loginName, artifactId);
+        boolean repositoryExists = gitService.repositoryExists(username, artifactId);
 
         if (repositoryExists) {
             return redirectUriString(request,
@@ -85,23 +82,23 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
 
         Repository repository = new Repository();
         repository.setName(artifactId);
-        repository.setWorkSpace(loginName);
+        repository.setWorkSpace(username);
         gitService.createRepository(repository);
 
         ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
-        String gitRepositoryUrl = "https://github.com/" + loginName + "/" + artifactId;
+        String gitRepositoryUrl = "https://github.com/" + username + "/" + artifactId;
 
         try {
             GitRepository gitRepository = new GitRepository();
             gitRepository.setInitialBranch("main");
             gitRepository.setHttpTransportUrl(gitRepositoryUrl);
-            gitRepository.setOwnerName(loginName);
+            gitRepository.setUserName(username);
             gitRepository.setToken(gitService.getAccessToken());
             gitRepository.setTemplateFile(new File(result.getRootDirectory().toFile().getAbsolutePath()
                     + "/" + request.getBaseDir()));
             gitService.pushToGitRepository(gitRepository);
-        } catch (SCMException connectorException) {
-            throw connectorException;
+        } catch (OAuthAppException scmException) {
+            throw scmException;
         } finally {
             this.projectGenerationInvoker.cleanTempFiles(result.getRootDirectory());
         }
@@ -109,7 +106,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), gitRepositoryUrl);
     }
 
-    private void checkParameters(ConnectorProjectRequest request) {
+    private void checkParameters(PushToGitProjectRequest request) {
         Assert.notNull(request.getArtifactId(), "Invalid request param artifactId.");
         Assert.notNull(request.getCode(), "Invalid request param code.");
         Assert.notNull(request.getName(), "Invalid request param name.");
@@ -125,11 +122,11 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         Assert.notNull(request.getJavaVersion(), "Invalid request param javaVersion.");
     }
 
-    private String redirectUriString(ConnectorProjectRequest request) {
+    private String redirectUriString(PushToGitProjectRequest request) {
         return redirectUriString(request, null, null);
     }
 
-    private String redirectUriString(ConnectorProjectRequest request, String errorCode, String msg) {
+    private String redirectUriString(PushToGitProjectRequest request, String errorCode, String msg) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
         if (errorCode != null && msg != null) {
             uriComponentsBuilder
@@ -154,7 +151,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
         return "redirect:/#!" + uriComponentsBuilder.toUriString();
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class, SCMException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class, OAuthAppException.class})
     public String invalidProjectRequest(RuntimeException ex, HttpServletRequest httpServletRequest) {
         Map<String, String> map = new HashMap<>();
         Enumeration<String> parameterNames = httpServletRequest.getParameterNames();
@@ -162,12 +159,12 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
             map.put(name, httpServletRequest.getParameter(name));
         }
         ObjectMapper mapper = new ObjectMapper();
-        ConnectorProjectRequest request = mapper.convertValue(map, ConnectorProjectRequest.class);
+        PushToGitProjectRequest request = mapper.convertValue(map, PushToGitProjectRequest.class);
         String errorCode = ResultCode.CODE_SUCCESS.getCode();
         if (ex instanceof IllegalArgumentException) {
             errorCode = ResultCode.INVALID_PARAM.getCode();
-        } else if (ex instanceof SCMException) {
-            errorCode = ResultCode.CONNECTOR_EXCEPTION.getCode();
+        } else if (ex instanceof OAuthAppException) {
+            errorCode = ResultCode.OAUTHAPP_EXCEPTION.getCode();
         }
         return redirectUriString(request, errorCode, ex.getMessage());
     }

@@ -3,7 +3,7 @@ package com.azure.spring.initializr.extension.scm.common.model;
 import java.io.File;
 
 public class GitRepository {
-    private String ownerName;
+    private String userName;
 
     private String token;
 
@@ -15,12 +15,12 @@ public class GitRepository {
 
     private String email;
 
-    public String getOwnerName() {
-        return ownerName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getInitialBranch() {

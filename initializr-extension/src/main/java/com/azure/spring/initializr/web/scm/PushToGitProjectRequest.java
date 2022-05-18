@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.azure.spring.initializr.web.connector;
+package com.azure.spring.initializr.web.scm;
 
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConnectorProjectRequest extends ExtendProjectRequest {
+public class PushToGitProjectRequest extends ExtendProjectRequest {
     private String code;
 
     private String connectorType;

@@ -24,11 +24,11 @@ import com.azure.spring.initializr.extension.scm.github.restclient.GitHubOAuthCl
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
-import com.azure.spring.initializr.metadata.scm.OAuthApp;
 import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
 import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCustomizer;
+import com.azure.spring.initializr.metadata.scm.OAuthApp;
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
@@ -167,21 +167,21 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "scm.oauthapp.github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "oauthapps.github.enabled", havingValue = "true")
     GitHubClient gitHubClient(WebClient.Builder builder) {
         return new GitHubClient(builder);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "scm.oauthapp.github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "oauthapps.github.enabled", havingValue = "true")
     GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient.Builder builder) {
-        OAuthApp connector = properties.getOAuthApp()
-                                        .get("github");
-        return new GitHubOAuthClient(connector, builder);
+        OAuthApp oAuthApp = properties.getOAuthApps()
+                                       .get("github");
+        return new GitHubOAuthClient(oAuthApp, builder);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr", name = "scm.oauthapp.github.enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "extend.initializr", name = "oauthapps.github.enabled", havingValue = "true")
     GithubServiceFactory githubProviderFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient) {
         return new GithubServiceFactory(gitHubOAuthClient, gitHubClient);
     }

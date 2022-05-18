@@ -1,6 +1,6 @@
 package com.azure.spring.initializr.extension.scm.github.restclient;
 
-import com.azure.spring.initializr.extension.scm.common.exception.SCMException;
+import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.common.model.Repository;
 import com.azure.spring.initializr.extension.scm.common.model.User;
 import com.azure.spring.initializr.extension.scm.common.restclient.GitClient;
@@ -47,7 +47,7 @@ public class GitHubClient implements GitClient {
                     .block();
         } catch (RuntimeException ex) {
             LOGGER.error("An error occurred while getting user info.", ex);
-            throw new SCMException("An error occurred while getting user info.");
+            throw new OAuthAppException("An error occurred while getting user info.");
         }
 
     }
@@ -70,21 +70,21 @@ public class GitHubClient implements GitClient {
                     .bodyToMono(String.class).block();
         } catch (RuntimeException ex) {
             LOGGER.error("An error occurred while creating repo.", ex);
-            throw new SCMException("An error occurred while creating repo.");
+            throw new OAuthAppException("An error occurred while creating repo.");
         }
 
     }
 
     @Override
-    public boolean repositoryExists(String accessToken, String loginName, String repoName) {
+    public boolean repositoryExists(String accessToken, String username, String repoName) {
         Assert.notNull(accessToken, "Invalid accessToken");
-        Assert.notNull(loginName, "Invalid loginName");
+        Assert.notNull(username, "Invalid username");
         Assert.notNull(repoName, "Invalid repoName");
         try {
             HttpStatus httpStatus = builder
                     .baseUrl(BASE_URI).build()
                     .get()
-                    .uri("/repos/" + loginName + "/" + repoName)
+                    .uri("/repos/" + username + "/" + repoName)
                     .header("Authorization", getToken(accessToken))
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
@@ -96,7 +96,7 @@ public class GitHubClient implements GitClient {
             return false;
         } catch (RuntimeException ex) {
             LOGGER.error("An error occurred while checking repository status.", ex);
-            throw new SCMException("An error occurred while checking repository status.");
+            throw new OAuthAppException("An error occurred while checking repository status.");
         }
     }
 

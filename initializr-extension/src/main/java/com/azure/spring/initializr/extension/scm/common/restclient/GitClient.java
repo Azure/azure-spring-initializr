@@ -9,6 +9,6 @@ public interface GitClient {
 
     String createRepository(String accessToken, Repository repository) ;
 
-    boolean repositoryExists(String accessToken, String ownerName, String repoName);
+    boolean repositoryExists(String accessToken, String username, String repoName);
 
 }

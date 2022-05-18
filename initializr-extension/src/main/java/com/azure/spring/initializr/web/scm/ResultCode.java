@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.web.connector;
+package com.azure.spring.initializr.web.scm;
 
 public enum ResultCode {
 
@@ -6,7 +6,7 @@ public enum ResultCode {
     INVALID_PARAM("201", "Param is invalid."),
     CODE_REPO_ALREADY_EXISTS("202", "Repo already exists."),
     ACCESSTOKEN_EMPTY("203","Can not get access token."),
-    CONNECTOR_EXCEPTION("204", "There is a connector exception."),
+    OAUTHAPP_EXCEPTION("204", "There is an OAuthAppException."),
     CODE_404("404","There was an unexpected error (type=Not Found, status=404).."),
     ;
 

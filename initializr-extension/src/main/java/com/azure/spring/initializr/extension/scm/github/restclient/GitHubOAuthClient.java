@@ -1,6 +1,6 @@
 package com.azure.spring.initializr.extension.scm.github.restclient;
 
-import com.azure.spring.initializr.extension.scm.common.exception.SCMException;
+import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.common.model.TokenResult;
 import com.azure.spring.initializr.extension.scm.common.restclient.OAuthClient;
 import com.azure.spring.initializr.metadata.scm.OAuthApp;
@@ -19,19 +19,19 @@ import java.util.Map;
 /**
  */
 @Component
-@ConditionalOnProperty(prefix = "initializr.connectors", name = "github.enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "initializr.scm.oauthapp", name = "github.enabled", havingValue = "true")
 public class GitHubOAuthClient implements OAuthClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubOAuthClient.class);
 
     private final static String BASE_URI = "https://github.com";
     private final static String ACCESS_TOKEN_URI = "/login/oauth/access_token";
 
-    private final OAuthApp connector;
+    private final OAuthApp oAuthApp;
     private final WebClient.Builder builder;
 
 
-    public GitHubOAuthClient(OAuthApp connector, WebClient.Builder builder) {
-        this.connector = connector;
+    public GitHubOAuthClient(OAuthApp oAuthApp, WebClient.Builder builder) {
+        this.oAuthApp = oAuthApp;
         this.builder = builder;
     }
 
@@ -41,9 +41,9 @@ public class GitHubOAuthClient implements OAuthClient {
 
         try {
             Map<String, String> map = new HashMap();
-            map.put("client_id", connector.getClientId());
-            map.put("client_secret", connector.getClientSecret());
-            map.put("redirect_uri", connector.getRedirectUri());
+            map.put("client_id", oAuthApp.getClientId());
+            map.put("client_secret", oAuthApp.getClientSecret());
+            map.put("redirect_uri", oAuthApp.getRedirectUri());
             map.put("code", authorizationCode);
             return builder
                     .baseUrl(BASE_URI)
@@ -58,7 +58,7 @@ public class GitHubOAuthClient implements OAuthClient {
                     .block();
         } catch (RuntimeException ex) {
             LOGGER.error("Error while authenticating", ex);
-            throw new SCMException("Error while authenticating");
+            throw new OAuthAppException("Error while authenticating");
         }
     }
 

@@ -18,13 +18,10 @@ extend:
         facets:
           - "web"
           - "jpa"
-    scm:
-      oauthapp:
-        github:
-          enabled: true
-          clientid: ${input-your-client-id}
-          clientSecret: ${input-your-client-secret}
-          oauthUri: https://github.com/login/oauth/authorize
-          redirectUri: ${input-your-redirectUri}
-
-
+    oauthapps:
+      github:
+        enabled: true
+        clientid: ${input-your-client-id}
+        clientSecret: ${input-your-client-secret}
+        oauthUri: https://github.com/login/oauth/authorize
+        redirectUri: ${input-your-redirectUri}
