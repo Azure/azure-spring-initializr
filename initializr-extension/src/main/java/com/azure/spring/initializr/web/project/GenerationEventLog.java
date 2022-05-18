@@ -1,6 +1,7 @@
 package com.azure.spring.initializr.web.project;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class GenerationEventLog {
 
@@ -8,9 +9,9 @@ public class GenerationEventLog {
 
     private String architecture;
 
-    private String samples;
+    private List<String> samples;
 
-    private String dependencies;
+    private List<String> dependencies;
 
     private String name;
 
@@ -82,19 +83,19 @@ public class GenerationEventLog {
         this.architecture = architecture;
     }
 
-    public String getSamples() {
+    public List<String> getSamples() {
         return samples;
     }
 
-    public void setSamples(String samples) {
+    public void setSamples(List<String> samples) {
         this.samples = samples;
     }
 
-    public String getDependencies() {
+    public List<String> getDependencies() {
         return dependencies;
     }
 
-    public void setDependencies(String dependencies) {
+    public void setDependencies(List<String> dependencies) {
         this.dependencies = dependencies;
     }
 
