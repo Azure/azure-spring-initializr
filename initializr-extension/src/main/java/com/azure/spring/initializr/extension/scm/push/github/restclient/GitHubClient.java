@@ -1,9 +1,9 @@
-package com.azure.spring.initializr.extension.scm.github.restclient;
+package com.azure.spring.initializr.extension.scm.push.github.restclient;
 
-import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
-import com.azure.spring.initializr.extension.scm.common.model.Repository;
-import com.azure.spring.initializr.extension.scm.common.model.User;
-import com.azure.spring.initializr.extension.scm.common.restclient.GitClient;
+import com.azure.spring.initializr.extension.scm.push.common.exception.OAuthAppException;
+import com.azure.spring.initializr.extension.scm.push.common.model.Repository;
+import com.azure.spring.initializr.extension.scm.push.common.model.User;
+import com.azure.spring.initializr.extension.scm.push.common.restclient.GitClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

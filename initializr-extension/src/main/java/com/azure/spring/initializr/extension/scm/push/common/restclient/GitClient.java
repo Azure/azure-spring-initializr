@@ -1,7 +1,7 @@
-package com.azure.spring.initializr.extension.scm.common.restclient;
+package com.azure.spring.initializr.extension.scm.push.common.restclient;
 
-import com.azure.spring.initializr.extension.scm.common.model.Repository;
-import com.azure.spring.initializr.extension.scm.common.model.User;
+import com.azure.spring.initializr.extension.scm.push.common.model.Repository;
+import com.azure.spring.initializr.extension.scm.push.common.model.User;
 
 public interface GitClient {
 

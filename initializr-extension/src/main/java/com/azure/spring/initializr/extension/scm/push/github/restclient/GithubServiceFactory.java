@@ -1,7 +1,7 @@
-package com.azure.spring.initializr.extension.scm.github.restclient;
+package com.azure.spring.initializr.extension.scm.push.github.restclient;
 
-import com.azure.spring.initializr.extension.scm.common.service.GitService;
-import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactory;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitService;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactory;
 
 public class GithubServiceFactory implements GitServiceFactory {
 

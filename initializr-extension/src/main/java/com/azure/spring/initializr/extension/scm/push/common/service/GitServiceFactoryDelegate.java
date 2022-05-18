@@ -1,7 +1,7 @@
-package com.azure.spring.initializr.extension.scm.common.service;
+package com.azure.spring.initializr.extension.scm.push.common.service;
 
 
-import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
+import com.azure.spring.initializr.extension.scm.push.common.exception.OAuthAppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;

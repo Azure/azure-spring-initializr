@@ -1,7 +1,7 @@
 package com.azure.spring.initializr.autoconfigure;
 
 import com.azure.spring.initializr.metadata.Architecture;
-import com.azure.spring.initializr.metadata.scm.OAuthApp;
+import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;

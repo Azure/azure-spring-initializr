@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.extension.scm.common.service;
+package com.azure.spring.initializr.extension.scm.push.common.service;
 
 public interface GitServiceFactory {
 

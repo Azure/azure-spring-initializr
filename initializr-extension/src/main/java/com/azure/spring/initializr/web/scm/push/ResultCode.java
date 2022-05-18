@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.web.scm;
+package com.azure.spring.initializr.web.scm.push;
 
 public enum ResultCode {
 

@@ -1,14 +1,12 @@
-package com.azure.spring.initializr.extension.scm.github.restclient;
+package com.azure.spring.initializr.extension.scm.push.github.restclient;
 
-import com.azure.spring.initializr.extension.scm.common.exception.OAuthAppException;
-import com.azure.spring.initializr.extension.scm.common.model.TokenResult;
-import com.azure.spring.initializr.extension.scm.common.restclient.OAuthClient;
-import com.azure.spring.initializr.metadata.scm.OAuthApp;
+import com.azure.spring.initializr.extension.scm.push.common.exception.OAuthAppException;
+import com.azure.spring.initializr.extension.scm.push.common.model.TokenResult;
+import com.azure.spring.initializr.extension.scm.push.common.restclient.OAuthClient;
+import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;

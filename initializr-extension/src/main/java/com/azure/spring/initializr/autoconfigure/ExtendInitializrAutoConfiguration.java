@@ -16,11 +16,11 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
-import com.azure.spring.initializr.extension.scm.github.restclient.GithubServiceFactory;
-import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactory;
-import com.azure.spring.initializr.extension.scm.common.service.GitServiceFactoryDelegate;
-import com.azure.spring.initializr.extension.scm.github.restclient.GitHubClient;
-import com.azure.spring.initializr.extension.scm.github.restclient.GitHubOAuthClient;
+import com.azure.spring.initializr.extension.scm.push.github.restclient.GithubServiceFactory;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactory;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryDelegate;
+import com.azure.spring.initializr.extension.scm.push.github.restclient.GitHubClient;
+import com.azure.spring.initializr.extension.scm.push.github.restclient.GitHubOAuthClient;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
@@ -28,7 +28,7 @@ import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
 import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCustomizer;
-import com.azure.spring.initializr.metadata.scm.OAuthApp;
+import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;

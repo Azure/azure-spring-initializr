@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.extension.scm.common.model;
+package com.azure.spring.initializr.extension.scm.push.common.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 

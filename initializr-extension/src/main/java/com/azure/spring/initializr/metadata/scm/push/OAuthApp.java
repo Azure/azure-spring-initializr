@@ -1,4 +1,4 @@
-package com.azure.spring.initializr.metadata.scm;
+package com.azure.spring.initializr.metadata.scm.push;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

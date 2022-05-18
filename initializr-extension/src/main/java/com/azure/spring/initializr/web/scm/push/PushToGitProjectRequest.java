@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.azure.spring.initializr.web.scm;
+package com.azure.spring.initializr.web.scm.push;
 
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
