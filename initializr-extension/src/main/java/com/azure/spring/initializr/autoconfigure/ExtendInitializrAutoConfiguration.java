@@ -28,7 +28,6 @@ import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
 import com.azure.spring.initializr.web.project.EventHubsProjectGenerationStatisticsProcessor;
-import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.azure.spring.initializr.web.project.ExtendProjectRequestToDescriptionConverter;
 import com.azure.spring.initializr.web.project.ProjectGenerationListener;
 import com.azure.spring.initializr.web.project.ProjectGenerationStatisticsProcessor;
@@ -44,14 +43,14 @@ import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.InitializrProperties;
 import io.spring.initializr.web.autoconfigure.InitializrWebConfig;
 import io.spring.initializr.web.controller.CommandLineMetadataController;
+import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.controller.SpringCliDistributionController;
 import io.spring.initializr.web.project.DefaultProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
+import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.support.DefaultDependencyMetadataProvider;
 import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
@@ -86,8 +85,6 @@ import java.util.stream.StreamSupport;
 @AutoConfigureAfter({ JacksonAutoConfiguration.class, RestTemplateAutoConfiguration.class })
 public class ExtendInitializrAutoConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExtendInitializrAutoConfiguration.class);
-
     @Bean
     @ConditionalOnMissingBean
     public ProjectDirectoryFactory projectDirectoryFactory() {
@@ -96,24 +93,16 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ProjectGenerationListener projectGenerationListener(ObjectMapper objectMapper,
-                                                               ObjectProvider<ProjectGenerationStatisticsProcessor> statisticsProcessors) {
-        ProjectGenerationStatisticsProcessor statisticsProcessor = statisticsProcessors.getIfUnique();
-        if (statisticsProcessor == null) {
-            LOGGER.warn("No 'ProjectGenerationStatisticsProcessor' bean available.");
-        }
-        return new ProjectGenerationListener(objectMapper, statisticsProcessor);
+    public ProjectGenerationListener projectGenerationListener(ObjectProvider<ProjectGenerationStatisticsProcessor> statisticsProcessors) {
+        return new ProjectGenerationListener(statisticsProcessors.getIfUnique());
     }
 
     @Bean
     @ConditionalOnMissingBean(ProjectGenerationStatisticsProcessor.class)
     @ConditionalOnProperty(value = "extend.initializr.stats.eventhubs.enabled", havingValue = "true")
-    public ProjectGenerationStatisticsProcessor projectGenerationStatisticsProcessor(ObjectProvider<EventHubProducerClient> producerClients) {
-        EventHubProducerClient producerClient = producerClients.getIfUnique();
-        if (producerClient == null) {
-            LOGGER.warn("No 'EventHubProducerClient' bean available.");
-        }
-        return new EventHubsProjectGenerationStatisticsProcessor(producerClient);
+    public ProjectGenerationStatisticsProcessor projectGenerationStatisticsProcessor(ObjectMapper objectMapper,
+                                                                                     ObjectProvider<EventHubProducerClient> producerClients) {
+        return new EventHubsProjectGenerationStatisticsProcessor(objectMapper, producerClients.getIfUnique());
     }
 
     @Bean
@@ -207,14 +196,14 @@ public class ExtendInitializrAutoConfiguration {
 
         @Bean("projectGenerationController")
         @ConditionalOnMissingBean
-        ExtendProjectGenerationController projectGenerationController(
+        ProjectGenerationController<ProjectRequest> projectGenerationController(
             InitializrMetadataProvider metadataProvider,
             ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
             ApplicationContext applicationContext) {
             ExtendProjectRequestToDescriptionConverter converter =
                 new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
                     .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
-            ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<ExtendProjectRequest>(
+            ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<ProjectRequest>(
                 applicationContext, converter);
             return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
         }

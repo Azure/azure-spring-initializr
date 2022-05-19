@@ -1,9 +1,18 @@
 package com.azure.spring.initializr.web.project;
 
+import io.spring.initializr.web.project.ProjectFailedEvent;
+import io.spring.initializr.web.project.ProjectGeneratedEvent;
+
 /**
- * Statistical project generation log processor interface.
+ * The processor interface processes the project generation log statistical.
  */
 public interface ProjectGenerationStatisticsProcessor {
 
-    void sendRequest(String json);
+    default void process(ProjectFailedEvent failedEvent) {
+
+    }
+
+    default void process(ProjectGeneratedEvent generatedEvent) {
+
+    }
 }

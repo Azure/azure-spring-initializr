@@ -1,11 +1,11 @@
 package com.azure.spring.initializr.web.project;
 
-import io.spring.initializr.web.project.WebProjectRequest;
+import io.spring.initializr.web.project.ProjectRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtendProjectRequest extends WebProjectRequest {
+public class ExtendProjectRequest extends ProjectRequest {
     private String architecture;
     private List<String> samples = new ArrayList<>();
 

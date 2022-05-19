@@ -16,8 +16,6 @@
 
 package com.azure.spring.initializr.web.project;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.web.project.ProjectFailedEvent;
 import io.spring.initializr.web.project.ProjectGeneratedEvent;
 import org.slf4j.Logger;
@@ -31,49 +29,27 @@ import org.springframework.scheduling.annotation.Async;
 public class ProjectGenerationListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectGenerationListener.class);
-    private final ObjectMapper objectMapper;
+
     private final ProjectGenerationStatisticsProcessor statisticsProcessor;
 
-    public ProjectGenerationListener(ObjectMapper objectMapper,
-                                     ProjectGenerationStatisticsProcessor statisticsProcessor) {
-        this.objectMapper = objectMapper;
-        this.statisticsProcessor = statisticsProcessor;
+    public ProjectGenerationListener(ProjectGenerationStatisticsProcessor statisticsProcessor) {
+        if (statisticsProcessor != null) {
+            this.statisticsProcessor = statisticsProcessor;
+        } else {
+            LOGGER.warn("No 'ProjectGenerationStatisticsProcessor' bean available.");
+            this.statisticsProcessor = new ProjectGenerationStatisticsProcessor(){};
+        }
     }
 
     @Async
     @EventListener
     public void onProjectFailedEvent(ProjectFailedEvent event) {
-        try {
-            String failedEventLogString = getProjectFailedEventLogString(event);
-            if (statisticsProcessor != null) {
-                statisticsProcessor.sendRequest(failedEventLogString);
-            }
-            LOGGER.error("Generation failed.", event.getCause());
-            LOGGER.info("Project generation failed: {}", failedEventLogString);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Convert the failed generation event exception.", e);
-        }
+        statisticsProcessor.process(event);
     }
 
     @Async
     @EventListener
     public void onProjectGeneratedEvent(ProjectGeneratedEvent event) {
-        try {
-            String eventLogString = getGenerationEventLogString(event);
-            if (statisticsProcessor != null) {
-                statisticsProcessor.sendRequest(eventLogString);
-            }
-            LOGGER.info("Project generated: {}", eventLogString);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Convert the generation event exception.", e);
-        }
-    }
-
-    private String getProjectFailedEventLogString(ProjectFailedEvent event) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(GenerationFailedEventLogConverter.CONVERTER.convert(event));
-    }
-
-    private String getGenerationEventLogString(ProjectGeneratedEvent event) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(GenerationEventLogConverter.CONVERTER.convert(event));
+        statisticsProcessor.process(event);
     }
 }

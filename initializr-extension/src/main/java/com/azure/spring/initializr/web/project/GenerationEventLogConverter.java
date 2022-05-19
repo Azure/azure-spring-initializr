@@ -21,7 +21,7 @@ public final class GenerationEventLogConverter implements Converter<ProjectReque
         GenerationEventLog log = new GenerationEventLog();
         Instant instant = Instant.ofEpochMilli(event.getTimestamp());
         log.setTimestamp(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()));
-        ExtendProjectRequest request = (ExtendProjectRequest) event.getProjectRequest();
+        ExtendWebProjectRequest request = (ExtendWebProjectRequest) event.getProjectRequest();
         BeanUtils.copyProperties(request, log);
         log.setAppVersion(event.getProjectRequest().getVersion());
         log.setProjectType(event.getProjectRequest().getType());
