@@ -50,7 +50,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
             try {
                 GitService gitService = gitServiceFactoryResolver.resolve(request.getGitServiceType())
                                                                  .getGitService(request.getCode());
-                String gitRepositoryUrl = gitService.pushToGitRepository(request, result);
+                String gitRepositoryUrl = gitService.pushProjectToGitRepository(request, result);
                 return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), gitRepositoryUrl);
             } catch (RuntimeException exception) {
                 throw exception;

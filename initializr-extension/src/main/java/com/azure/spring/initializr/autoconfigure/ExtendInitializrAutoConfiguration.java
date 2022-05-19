@@ -17,11 +17,9 @@
 package com.azure.spring.initializr.autoconfigure;
 
 import com.azure.spring.initializr.extension.scm.push.common.GitServiceEnum;
-import com.azure.spring.initializr.extension.scm.push.github.restclient.GithubServiceFactory;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactory;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryResolver;
-import com.azure.spring.initializr.extension.scm.push.github.restclient.GitHubClient;
-import com.azure.spring.initializr.extension.scm.push.github.restclient.GitHubOAuthClient;
+import com.azure.spring.initializr.extension.scm.push.github.restclient.GithubServiceFactory;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
@@ -29,6 +27,7 @@ import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
 import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCustomizer;
+import com.azure.spring.initializr.metadata.scm.push.GitPush;
 import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
@@ -147,7 +146,7 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    GitServiceFactoryResolver gitServiceFactoryDelegate(ObjectProvider<GitServiceFactory> providerFactories) {
+    GitServiceFactoryResolver gitServiceFactoryResolver(ObjectProvider<GitServiceFactory> providerFactories) {
         return new GitServiceFactoryResolver(providerFactories);
     }
 
@@ -156,29 +155,12 @@ public class ExtendInitializrAutoConfiguration {
             prefix = "extend.initializr.gitpush.oauthapps",
             name = "github.enabled",
             havingValue = "true")
-    GitHubClient gitHubClient(WebClient webClient) {
-        return new GitHubClient(webClient);
-    }
-
-    @Bean
-    @ConditionalOnProperty(
-            prefix = "extend.initializr.gitpush.oauthapps",
-            name = "github.enabled",
-            havingValue = "true")
-    GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient webClient) {
+    GitServiceFactory githubServiceFactory(ExtendInitializrProperties properties,
+                                           WebClient webClient) {
+        GitPush.Config gitPushConfig = properties.getGitPush().getConfig();
         OAuthApp oAuthApp = properties.getOAuthApps().get(GitServiceEnum.GITHUB.getName());
-        return new GitHubOAuthClient(oAuthApp, webClient);
-    }
 
-    @Bean
-    @ConditionalOnProperty(
-            prefix = "extend.initializr.gitpush.oauthapps",
-            name = "github.enabled",
-            havingValue = "true")
-    GitServiceFactory githubServiceFactory(GitHubOAuthClient gitHubOAuthClient,
-                                           GitHubClient gitHubClient,
-                                           ExtendInitializrProperties properties) {
-        return new GithubServiceFactory(gitHubOAuthClient, gitHubClient, properties.getGitPush());
+        return new GithubServiceFactory(gitPushConfig, oAuthApp, webClient);
     }
 
     @Bean

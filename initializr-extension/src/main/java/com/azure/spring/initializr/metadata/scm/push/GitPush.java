@@ -6,35 +6,47 @@ import java.util.Map;
 public class GitPush {
 
     private Map<String, OAuthApp> oAuthApps = new HashMap<>();
+    private final Config config = new Config();
 
-    private String gitPushInitEmail = "SpringIntegSupport@microsoft.com";
+    public static class Config {
 
-    private String gitPushInitMessage = "Initial commit from Azure Spring Initializr";
+        private String initDefaultBranch = "main";
 
-    private String gitPushInitBranch = "main";
+        private final InitCommit initCommit = new InitCommit();
 
-    public String getGitPushInitEmail() {
-        return gitPushInitEmail;
+        public String getInitDefaultBranch() {
+            return initDefaultBranch;
+        }
+
+        public void setInitDefaultBranch(String initDefaultBranch) {
+            this.initDefaultBranch = initDefaultBranch;
+        }
+
+        public InitCommit getInitCommit() {
+            return initCommit;
+        }
+
     }
 
-    public void setGitPushInitEmail(String gitPushInitEmail) {
-        this.gitPushInitEmail = gitPushInitEmail;
-    }
+    public static class InitCommit {
+        private String userEmail = "SpringIntegSupport@microsoft.com";
+        private String message = "Initial commit from Azure Spring Initializr";
 
-    public String getGitPushInitMessage() {
-        return gitPushInitMessage;
-    }
+        public String getUserEmail() {
+            return userEmail;
+        }
 
-    public void setGitPushInitMessage(String gitPushInitMessage) {
-        this.gitPushInitMessage = gitPushInitMessage;
-    }
+        public void setUserEmail(String userEmail) {
+            this.userEmail = userEmail;
+        }
 
-    public String getGitPushInitBranch() {
-        return gitPushInitBranch;
-    }
+        public String getMessage() {
+            return message;
+        }
 
-    public void setGitPushInitBranch(String gitPushInitBranch) {
-        this.gitPushInitBranch = gitPushInitBranch;
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     public Map<String, OAuthApp> getoAuthApps() {
@@ -43,5 +55,9 @@ public class GitPush {
 
     public void setoAuthApps(Map<String, OAuthApp> oAuthApps) {
         this.oAuthApps = oAuthApps;
+    }
+
+    public Config getConfig() {
+        return config;
     }
 }

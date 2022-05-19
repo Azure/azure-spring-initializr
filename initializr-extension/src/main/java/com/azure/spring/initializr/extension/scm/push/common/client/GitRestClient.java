@@ -1,35 +1,37 @@
-package com.azure.spring.initializr.extension.scm.push.common.restclient;
+package com.azure.spring.initializr.extension.scm.push.common.client;
 
 import com.azure.spring.initializr.extension.scm.push.common.model.User;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 
-public interface GitClient {
+/**
+ *
+ */
+public interface GitRestClient {
 
     /**
-     * Get userinfo by accessToken.
+     * Get userinfo
      *
-     * @param accessToken accessToken to access remote Git service
      * @return current login user info
      */
-    User getUser(String accessToken);
+    User getUser();
 
     /**
      * Create repository with specified name in remote Git service repositories.
      *
-     * @param accessToken accessToken to access remote Git service
      * @param user        current login user
      * @param request     user request info
-     * @return
+     * @return            created remote git repository url
      */
-    String createRepository(String accessToken, User user, ExtendProjectRequest request);
+    String createRepository(User user, ExtendProjectRequest request);
 
     /**
      * Check whether repository with specified name exists in remote Git service repositories.
      *
-     * @param accessToken accessToken to access remote Git service
      * @param user        current login user
      * @param request     user request info
-     * @return
+     * @return            true:  repository with specified name already exists
+     *                    false: repository with specified name not exists
      */
-    boolean repositoryExists(String accessToken, User user, ExtendProjectRequest request);
+    boolean repositoryExists(User user, ExtendProjectRequest request);
+
 }
