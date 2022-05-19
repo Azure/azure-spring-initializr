@@ -2,7 +2,7 @@ package com.azure.spring.initializr.web.controller;
 
 import com.azure.spring.initializr.extension.scm.push.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitService;
-import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryDelegate;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryResolver;
 import com.azure.spring.initializr.web.ResultCode;
 import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,13 +24,13 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
 
     private final ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker;
 
-    private final GitServiceFactoryDelegate gitServiceFactoryDelegate;
+    private final GitServiceFactoryResolver gitServiceFactoryResolver;
 
     public ExtendProjectGenerationController(InitializrMetadataProvider metadataProvider,
                                              ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker,
-                                             GitServiceFactoryDelegate gitServiceFactoryDelegate) {
+                                             GitServiceFactoryResolver gitServiceFactoryResolver) {
         super(metadataProvider, projectGenerationInvoker);
-        this.gitServiceFactoryDelegate = gitServiceFactoryDelegate;
+        this.gitServiceFactoryResolver = gitServiceFactoryResolver;
         this.projectGenerationInvoker = projectGenerationInvoker;
     }
 
@@ -45,10 +44,12 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
 
     @RequestMapping(path = "/login/oauth2/code")
     public String pushToGitRepository(ExtendProjectRequest request) {
-        if (StringUtils.isNotBlank(request.getGitServiceType()) && StringUtils.isNotBlank(request.getCode())) {
+        if (StringUtils.isNotBlank(request.getGitServiceType())
+                && StringUtils.isNotBlank(request.getCode())) {
             ProjectGenerationResult result = this.projectGenerationInvoker.invokeProjectStructureGeneration(request);
             try {
-                GitService gitService = gitServiceFactoryDelegate.getGitService(request.getGitServiceType(), request.getCode());
+                GitService gitService = gitServiceFactoryResolver.resolve(request.getGitServiceType())
+                                                                 .getGitService(request.getCode());
                 String gitRepositoryUrl = gitService.pushToGitRepository(request, result);
                 return redirectUriString(request, ResultCode.CODE_SUCCESS.getCode(), gitRepositoryUrl);
             } catch (RuntimeException exception) {
@@ -67,9 +68,7 @@ public class ExtendProjectGenerationController extends ProjectGenerationControll
     private String redirectUriString(ExtendProjectRequest request, String errorCode, String msg) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
         if (errorCode != null && msg != null) {
-            uriComponentsBuilder
-                    .queryParam("errorcode", errorCode)
-                    .queryParam("msg", msg);
+            uriComponentsBuilder.queryParam("errorcode", errorCode).queryParam("msg", msg);
         }
 
         if (request != null) {

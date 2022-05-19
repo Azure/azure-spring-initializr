@@ -21,24 +21,22 @@ public class GitHubClient implements GitClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubClient.class);
 
     private static final String BASE_URI = "https://api.github.com";
-    private static final String CREATE_REPO_PATH = "/user/repos";
-    private static final String GET_USER = "/user";
+    private static final String CREATE_REPO_PATH = BASE_URI + "/user/repos";
+    private static final String GET_USER_PATH = BASE_URI + "/user";
 
-    private final WebClient.Builder builder;
+    private final WebClient webClient;
 
-    public GitHubClient(WebClient.Builder builder) {
-        this.builder = builder;
+    public GitHubClient(WebClient webClient) {
+        this.webClient = webClient;
     }
 
     @Override
     public User getUser(String accessToken) {
         Assert.notNull(accessToken, "Invalid accessToken.");
         try {
-            WebClient.Builder builder = WebClient.builder();
-            return builder.baseUrl(BASE_URI)
-                    .build()
+            return webClient
                     .get()
-                    .uri(GET_USER)
+                    .uri(GET_USER_PATH)
                     .header("Authorization", getToken(accessToken))
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
@@ -48,7 +46,6 @@ public class GitHubClient implements GitClient {
             LOGGER.error("An error occurred while getting user info.", ex);
             throw new OAuthAppException("An error occurred while getting user info.");
         }
-
     }
 
     @Override
@@ -61,16 +58,17 @@ public class GitHubClient implements GitClient {
             Map<String, String> map = new HashMap<>();
             map.put("name", request.getArtifactId());
 
-            CreatedRepository createdRepository = builder.baseUrl(BASE_URI)
-                    .build()
-                    .post()
-                    .uri(CREATE_REPO_PATH)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(map))
-                    .header("Authorization", getToken(accessToken))
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono(CreatedRepository.class).block();
+            CreatedRepository createdRepository =
+                    webClient
+                        .post()
+                        .uri(CREATE_REPO_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromValue(map))
+                        .header("Authorization", getToken(accessToken))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .retrieve()
+                        .bodyToMono(CreatedRepository.class)
+                        .block();
             return createdRepository.getRepositoryUrl();
         } catch (RuntimeException ex) {
             LOGGER.error("An error occurred while creating repo.", ex);
@@ -84,15 +82,18 @@ public class GitHubClient implements GitClient {
         Assert.notNull(user, "Invalid user.");
         Assert.notNull(request, "Invalid request.");
         try {
-            HttpStatus httpStatus = builder
-                    .baseUrl(BASE_URI).build()
-                    .get()
-                    .uri("/repos/" + user.getUsername() + "/" + request.getArtifactId())
-                    .header("Authorization", getToken(accessToken))
-                    .accept(MediaType.APPLICATION_JSON)
-                    .exchange()
-                    .block()
-                    .statusCode();
+            HttpStatus httpStatus = webClient
+                                         .get()
+                                         .uri(BASE_URI
+                                                + "/repos/"
+                                                + user.getUsername()
+                                                + "/"
+                                                + request.getArtifactId())
+                                         .header("Authorization", getToken(accessToken))
+                                         .accept(MediaType.APPLICATION_JSON)
+                                         .exchange()
+                                         .block()
+                                         .statusCode();
             return "OK".equals(httpStatus.getReasonPhrase());
         } catch (RuntimeException ex) {
             LOGGER.error("An error occurred while checking repository status.", ex);
@@ -118,5 +119,4 @@ public class GitHubClient implements GitClient {
             this.repositoryUrl = repositoryUrl;
         }
     }
-
 }

@@ -8,21 +8,22 @@ import static com.azure.spring.initializr.extension.scm.push.common.GitServiceEn
 
 public class GithubServiceFactory implements GitServiceFactory {
 
-    private final GitHubOAuthClient gitHubOAuthClient;
+    private final GitPush gitPush;
 
     private final GitHubClient gitHubClient;
 
-    private final GitPush gitPush;
+    private final GitHubOAuthClient gitHubOAuthClient;
 
-    public GithubServiceFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient, GitPush gitPush) {
+    public GithubServiceFactory(
+            GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient, GitPush gitPush) {
         this.gitHubOAuthClient = gitHubOAuthClient;
         this.gitHubClient = gitHubClient;
         this.gitPush = gitPush;
     }
 
     @Override
-    public GitService getGitService(String code) {
-        return new GitService(gitHubOAuthClient, gitHubClient, code, gitPush);
+    public GitService getGitService(String authorizationCode) {
+        return new GitService(gitHubOAuthClient, gitHubClient, authorizationCode, gitPush);
     }
 
     @Override

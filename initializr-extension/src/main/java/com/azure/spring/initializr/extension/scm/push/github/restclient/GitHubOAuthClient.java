@@ -14,21 +14,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- */
+/** */
 public class GitHubOAuthClient implements OAuthClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubOAuthClient.class);
 
     private static final String BASE_URI = "https://github.com";
-    private static final String ACCESS_TOKEN_URI = "/login/oauth/access_token";
+    private static final String ACCESS_TOKEN_PATH = BASE_URI + "/login/oauth/access_token";
 
     private final OAuthApp oAuthApp;
-    private final WebClient.Builder builder;
+    private final WebClient webClient;
 
-
-    public GitHubOAuthClient(OAuthApp oAuthApp, WebClient.Builder builder) {
+    public GitHubOAuthClient(OAuthApp oAuthApp, WebClient webClient) {
         this.oAuthApp = oAuthApp;
-        this.builder = builder;
+        this.webClient = webClient;
     }
 
     @Override
@@ -43,11 +41,9 @@ public class GitHubOAuthClient implements OAuthClient {
             map.put("client_secret", oAuthApp.getClientSecret());
             map.put("redirect_uri", oAuthApp.getRedirectUri());
             map.put("code", authorizationCode);
-            return builder
-                    .baseUrl(BASE_URI)
-                    .build()
+            return webClient
                     .post()
-                    .uri(ACCESS_TOKEN_URI)
+                    .uri(ACCESS_TOKEN_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(map))
                     .accept(MediaType.APPLICATION_JSON)
@@ -59,5 +55,4 @@ public class GitHubOAuthClient implements OAuthClient {
             throw new OAuthAppException("Error while authenticating");
         }
     }
-
 }

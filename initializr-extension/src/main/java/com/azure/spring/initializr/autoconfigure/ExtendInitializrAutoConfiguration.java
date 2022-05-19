@@ -19,7 +19,7 @@ package com.azure.spring.initializr.autoconfigure;
 import com.azure.spring.initializr.extension.scm.push.common.GitServiceEnum;
 import com.azure.spring.initializr.extension.scm.push.github.restclient.GithubServiceFactory;
 import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactory;
-import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryDelegate;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryResolver;
 import com.azure.spring.initializr.extension.scm.push.github.restclient.GitHubClient;
 import com.azure.spring.initializr.extension.scm.push.github.restclient.GitHubOAuthClient;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
@@ -80,10 +80,8 @@ import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
-
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ ExtendInitializrProperties.class, InitializrProperties.class })
@@ -109,7 +107,6 @@ public class ExtendInitializrAutoConfiguration {
         return new AzureInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
     }
 
-
     @Bean
     @ConditionalOnMissingBean
     InitializrPropertiesCustomizer initializerPropertiesCustomizer(InitializrProperties properties) {
@@ -121,6 +118,7 @@ public class ExtendInitializrAutoConfiguration {
     ApplyDefaultCustomizer applyDefaultCustomizer() {
         return new ApplyDefaultCustomizer();
     }
+
     @Bean
     @ConditionalOnMissingBean
     ExtendInitializrPropertiesCustomizer extendInitializrPropertiesCustomizer(ExtendInitializrProperties properties){
@@ -149,34 +147,44 @@ public class ExtendInitializrAutoConfiguration {
     }
 
     @Bean
-    GitServiceFactoryDelegate gitServiceFactoryDelegate(ObjectProvider<GitServiceFactory> providerFactories) {
-        return new GitServiceFactoryDelegate(providerFactories);
+    GitServiceFactoryResolver gitServiceFactoryDelegate(ObjectProvider<GitServiceFactory> providerFactories) {
+        return new GitServiceFactoryResolver(providerFactories);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr.gitpush.oauthapps", name = "github.enabled", havingValue = "true")
-    GitHubClient gitHubClient(WebClient.Builder builder) {
-        return new GitHubClient(builder);
+    @ConditionalOnProperty(
+            prefix = "extend.initializr.gitpush.oauthapps",
+            name = "github.enabled",
+            havingValue = "true")
+    GitHubClient gitHubClient(WebClient webClient) {
+        return new GitHubClient(webClient);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr.gitpush.oauthapps", name = "github.enabled", havingValue = "true")
-    GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient.Builder builder) {
-        OAuthApp oAuthApp = properties.getOAuthApps()
-                                      .get(GitServiceEnum.GITHUB.getName());
-        return new GitHubOAuthClient(oAuthApp, builder);
+    @ConditionalOnProperty(
+            prefix = "extend.initializr.gitpush.oauthapps",
+            name = "github.enabled",
+            havingValue = "true")
+    GitHubOAuthClient gitHubOAuthClient(ExtendInitializrProperties properties, WebClient webClient) {
+        OAuthApp oAuthApp = properties.getOAuthApps().get(GitServiceEnum.GITHUB.getName());
+        return new GitHubOAuthClient(oAuthApp, webClient);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "extend.initializr.gitpush.oauthapps", name = "github.enabled", havingValue = "true")
-    GitServiceFactory githubServiceFactory(GitHubOAuthClient gitHubOAuthClient, GitHubClient gitHubClient, ExtendInitializrProperties properties) {
+    @ConditionalOnProperty(
+            prefix = "extend.initializr.gitpush.oauthapps",
+            name = "github.enabled",
+            havingValue = "true")
+    GitServiceFactory githubServiceFactory(GitHubOAuthClient gitHubOAuthClient,
+                                           GitHubClient gitHubClient,
+                                           ExtendInitializrProperties properties) {
         return new GithubServiceFactory(gitHubOAuthClient, gitHubClient, properties.getGitPush());
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public WebClient.Builder builder() {
-        return WebClient.builder();
+    public WebClient webclient() {
+        return WebClient.builder().build();
     }
 
     @Bean
@@ -204,16 +212,13 @@ public class ExtendInitializrAutoConfiguration {
         return new NoOpCache("templates");
     }
 
-
     @Bean
     @ConditionalOnMissingBean
     public DependencyMetadataProvider dependencyMetadataProvider() {
         return new DefaultDependencyMetadataProvider();
     }
 
-    /**
-     * Initializr web configuration.
-     */
+    /** Initializr web configuration. */
     @Configuration
     @ConditionalOnWebApplication
     static class InitializrWebConfiguration {
@@ -224,13 +229,15 @@ public class ExtendInitializrAutoConfiguration {
                 InitializrMetadataProvider metadataProvider,
                 ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
                 ApplicationContext applicationContext,
-                GitServiceFactoryDelegate gitServiceFactoryDelegate) {
+                GitServiceFactoryResolver gitServiceFactoryResolver) {
             ExtendProjectRequestToDescriptionConverter converter =
-                    new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
-                            .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
-            ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-                    applicationContext, converter);
-            return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker, gitServiceFactoryDelegate);
+                    new ExtendProjectRequestToDescriptionConverter(
+                            platformVersionTransformer.getIfAvailable(
+                                    DefaultProjectRequestPlatformVersionTransformer::new));
+            ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker =
+                    new ProjectGenerationInvoker<>(applicationContext, converter);
+            return new ExtendProjectGenerationController(
+                    metadataProvider, projectGenerationInvoker, gitServiceFactoryResolver);
         }
 
         @Bean
@@ -263,7 +270,6 @@ public class ExtendInitializrAutoConfiguration {
         InitializrModule InitializrJacksonModule() {
             return new InitializrModule();
         }
-
     }
 
     /**
@@ -277,7 +283,6 @@ public class ExtendInitializrAutoConfiguration {
         JCacheManagerCustomizer initializrCacheManagerCustomizer() {
             return new InitializrJCacheManagerCustomizer();
         }
-
     }
 
     @Order(0)
@@ -305,7 +310,5 @@ public class ExtendInitializrAutoConfiguration {
             return new MutableConfiguration<>().setStoreByValue(false).setManagementEnabled(true)
                                                .setStatisticsEnabled(true);
         }
-
     }
-
 }

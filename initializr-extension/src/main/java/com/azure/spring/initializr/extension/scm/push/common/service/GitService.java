@@ -1,6 +1,5 @@
 package com.azure.spring.initializr.extension.scm.push.common.service;
 
-
 import com.azure.spring.initializr.extension.scm.push.common.exception.OAuthAppException;
 import com.azure.spring.initializr.extension.scm.push.common.model.TokenResult;
 import com.azure.spring.initializr.extension.scm.push.common.model.User;
@@ -26,7 +25,7 @@ import java.net.URISyntaxException;
 public class GitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitService.class);
 
-    private final String code;
+    private final String authorizationCode;
 
     private String accessToken;
 
@@ -38,14 +37,22 @@ public class GitService {
 
     private final GitPush gitPush;
 
-    public GitService(OAuthClient oAuthClient, GitClient gitClient, String code, GitPush gitPush) {
+    public GitService(OAuthClient oAuthClient, GitClient gitClient, String authorizationCode, GitPush gitPush) {
         this.gitClient = gitClient;
         this.oAuthClient = oAuthClient;
-        this.code = code;
+        this.authorizationCode = authorizationCode;
         this.gitPush = gitPush;
+
         getAccessToken();
     }
 
+    /**
+     * Push the generated project to remote git repository.
+     *
+     * @param request the user request
+     * @param result the generated project
+     * @return
+     */
     public String pushToGitRepository(ExtendProjectRequest request, ProjectGenerationResult result) {
         checkParameters(request);
 
@@ -53,8 +60,11 @@ public class GitService {
         checkRepositoryExists(user, request);
 
         String gitRepositoryUrl = createRepository(user, request);
-        File path = new File(result.getRootDirectory().toFile().getAbsolutePath()
-                + "/" + request.getBaseDir());
+        File path =
+                new File(
+                        result.getRootDirectory().toFile().getAbsolutePath()
+                                + "/"
+                                + request.getBaseDir());
         commitAndPush(user.getUsername(), path, gitRepositoryUrl);
 
         return gitRepositoryUrl;
@@ -62,7 +72,7 @@ public class GitService {
 
     private void getAccessToken() {
         if (!authorized) {
-            TokenResult tokenResult = oAuthClient.getAccessToken(code);
+            TokenResult tokenResult = oAuthClient.getAccessToken(authorizationCode);
             authorized = true;
             if (StringUtils.isNotEmpty(tokenResult.getAccessToken())) {
                 accessToken = tokenResult.getAccessToken();
@@ -81,18 +91,17 @@ public class GitService {
     }
 
     private void checkRepositoryExists(User user, ExtendProjectRequest request) {
-        boolean repositoryExists =  gitClient.repositoryExists(accessToken, user, request);
+        boolean repositoryExists = gitClient.repositoryExists(accessToken, user, request);
         if (repositoryExists) {
-            throw new OAuthAppException("There is already a project named ' "
-                    + request.getArtifactId()
-                    + "' on your " + request.getGitServiceType()
-                    + ", please retry with a different name (the artifact is the name)...");
+            throw new OAuthAppException(
+                    "There is already a project named ' "
+                            + request.getArtifactId()
+                            + "' on your "
+                            + request.getGitServiceType()
+                            + ", please retry with a different name (the artifact is the name)...");
         }
     }
 
-    /**
-     *
-     */
     private void commitAndPush(String userName, File directory, String gitRepoUrl) {
         try {
             Assert.notNull(accessToken, "Invalid accessToken.");
@@ -121,7 +130,8 @@ public class GitService {
                 .setDirectory(directory)
                 .call();
         repo.add().addFilepattern(".").call();
-        repo.commit().setMessage(gitPush.getGitPushInitMessage())
+        repo.commit()
+                .setMessage(gitPush.getGitPushInitMessage())
                 .setAuthor(userName, gitPush.getGitPushInitEmail())
                 .setCommitter(userName, gitPush.getGitPushInitEmail())
                 .setSign(false)
@@ -129,15 +139,15 @@ public class GitService {
         return repo;
     }
 
-    private void gitPush(String token, String userName, String gitRepoUrl, Git repo) throws GitAPIException, URISyntaxException {
+    private void gitPush(String token, String userName, String gitRepoUrl, Git repo)
+            throws GitAPIException, URISyntaxException {
         RemoteAddCommand remote = repo.remoteAdd();
-        remote.setName("origin")
-                .setUri(new URIish(gitRepoUrl)).call();
+        remote.setName("origin").setUri(new URIish(gitRepoUrl)).call();
         PushCommand pushCommand = repo.push();
         pushCommand.add("HEAD");
         pushCommand.setRemote("origin");
-        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userName,
-                token));
+        pushCommand.setCredentialsProvider(
+                new UsernamePasswordCredentialsProvider(userName, token));
         pushCommand.call();
     }
 
@@ -157,6 +167,4 @@ public class GitService {
         Assert.notNull(request.getBootVersion(), "Invalid request param bootVersion.");
         Assert.notNull(request.getJavaVersion(), "Invalid request param javaVersion.");
     }
-
-
 }

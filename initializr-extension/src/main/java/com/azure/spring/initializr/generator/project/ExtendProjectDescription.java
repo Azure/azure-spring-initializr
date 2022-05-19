@@ -33,7 +33,7 @@ public class ExtendProjectDescription extends MutableProjectDescription {
         return Collections.unmodifiableMap(this.requestedDependencies);
     }
 
-    private String  gitServiceType;
+    private String gitServiceType;
 
     public String getGitServiceType() {
         return gitServiceType;
@@ -42,5 +42,4 @@ public class ExtendProjectDescription extends MutableProjectDescription {
     public void setGitServiceType(String gitServiceType) {
         this.gitServiceType = gitServiceType;
     }
-    
 }
