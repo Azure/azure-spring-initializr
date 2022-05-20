@@ -3,14 +3,10 @@ package com.azure.spring.initializr.web.project;
 import io.spring.initializr.metadata.InitializrMetadata;
 import org.springframework.beans.BeanWrapperImpl;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExtendWebProjectRequest extends ExtendProjectRequest {
-    private String architecture;
-    private List<String> samples = new ArrayList<>();
 
     private final Map<String, Object> parameters = new LinkedHashMap<>();
 
@@ -20,22 +16,6 @@ public class ExtendWebProjectRequest extends ExtendProjectRequest {
      */
     public Map<String, Object> getParameters() {
         return this.parameters;
-    }
-
-    public String getArchitecture() {
-        return architecture;
-    }
-
-    public void setArchitecture(String architecture) {
-        this.architecture = architecture;
-    }
-
-    public List<String> getSamples() {
-        return samples;
-    }
-
-    public void setSamples(List<String> samples) {
-        this.samples = samples;
     }
 
     /**

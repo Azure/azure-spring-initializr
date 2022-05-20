@@ -16,7 +16,6 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
-import com.azure.messaging.eventhubs.EventHubProducerClient;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
@@ -27,10 +26,7 @@ import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCusto
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
-import com.azure.spring.initializr.web.project.EventHubsProjectGenerationStatisticsProcessor;
 import com.azure.spring.initializr.web.project.ExtendProjectRequestToDescriptionConverter;
-import com.azure.spring.initializr.web.project.ProjectGenerationListener;
-import com.azure.spring.initializr.web.project.ProjectGenerationStatisticsProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.io.SimpleIndentStrategy;
@@ -56,7 +52,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -93,24 +88,11 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ProjectGenerationListener projectGenerationListener(ObjectProvider<ProjectGenerationStatisticsProcessor> statisticsProcessors) {
-        return new ProjectGenerationListener(statisticsProcessors.getIfUnique());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ProjectGenerationStatisticsProcessor.class)
-    @ConditionalOnProperty(value = "extend.initializr.stats.eventhubs.enabled", havingValue = "true")
-    public ProjectGenerationStatisticsProcessor projectGenerationStatisticsProcessor(ObjectMapper objectMapper,
-                                                                                     ObjectProvider<EventHubProducerClient> producerClients) {
-        return new EventHubsProjectGenerationStatisticsProcessor(objectMapper, producerClients.getIfUnique());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
     public AzureInitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(
         RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
         return new AzureInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
     }
+
 
     @Bean
     @ConditionalOnMissingBean
@@ -140,7 +122,7 @@ public class ExtendInitializrAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(InitializrMetadataProvider.class)
-    public ExtendInitializrMetadataProvider initializrMetadataProvider(InitializrProperties properties,
+    public InitializrMetadataProvider initializrMetadataProvider(InitializrProperties properties,
                                                                  ExtendInitializrMetadataBuilder builder,
                                                                  ObjectProvider<InitializrMetadataUpdateStrategy> strategies) {
 //        ExtendInitializrMetadataBuilder builder = ExtendInitializrMetadataBuilder
@@ -194,7 +176,7 @@ public class ExtendInitializrAutoConfiguration {
             return new InitializrWebConfig();
         }
 
-        @Bean("projectGenerationController")
+        @Bean
         @ConditionalOnMissingBean
         ProjectGenerationController<ProjectRequest> projectGenerationController(
             InitializrMetadataProvider metadataProvider,

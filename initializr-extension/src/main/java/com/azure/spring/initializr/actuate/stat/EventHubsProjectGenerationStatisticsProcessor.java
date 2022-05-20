@@ -1,12 +1,11 @@
-package com.azure.spring.initializr.web.project;
+package com.azure.spring.initializr.actuate.stat;
 
 
 import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.EventHubProducerClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.spring.initializr.web.project.ProjectFailedEvent;
-import io.spring.initializr.web.project.ProjectGeneratedEvent;
+import io.spring.initializr.web.project.ProjectRequestEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +17,15 @@ import java.util.Arrays;
 public class EventHubsProjectGenerationStatisticsProcessor implements ProjectGenerationStatisticsProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventHubsProjectGenerationStatisticsProcessor.class);
+    private final ExtendProjectRequestDocumentFactory documentFactory;
     private final ObjectMapper objectMapper;
     private final EventHubProducerClient producerClient;
 
-    public EventHubsProjectGenerationStatisticsProcessor(ObjectMapper objectMapper,
+    public EventHubsProjectGenerationStatisticsProcessor(ExtendProjectRequestDocumentFactory documentFactory,
+                                                         ObjectMapper objectMapper,
                                                          EventHubProducerClient producerClient) {
         LOGGER.info("Project generation listener will use this processor to distribute generation logs.");
+        this.documentFactory = documentFactory;
         if (producerClient == null) {
             LOGGER.warn("No 'EventHubProducerClient' instance available.");
         }
@@ -32,29 +34,26 @@ public class EventHubsProjectGenerationStatisticsProcessor implements ProjectGen
     }
 
     @Override
-    public void process(ProjectGeneratedEvent event) {
+    public void process(ProjectRequestEvent event) {
+        String json = null;
         try {
-            String log = objectMapper.writeValueAsString(GenerationEventLogConverter.CONVERTER.convert(event));
+            ExtendProjectRequestDocument document = this.documentFactory.createDocument(event);
+            LOGGER.debug("Processing " + document);
+            json = toJson(document);
             if (producerClient != null) {
-                producerClient.send(Arrays.asList(new EventData(log)));
+                producerClient.send(Arrays.asList(new EventData(json)));
             }
-            LOGGER.info("Project generated: {}", log);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Generated event JSON processing exception.", e);
+        }
+        catch (Exception ex) {
+            LOGGER.warn(String.format("Failed to send stat to Event Hub, document follows %n%n%s%n", json), ex);
         }
     }
-
-    @Override
-    public void process(ProjectFailedEvent event) {
+    private String toJson(ExtendProjectRequestDocument stats) {
         try {
-            String log = objectMapper.writeValueAsString(GenerationFailedEventLogConverter.CONVERTER.convert(event));
-            if (producerClient != null) {
-                producerClient.send(Arrays.asList(new EventData(log)));
-            }
-            LOGGER.error("Generation failed.", event.getCause());
-            LOGGER.info("Project generation failed: {}", log);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Failed generation event JSON processing exception.", e);
+            return this.objectMapper.writeValueAsString(stats);
+        }
+        catch (JsonProcessingException ex) {
+            throw new IllegalStateException("Cannot convert to JSON", ex);
         }
     }
 }

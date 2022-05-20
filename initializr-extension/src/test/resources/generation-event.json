@@ -1,26 +1,36 @@
 {
-  "timestamp": "2022-05-18T11:50:52.693",
-  "architecture": "none",
-  "samples": ["blob", "native"],
-  "dependencies": [
-    "azure-storage-blob",
-    "native",
-    "devtools"
-  ],
-  "name": "demo",
-  "projectType": "maven-project",
-  "description": "Demo project for Spring Boot",
-  "groupId": "com.example",
-  "artifactId": "demo",
-  "appVersion": "0.0.1-SNAPSHOT",
-  "bootVersion": "2.6.6",
-  "packaging": "jar",
-  "applicationName": "demo",
-  "language": "java",
-  "packageName": "com.example.demo",
-  "javaVersion": "11",
-  "host": "azure-initializr-stats-spring-initializr.azuremicroservices.io",
-  "message": "Manual exception test",
-  "stackTrace": "Manual exception test",
-  "exceptionClass": "ProjectGenerationException"
+  "EventDate": "2022-05-20T20:53:54.013",
+  "Architecture": "none",
+  "Host": "localhost:8080",
+  "Referer": "http://localhost:8080/",
+  "Type": "maven-project",
+  "BuildSystem": "maven",
+  "GroupId": "com.example",
+  "ArtifactId": "demo",
+  "JavaVersion": "20.Beta",
+  "Language": "java",
+  "Packaging": "jar",
+  "PackageName": "com.example.demo",
+  "Version": {
+    "Id": "2.6.6",
+    "Major": "2",
+    "Minor": "2.6"
+  },
+  "Client": {
+    "Id": "browser",
+    "Version": null,
+    "Ip": null,
+    "Country": null
+  },
+  "Dependencies": {
+    "Id": "azure-storage-blob devtools lombok",
+    "Values": [
+      "azure-storage-blob",
+      "devtools",
+      "lombok"
+    ],
+    "Count": 3
+  },
+  "Samples": [],
+  "ErrorState": {}
 }

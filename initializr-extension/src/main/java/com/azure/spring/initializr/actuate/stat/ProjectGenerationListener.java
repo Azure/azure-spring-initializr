@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.azure.spring.initializr.web.project;
+package com.azure.spring.initializr.actuate.stat;
 
 import io.spring.initializr.web.project.ProjectFailedEvent;
 import io.spring.initializr.web.project.ProjectGeneratedEvent;
@@ -22,6 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This listens for {@link ProjectGeneratedEvent} and {@link ProjectFailedEvent}.
@@ -29,27 +33,24 @@ import org.springframework.scheduling.annotation.Async;
 public class ProjectGenerationListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectGenerationListener.class);
+    private final List<ProjectGenerationStatisticsProcessor> statisticsProcessors;
 
-    private final ProjectGenerationStatisticsProcessor statisticsProcessor;
-
-    public ProjectGenerationListener(ProjectGenerationStatisticsProcessor statisticsProcessor) {
-        if (statisticsProcessor != null) {
-            this.statisticsProcessor = statisticsProcessor;
-        } else {
+    public ProjectGenerationListener(List<ProjectGenerationStatisticsProcessor> statisticsProcessors) {
+        if (CollectionUtils.isEmpty(statisticsProcessors)) {
             LOGGER.warn("No 'ProjectGenerationStatisticsProcessor' bean available.");
-            this.statisticsProcessor = new ProjectGenerationStatisticsProcessor(){};
         }
+        this.statisticsProcessors = Collections.unmodifiableList(statisticsProcessors);
     }
 
     @Async
     @EventListener
     public void onProjectFailedEvent(ProjectFailedEvent event) {
-        statisticsProcessor.process(event);
+        statisticsProcessors.forEach(p -> p.process(event));
     }
 
     @Async
     @EventListener
     public void onProjectGeneratedEvent(ProjectGeneratedEvent event) {
-        statisticsProcessor.process(event);
+        statisticsProcessors.forEach(p -> p.process(event));
     }
 }

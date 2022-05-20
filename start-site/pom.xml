@@ -39,6 +39,10 @@
 			<artifactId>initializr-actuator</artifactId>
 		</dependency>
     <dependency>
+      <groupId>com.azure.spring</groupId>
+      <artifactId>spring-cloud-azure-starter-eventhubs</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.azure.spring.initializr</groupId>
       <artifactId>initializr-extension</artifactId>
     </dependency>

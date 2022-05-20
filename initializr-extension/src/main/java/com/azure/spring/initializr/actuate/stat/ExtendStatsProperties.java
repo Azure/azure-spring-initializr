@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.azure.spring.initializr.autoconfigure;
+package com.azure.spring.initializr.actuate.stat;
 
-import com.azure.spring.initializr.web.project.EventHubsProjectGenerationStatisticsProcessor;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Statistics-related properties.
  */
-public class StatsProperties {
+@ConfigurationProperties(prefix = "extend.initializr.stats")
+public class ExtendStatsProperties {
     
     private final Eventhubs eventhubs = new Eventhubs();
 
