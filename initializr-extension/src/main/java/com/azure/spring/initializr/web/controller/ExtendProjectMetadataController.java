@@ -1,6 +1,7 @@
 package com.azure.spring.initializr.web.controller;
 
 import com.azure.spring.initializr.autoconfigure.ExtendInitializrProperties;
+import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV21JsonMapper;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV22JsonMapper;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV2JsonMapper;
@@ -51,9 +52,9 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
         this.properties = properties;
     }
 
-    @RequestMapping(path = "/metadata/connectors", produces = "application/json")
+    @RequestMapping(path = "/metadata/oauthapps", produces = "application/json")
     @ResponseBody
-    public Map oauthApps() {
+    public Map<String, OAuthApp> oauthApps() {
         return this.properties.getOAuthApps();
     }
 

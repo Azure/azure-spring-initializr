@@ -57,7 +57,7 @@ export default function Application() {
         dispatchInitializr({ type: 'COMPLETE', payload: { ...response } })
         dispatch({ type: 'COMPLETE', payload: response })
       }).then(() => {
-        const url2 = `${windowsUtils.origin}/metadata/connectors`
+        const url2 = `${windowsUtils.origin}/metadata/oauthapps`
         return fetch(url2)
           .then(res => res.json())
           .then(res => {

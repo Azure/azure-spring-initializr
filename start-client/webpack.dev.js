@@ -5,7 +5,7 @@ const common = require('./webpack.common.js')
 const path = require('path')
 
 const mock = require('./dev/api.mock.json')
-const mock_connectors = require('./dev/api.mock_connectors.json')
+const mock_oauthapps = require('./dev/api.mock_oauthapps.json')
 const fs = require('fs')
 
 const config = {
@@ -25,9 +25,9 @@ const config = {
           res.json(mock)
         }, 800)
       })
-      devServer.app.get('/metadata/connectors', function(req, res) {
+      devServer.app.get('/metadata/oauthapps', function(req, res) {
         setTimeout(() => {
-          res.json(mock_connectors)
+          res.json(mock_oauthapps)
         }, 800)
       })
       devServer.app.get('/starter.zip', function(req, res) {
