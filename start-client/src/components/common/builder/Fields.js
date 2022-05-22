@@ -13,9 +13,11 @@ import { AppContext } from '../../reducer/App'
 import { Button, Radio } from '../form'
 import { Dependency } from '../dependency'
 import { InitializrContext } from '../../reducer/Initializr'
+import { IconGithub } from '../icons'
 
 const Fields = ({
   onSubmit,
+  onPush,
   onExplore,
   onShare,
   refExplore,
@@ -25,7 +27,7 @@ const Fields = ({
 }) => {
   const windowsUtils = useWindowsUtils()
   const { config, dispatch, dependencies } = useContext(AppContext)
-  const { values, dispatch: dispatchInitializr, errors } = useContext(
+  const { values, git, dispatch: dispatchInitializr, errors } = useContext(
     InitializrContext
   )
   const update = args => {
@@ -206,6 +208,16 @@ const Fields = ({
         <Button id='share-project' onClick={onShare}>
           Share...
         </Button>
+        {get(git, 'github.enabled') === true ? (
+          <Button
+            id='push-to-github'
+            onClick={onPush}
+            disabled={generating}
+          >
+            Push to GitHub
+            <span style={{ float: 'right', width: '22px', height: '22px', margin:'-4px 0 0 0', padding:'0 0 0 6px' }}><IconGithub /></span>
+          </Button>
+        ) : null}
       </Actions>
     </>
   )

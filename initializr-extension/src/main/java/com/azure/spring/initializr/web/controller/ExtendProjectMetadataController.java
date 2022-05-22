@@ -1,5 +1,7 @@
 package com.azure.spring.initializr.web.controller;
 
+import com.azure.spring.initializr.autoconfigure.ExtendInitializrProperties;
+import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV21JsonMapper;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV22JsonMapper;
 import com.azure.spring.initializr.web.mapper.ExtendInitializrMetadataV2JsonMapper;
@@ -11,12 +13,8 @@ import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.InvalidInitializrMetadataException;
 import io.spring.initializr.web.controller.AbstractMetadataController;
-import io.spring.initializr.web.controller.ProjectMetadataController;
 import io.spring.initializr.web.mapper.DependencyMetadataV21JsonMapper;
 import io.spring.initializr.web.mapper.InitializrMetadataJsonMapper;
-import io.spring.initializr.web.mapper.InitializrMetadataV21JsonMapper;
-import io.spring.initializr.web.mapper.InitializrMetadataV22JsonMapper;
-import io.spring.initializr.web.mapper.InitializrMetadataV2JsonMapper;
 import io.spring.initializr.web.mapper.InitializrMetadataVersion;
 import io.spring.initializr.web.project.InvalidProjectRequestException;
 import org.springframework.http.CacheControl;
@@ -31,10 +29,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Controller
 public class ExtendProjectMetadataController extends AbstractMetadataController {
+
+    private final ExtendInitializrProperties properties;
 
     /**
      * HAL JSON content type.
@@ -44,9 +45,17 @@ public class ExtendProjectMetadataController extends AbstractMetadataController 
     private final DependencyMetadataProvider dependencyMetadataProvider;
 
     public ExtendProjectMetadataController(InitializrMetadataProvider metadataProvider,
-                                           DependencyMetadataProvider dependencyMetadataProvider) {
+                                           DependencyMetadataProvider dependencyMetadataProvider,
+                                           ExtendInitializrProperties properties) {
         super(metadataProvider);
         this.dependencyMetadataProvider = dependencyMetadataProvider;
+        this.properties = properties;
+    }
+
+    @RequestMapping(path = "/metadata/oauthapps", produces = "application/json")
+    @ResponseBody
+    public Map<String, OAuthApp> oauthApps() {
+        return this.properties.getOAuthApps();
     }
 
     @RequestMapping(path = "/metadata/config", produces = "application/json")

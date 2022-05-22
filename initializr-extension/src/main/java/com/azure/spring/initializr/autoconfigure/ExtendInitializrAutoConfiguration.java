@@ -16,19 +16,25 @@
 
 package com.azure.spring.initializr.autoconfigure;
 
+import com.azure.spring.initializr.extension.scm.push.common.GitServiceEnum;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactory;
+import com.azure.spring.initializr.extension.scm.push.common.service.GitServiceFactoryResolver;
+import com.azure.spring.initializr.extension.scm.push.github.restclient.GithubServiceFactory;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadata;
 import com.azure.spring.initializr.metadata.ExtendInitializrMetadataBuilder;
+import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
 import com.azure.spring.initializr.metadata.customizer.ApplyDefaultCustomizer;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrMetadataCustomizer;
-import com.azure.spring.initializr.metadata.ExtendInitializrMetadataProvider;
 import com.azure.spring.initializr.metadata.customizer.ExtendInitializrPropertiesCustomizer;
 import com.azure.spring.initializr.metadata.customizer.InitializrPropertiesCustomizer;
+import com.azure.spring.initializr.metadata.scm.push.GitPush;
+import com.azure.spring.initializr.metadata.scm.push.OAuthApp;
 import com.azure.spring.initializr.support.AzureInitializrMetadataUpdateStrategy;
 import com.azure.spring.initializr.web.controller.ExtendProjectGenerationController;
 import com.azure.spring.initializr.web.controller.ExtendProjectMetadataController;
+import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.azure.spring.initializr.web.project.ExtendProjectRequestToDescriptionConverter;
 import com.azure.spring.initializr.web.project.ProjectGenerationListener;
-import com.azure.spring.initializr.web.project.ExtendProjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.io.SimpleIndentStrategy;
@@ -39,16 +45,11 @@ import io.spring.initializr.metadata.DependencyMetadataProvider;
 import io.spring.initializr.metadata.InitializrConfiguration;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.metadata.InitializrProperties;
-
 import io.spring.initializr.web.autoconfigure.InitializrWebConfig;
 import io.spring.initializr.web.controller.CommandLineMetadataController;
-import io.spring.initializr.web.controller.DefaultProjectGenerationController;
-import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.controller.SpringCliDistributionController;
 import io.spring.initializr.web.project.DefaultProjectRequestPlatformVersionTransformer;
-import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
-import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.initializr.web.support.DefaultDependencyMetadataProvider;
 import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
@@ -57,6 +58,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -71,6 +73,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
@@ -78,7 +81,6 @@ import javax.cache.expiry.Duration;
 import java.nio.file.Files;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
-
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ ExtendInitializrProperties.class, InitializrProperties.class })
@@ -104,7 +106,6 @@ public class ExtendInitializrAutoConfiguration {
         return new AzureInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
     }
 
-
     @Bean
     @ConditionalOnMissingBean
     InitializrPropertiesCustomizer initializerPropertiesCustomizer(InitializrProperties properties) {
@@ -116,6 +117,7 @@ public class ExtendInitializrAutoConfiguration {
     ApplyDefaultCustomizer applyDefaultCustomizer() {
         return new ApplyDefaultCustomizer();
     }
+
     @Bean
     @ConditionalOnMissingBean
     ExtendInitializrPropertiesCustomizer extendInitializrPropertiesCustomizer(ExtendInitializrProperties properties){
@@ -143,18 +145,28 @@ public class ExtendInitializrAutoConfiguration {
         return new ExtendInitializrMetadataProvider(metadata, strategies);
     }
 
-    @Bean("projectGenerationController")
+    @Bean
+    GitServiceFactoryResolver gitServiceFactoryResolver(ObjectProvider<GitServiceFactory> providerFactories) {
+        return new GitServiceFactoryResolver(providerFactories);
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+            prefix = "extend.initializr.gitpush.oauthapps",
+            name = "github.enabled",
+            havingValue = "true")
+    GitServiceFactory githubServiceFactory(ExtendInitializrProperties properties,
+                                           WebClient webClient) {
+        GitPush.Config gitPushConfig = properties.getGitPush().getConfig();
+        OAuthApp oAuthApp = properties.getOAuthApps().get(GitServiceEnum.GITHUB.getName());
+
+        return new GithubServiceFactory(gitPushConfig, oAuthApp, webClient);
+    }
+
+    @Bean
     @ConditionalOnMissingBean
-    ProjectGenerationController<ExtendProjectRequest> projectGenerationController(
-        InitializrMetadataProvider metadataProvider,
-        ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
-        ApplicationContext applicationContext) {
-        ExtendProjectRequestToDescriptionConverter converter =
-            new ExtendProjectRequestToDescriptionConverter(platformVersionTransformer
-                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new));
-        ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-            applicationContext, converter);
-        return new ExtendProjectGenerationController(metadataProvider, projectGenerationInvoker);
+    public WebClient webclient() {
+        return WebClient.builder().build();
     }
 
     @Bean
@@ -182,19 +194,33 @@ public class ExtendInitializrAutoConfiguration {
         return new NoOpCache("templates");
     }
 
-
     @Bean
     @ConditionalOnMissingBean
     public DependencyMetadataProvider dependencyMetadataProvider() {
         return new DefaultDependencyMetadataProvider();
     }
 
-    /**
-     * Initializr web configuration.
-     */
+    /** Initializr web configuration. */
     @Configuration
     @ConditionalOnWebApplication
     static class InitializrWebConfiguration {
+
+        @Bean("projectGenerationController")
+        @ConditionalOnMissingBean
+        ExtendProjectGenerationController projectGenerationController(
+                InitializrMetadataProvider metadataProvider,
+                ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
+                ApplicationContext applicationContext,
+                GitServiceFactoryResolver gitServiceFactoryResolver) {
+            ExtendProjectRequestToDescriptionConverter converter =
+                    new ExtendProjectRequestToDescriptionConverter(
+                            platformVersionTransformer.getIfAvailable(
+                                    DefaultProjectRequestPlatformVersionTransformer::new));
+            ProjectGenerationInvoker<ExtendProjectRequest> projectGenerationInvoker =
+                    new ProjectGenerationInvoker<>(applicationContext, converter);
+            return new ExtendProjectGenerationController(
+                    metadataProvider, projectGenerationInvoker, gitServiceFactoryResolver);
+        }
 
         @Bean
         InitializrWebConfig initializrWebConfig() {
@@ -203,21 +229,10 @@ public class ExtendInitializrAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        ProjectGenerationController<ProjectRequest> projectGenerationController(
-            InitializrMetadataProvider metadataProvider,
-            ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
-            ApplicationContext applicationContext) {
-            ProjectGenerationInvoker<ProjectRequest> projectGenerationInvoker = new ProjectGenerationInvoker<>(
-                applicationContext, new DefaultProjectRequestToDescriptionConverter(platformVersionTransformer
-                .getIfAvailable(DefaultProjectRequestPlatformVersionTransformer::new)));
-            return new DefaultProjectGenerationController(metadataProvider, projectGenerationInvoker);
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
         ExtendProjectMetadataController projectMetadataController(InitializrMetadataProvider metadataProvider,
-                                                            DependencyMetadataProvider dependencyMetadataProvider) {
-            return new ExtendProjectMetadataController(metadataProvider, dependencyMetadataProvider);
+                                                                  DependencyMetadataProvider dependencyMetadataProvider,
+                                                                  ExtendInitializrProperties properties) {
+            return new ExtendProjectMetadataController(metadataProvider, dependencyMetadataProvider, properties);
         }
 
         @Bean
@@ -237,7 +252,6 @@ public class ExtendInitializrAutoConfiguration {
         InitializrModule InitializrJacksonModule() {
             return new InitializrModule();
         }
-
     }
 
     /**
@@ -251,7 +265,6 @@ public class ExtendInitializrAutoConfiguration {
         JCacheManagerCustomizer initializrCacheManagerCustomizer() {
             return new InitializrJCacheManagerCustomizer();
         }
-
     }
 
     @Order(0)
@@ -279,7 +292,5 @@ public class ExtendInitializrAutoConfiguration {
             return new MutableConfiguration<>().setStoreByValue(false).setManagementEnabled(true)
                                                .setStatisticsEnabled(true);
         }
-
     }
-
 }

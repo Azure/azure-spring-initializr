@@ -18,3 +18,24 @@ extend:
         facets:
           - "web"
           - "jpa"
+    gitpush:
+      oauthapps:
+        github:
+          enabled: true
+          clientid: ${kv-github-client-id}
+          client-secret: ${kv-github-client-secret}
+          oauth-uri: https://github.com/login/oauth/authorize
+          redirect-uri: ${kv-github-client-redirect-uri}
+
+spring:
+  cloud:
+    azure:
+      compatibility-verifier:
+        enabled: false
+      keyvault:
+        secret:
+          # set property-source-enabled to `true` if you want to use keyvault
+          property-source-enabled: false
+          property-sources:
+            - name: key-vault-property-souece
+              endpoint: ${input-your-keyvault-endpoint}

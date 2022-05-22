@@ -19,7 +19,7 @@ import { Fields, Loading } from './common/builder'
 import { Form } from './common/form'
 import { Header, SideLeft, SideRight } from './common/layout'
 import { InitializrContext } from './reducer/Initializr'
-import { getConfig, getInfo, getProject } from './utils/ApiUtils'
+import { getConfig, getInfo, getProject, getGitParams } from './utils/ApiUtils'
 
 const Explore = lazy(() => import('./common/explore/Explore.js'))
 const Share = lazy(() => import('./common/share/Share.js'))
@@ -35,7 +35,7 @@ export default function Application() {
     list,
     dependencies,
   } = useContext(AppContext)
-  const { values, share, dispatch: dispatchInitializr } = useContext(
+  const { values, share, git, dispatch: dispatchInitializr } = useContext(
     InitializrContext
   )
 
@@ -56,6 +56,13 @@ export default function Application() {
         const response = getConfig(jsonConfig)
         dispatchInitializr({ type: 'COMPLETE', payload: { ...response } })
         dispatch({ type: 'COMPLETE', payload: response })
+      }).then(() => {
+        const url2 = `${windowsUtils.origin}/metadata/oauthapps`
+        return fetch(url2)
+          .then(res => res.json())
+          .then(res => {
+            dispatchInitializr({ type: 'GIT_READY', payload: res })
+          })
       })
     }
   }, [dispatch, dispatchInitializr, windowsUtils.origin])
@@ -76,6 +83,24 @@ export default function Application() {
     setGenerating(false)
     if (project) {
       FileSaver.saveAs(project, `${get(values, 'meta.artifact')}.zip`)
+    }
+  }
+
+  const onPush = async (e) => {
+    let { enabled, clientId, oauthUri, redirectUri } = get(git, 'github', {});
+    const redirectParams = getGitParams(values, get(dependencies, 'list'));
+    if (enabled) {
+      const url = [
+        oauthUri,
+        '?client_id=',
+        clientId,
+        '&redirect_uri=',
+        encodeURIComponent(`${redirectUri}?${redirectParams}&gitServiceType=github`),
+        '&state=',
+        Date.now().toString(36),
+        '&scope=repo',
+      ].join('');
+      location.assign(url);
     }
   }
 
@@ -139,6 +164,7 @@ export default function Application() {
             <>
               <Fields
                 onSubmit={onSubmit}
+                onPush={onPush}
                 onShare={onShare}
                 onExplore={onExplore}
                 refExplore={buttonExplore}

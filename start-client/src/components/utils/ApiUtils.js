@@ -313,3 +313,33 @@ export const getProject = function getProject(url, values, config) {
     )
   })
 }
+
+export const getGitParams = function getProject(values, config) {
+  const params = querystring.stringify({
+    type: get(values, 'project'),
+    language: get(values, 'language'),
+    bootVersion: get(values, 'boot'),
+    baseDir: get(values, 'meta.artifact'),
+    groupId: get(values, 'meta.group'),
+    artifactId: get(values, 'meta.artifact'),
+    name: get(values, 'meta.name'),
+    description: get(values, 'meta.description'),
+    packageName: get(values, 'meta.packageName'),
+    packaging: get(values, 'meta.packaging'),
+    javaVersion: get(values, 'meta.java'),
+    architecture: get(values, 'architecture'),
+  })
+  let paramsDependencies = get(values, 'dependencies', [])
+    .map(dependency => {
+      const dep = config.find(it => it.id === dependency)
+      return isValidDependency(get(values, 'boot'), dep) ? dependency : null
+    })
+    .filter(dep => !!dep)
+    .join(',')
+
+  if (paramsDependencies) {
+    paramsDependencies = `&dependencies=${paramsDependencies}`
+  }
+
+  return `${params}${paramsDependencies}`;
+}

@@ -1,0 +1,8 @@
+{
+    "github": {
+        "enabled": true,
+        "clientId": "1b17c66d923a18bc63c0",
+        "oauthUri": "https://github.com/login/oauth/authorize",
+        "redirectUri": "http://localhost:8080/login/oauth2/code/github"
+    }
+}
