@@ -30,6 +30,8 @@ extend:
 spring:
   cloud:
     azure:
+      compatibility-verifier:
+        enabled: false
       keyvault:
         secret:
           # set property-source-enabled to `true` if you want to use keyvault
