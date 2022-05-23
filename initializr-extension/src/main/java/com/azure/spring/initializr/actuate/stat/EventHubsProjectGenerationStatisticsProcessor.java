@@ -38,8 +38,8 @@ public class EventHubsProjectGenerationStatisticsProcessor implements ProjectGen
         String json = null;
         try {
             ExtendProjectRequestDocument document = this.documentFactory.createDocument(event);
-            LOGGER.debug("Processing " + document);
             json = toJson(document);
+            LOGGER.debug("Processing " + json);
             if (producerClient != null) {
                 producerClient.send(Arrays.asList(new EventData(json)));
             }

@@ -3,7 +3,7 @@ logging:
     org.springframework.core.env: warn
     org.springframework.jndi: warn
     com.azure.core.amqp.implementation: warn
-
+    com.azure.spring.initializr.actuate.stat: debug
 management:
   info:
     env:
@@ -40,6 +40,8 @@ spring:
 
   cloud:
     azure:
+      compatibility-verifier:
+        enabled: false
       credential:
         managed-identity-enabled: true
       eventhubs:
