@@ -1,0 +1,1 @@
+.create table RawSpringInitializrGenerationStats_RealTime (EventDate: datetime, Architecture: string, Host: string, Referer: string, Type: string, BuildSystem: string, GroupId: string, ArtifactId: string, JavaVersion: string, Language: string, Packaging: string, PackageName: string, Version: dynamic, Client: dynamic, Dependencies: dynamic, Samples: dynamic, ErrorState: dynamic)
