@@ -19,7 +19,14 @@ package com.azure.spring.initializr.autoconfigure;
 import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureActuatorBuildCustomizer;
 import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureDefaultBuildCustomizer;
 import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureMessagingBuildCustomizer;
+import com.azure.spring.initializr.extension.dependency.springazure.SpringCloudAzureNativeGradleBuildCustomizer;
+import com.azure.spring.initializr.extension.dependency.springazure.SpringCloudAzureNativeMavenBuildCustomizer;
 import com.azure.spring.initializr.extension.dependency.springazure.SpringAzureSleuthBuildCustomizer;
+import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
+import io.spring.initializr.generator.buildsystem.maven.MavenBuildSystem;
+import io.spring.initializr.generator.condition.ConditionalOnBuildSystem;
+import io.spring.initializr.generator.condition.ConditionalOnRequestedDependency;
+import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.metadata.InitializrMetadata;
 import org.springframework.context.annotation.Bean;
@@ -44,18 +51,34 @@ public class ExtendDependencyProjectGenerationConfiguration {
 	}
 
 	@Bean
+    @ConditionalOnRequestedDependency("actuator")
 	public SpringAzureActuatorBuildCustomizer springAzureActuatorBuildCustomizer() {
 		return new SpringAzureActuatorBuildCustomizer();
 	}
 
 	@Bean
+    @ConditionalOnRequestedDependency("cloud-stream")
 	public SpringAzureMessagingBuildCustomizer springAzureMessagingBuildCustomizer() {
 		return new SpringAzureMessagingBuildCustomizer();
 	}
 
 	@Bean
+    @ConditionalOnRequestedDependency("cloud-starter-sleuth")
 	public SpringAzureSleuthBuildCustomizer springAzureSleuthBuildCustomizer() {
 		return new SpringAzureSleuthBuildCustomizer();
 	}
 
+    @Bean
+    @ConditionalOnRequestedDependency("native")
+    @ConditionalOnBuildSystem(MavenBuildSystem.ID)
+    public SpringCloudAzureNativeMavenBuildCustomizer springCloudAzureNativeMavenBuildCustomizer(ProjectDescription description) {
+        return new SpringCloudAzureNativeMavenBuildCustomizer(description.getPlatformVersion());
+    }
+
+    @Bean
+    @ConditionalOnRequestedDependency("native")
+    @ConditionalOnBuildSystem(GradleBuildSystem.ID)
+    public SpringCloudAzureNativeGradleBuildCustomizer springCloudAzureNativeGradleBuildCustomizer(ProjectDescription description) {
+        return new SpringCloudAzureNativeGradleBuildCustomizer(description.getPlatformVersion());
+    }
 }
