@@ -41,41 +41,44 @@ public class SpringAzureMessagingBuildCustomizer implements BuildCustomizer<Buil
 
     @Override
     public void customize(Build build) {
-        customizeIntegrationDependency(build);
-        customizeCloudStreamDependency(build);
+        customizeServiceBus(build);
+        customizeEventHubs(build);
+        customizeStorageQueue(build);
     }
 
-    private void customizeCloudStreamDependency(Build build) {
-        if (build.dependencies().has(CLOUD_STREAM_DEPENDENCY_ID)) {
-            if (build.dependencies().has(AZURE_EVENT_HUBS_DEPENDENCY_ID)) {
-                build.dependencies().add("spring-cloud-azure-stream-binder-eventhubs",
-                        Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-stream-binder-eventhubs"));
-                build.dependencies().remove(AZURE_EVENT_HUBS_DEPENDENCY_ID);
-            }
-
-            if (build.dependencies().has(AZURE_SERVICE_BUS_DEPENDENCY_ID)) {
+    private void customizeServiceBus(Build build) {
+        if (build.dependencies().has(AZURE_SERVICE_BUS_DEPENDENCY_ID)) {
+            if (build.dependencies().has(CLOUD_STREAM_DEPENDENCY_ID)) {
                 build.dependencies().add("spring-cloud-azure-stream-binder-servicebus",
                         Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-stream-binder-servicebus"));
+                build.dependencies().remove(AZURE_SERVICE_BUS_DEPENDENCY_ID);
+            }
+            if (build.dependencies().has(INTEGRATION_DEPENDENCY_ID)) {
+                build.dependencies().add("spring-cloud-azure-starter-integration-servicebus",
+                        Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter-integration-servicebus"));
                 build.dependencies().remove(AZURE_SERVICE_BUS_DEPENDENCY_ID);
             }
         }
     }
 
-    private void customizeIntegrationDependency(Build build) {
-        if (build.dependencies().has(INTEGRATION_DEPENDENCY_ID)) {
-            if (build.dependencies().has(AZURE_EVENT_HUBS_DEPENDENCY_ID)) {
+    private void customizeEventHubs(Build build) {
+        if (build.dependencies().has(AZURE_EVENT_HUBS_DEPENDENCY_ID)) {
+            if (build.dependencies().has(CLOUD_STREAM_DEPENDENCY_ID)) {
+                build.dependencies().add("spring-cloud-azure-stream-binder-eventhubs",
+                        Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-stream-binder-eventhubs"));
+                build.dependencies().remove(AZURE_EVENT_HUBS_DEPENDENCY_ID);
+            }
+            if (build.dependencies().has(INTEGRATION_DEPENDENCY_ID)) {
                 build.dependencies().add("spring-cloud-azure-starter-integration-eventhubs",
                         Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter-integration-eventhubs"));
                 build.dependencies().remove(AZURE_EVENT_HUBS_DEPENDENCY_ID);
             }
+        }
+    }
 
-            if (build.dependencies().has(AZURE_SERVICE_BUS_DEPENDENCY_ID)) {
-                build.dependencies().add("spring-cloud-azure-starter-integration-servicebus",
-                        Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter-integration-servicebus"));
-                build.dependencies().remove(AZURE_SERVICE_BUS_DEPENDENCY_ID);
-            }
-
-            if (build.dependencies().has(AZURE_STORAGE_QUEUE_DEPENDENCY_ID)) {
+    private void customizeStorageQueue(Build build) {
+        if (build.dependencies().has(AZURE_STORAGE_QUEUE_DEPENDENCY_ID)) {
+            if (build.dependencies().has(INTEGRATION_DEPENDENCY_ID)) {
                 build.dependencies().add("spring-cloud-azure-starter-integration-storage-queue",
                         Dependency.withCoordinates("com.azure.spring", "spring-cloud-azure-starter-integration-storage-queue"));
                 build.dependencies().remove(AZURE_STORAGE_QUEUE_DEPENDENCY_ID);
