@@ -29,6 +29,8 @@ jobs:
     concurrency: staging_environment
     env:
       AZURE_SUBSCRIPTION: 799c12ba-353c-44a1-883d-84808ebb2216
+      AZURE_SPRING_APPS: spring-initializr
+      AZURE_SPRING_APPS_APP: spring-initializr
     if: ${{ github.repository == 'Azure/azure-spring-initializr' && github.event_name != 'pull_request' }}
     steps:
       - name: Checkout code
@@ -51,8 +53,8 @@ jobs:
         with:
           azure-subscription: ${{ env.AZURE_SUBSCRIPTION }}
           action: Deploy
-          service-name: azure-spring-initializr-dev
-          app-name: azure-spring-initializr
+          service-name: ${{ env.AZURE_SPRING_APPS }}
+          app-name: ${{ env.AZURE_SPRING_APPS_APP }}
           use-staging-deployment: false
           package: ${{ github.workspace }}/start-site/target/start-site-exec.jar
   build_java_docker_image:
